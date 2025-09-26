@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. lm-eval Integration and Project Foundation
+- [-] 1. lm-eval Integration and Project Foundation
   - Fork and extend lm-evaluation-harness with proper project structure
   - Create task directory structure following lm-eval conventions
   - Implement one-click installation script with lm-eval dependency management
