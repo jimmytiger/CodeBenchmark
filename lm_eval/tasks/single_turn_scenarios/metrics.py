@@ -1425,26 +1425,7 @@ def _check_general_style(code: str) -> float:
     return max(0.0, score)
 
 # Functional Metrics
-def pass_at_k(predictions: List[str], test_results: List[Dict], k: int = 1) -> float:
-    """Calculate Pass@K metric.
-    
-    Args:
-        predictions: List of code predictions
-        test_results: List of test execution results
-        k: Number of attempts
-        
-    Returns:
-        float: Pass@K score (0.0 to 1.0)
-    """
-    if not predictions or not test_results:
-        return 0.0
-    
-    if len(predictions) != len(test_results):
-        eval_logger.warning(f"Length mismatch in pass_at_k: predictions={len(predictions)}, test_results={len(test_results)}")
-        return 0.0
-    
-    passed = sum(1 for result in test_results if result.get('exit_code', 1) == 0)
-    return passed / len(test_results)
+# Removed duplicate pass_at_k function - using the more complete version below
 
 def runtime_correctness(execution_results: List[Dict]) -> float:
     """Calculate runtime correctness based on execution results.

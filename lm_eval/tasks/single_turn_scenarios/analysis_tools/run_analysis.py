@@ -12,10 +12,21 @@ import argparse
 from pathlib import Path
 from typing import List, Dict, Any
 
-from .compare_models import ModelComparator
-from .context_impact import ContextAnalyzer
-from .scenario_analysis import ScenarioAnalyzer
-from .generate_report import ReportGenerator
+try:
+    from .compare_models import ModelComparator
+    from .context_impact import ContextAnalyzer
+    from .scenario_analysis import ScenarioAnalyzer
+    from .generate_report import ReportGenerator
+except ImportError:
+    # Fallback for direct execution
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent))
+    
+    from compare_models import ModelComparator
+    from context_impact import ContextAnalyzer
+    from scenario_analysis import ScenarioAnalyzer
+    from generate_report import ReportGenerator
 
 
 def load_results(results_path: str) -> List[Dict[str, Any]]:

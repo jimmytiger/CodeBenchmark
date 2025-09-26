@@ -76,7 +76,9 @@ def load_dataset(metadata: Optional[Dict] = None, **kwargs) -> datasets.Dataset:
         dataset = filter_by_metadata(dataset, filter_metadata)
     
     eval_logger.info(f"Loaded {len(dataset)} problems from {problems_file} ({len(validation_errors)} validation errors)")
-    return dataset
+    
+    # Return dataset in the format expected by lm-eval framework
+    return {"test": dataset}
 
 def filter_by_metadata(dataset: datasets.Dataset, filters: Dict[str, Any]) -> datasets.Dataset:
     """Filter dataset by metadata criteria with comprehensive filtering support.
@@ -131,52 +133,64 @@ def filter_by_metadata(dataset: datasets.Dataset, filters: Dict[str, Any]) -> da
         eval_logger.error(f"Failed to filter dataset: {e}")
         return dataset
 
-def process_docs(doc: Dict[str, Any]) -> Dict[str, Any]:
-    """Process document for evaluation with comprehensive preprocessing.
+def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:
+    """Process documents for evaluation with comprehensive preprocessing.
     
     Args:
-        doc: Raw document from dataset
+        dataset: Raw dataset from load_dataset
         
     Returns:
-        Dict: Processed document with applied context and validation
-        
-    Raises:
-        ValueError: If document processing fails critically
+        datasets.Dataset: Processed dataset with applied context and validation
     """
-    try:
-        # Create a copy to avoid modifying original
-        processed_doc = doc.copy()
-        
-        # Validate essential fields
-        required_fields = ['id', 'prompt', 'context_mode']
-        for field in required_fields:
-            if field not in processed_doc:
-                eval_logger.error(f"Missing required field '{field}' in document {processed_doc.get('id', 'unknown')}")
-                raise ValueError(f"Missing required field: {field}")
-        
-        # Apply context template based on context_mode
-        processed_doc = apply_context_template(processed_doc, processed_doc.get('context_mode', 'no_context'))
-        
-        # Ensure formatted_prompt exists
-        if 'formatted_prompt' not in processed_doc:
-            processed_doc['formatted_prompt'] = processed_doc.get('prompt', '')
+    def _process_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
+        """Process a single document."""
+        try:
+            # Create a copy to avoid modifying original
+            processed_doc = doc.copy()
             
-        # Add processing metadata
-        processed_doc['_processed'] = True
-        
-        return processed_doc
-        
+            # Validate essential fields
+            required_fields = ['id', 'prompt', 'context_mode']
+            for field in required_fields:
+                if field not in processed_doc:
+                    eval_logger.error(f"Missing required field '{field}' in document {processed_doc.get('id', 'unknown')}")
+                    # Use default values for missing fields
+                    if field == 'context_mode':
+                        processed_doc[field] = 'no_context'
+                    elif field == 'prompt':
+                        processed_doc[field] = ''
+            
+            # Apply context template based on context_mode
+            processed_doc = apply_context_template(processed_doc, processed_doc.get('context_mode', 'no_context'))
+            
+            # Ensure formatted_prompt exists
+            if 'formatted_prompt' not in processed_doc:
+                processed_doc['formatted_prompt'] = processed_doc.get('prompt', '')
+                
+            # Add processing metadata
+            processed_doc['_processed'] = True
+            
+            return processed_doc
+            
+        except Exception as e:
+            eval_logger.error(f"Failed to process document {doc.get('id', 'unknown')}: {e}")
+            # Return minimal viable document
+            return {
+                'id': doc.get('id', 'unknown'),
+                'prompt': doc.get('prompt', ''),
+                'formatted_prompt': doc.get('prompt', ''),
+                'context_mode': doc.get('context_mode', 'no_context'),
+                '_processed': False,
+                '_error': str(e)
+            }
+    
+    # Process all documents in the dataset
+    try:
+        processed_dataset = dataset.map(_process_doc)
+        eval_logger.info(f"Processed {len(processed_dataset)} documents")
+        return processed_dataset
     except Exception as e:
-        eval_logger.error(f"Failed to process document {doc.get('id', 'unknown')}: {e}")
-        # Return minimal viable document
-        return {
-            'id': doc.get('id', 'unknown'),
-            'prompt': doc.get('prompt', ''),
-            'formatted_prompt': doc.get('prompt', ''),
-            'context_mode': doc.get('context_mode', 'no_context'),
-            '_processed': False,
-            '_error': str(e)
-        }
+        eval_logger.error(f"Failed to process dataset: {e}")
+        return dataset
 
 def apply_context_template(doc: Dict[str, Any], context_mode: str) -> Dict[str, Any]:
     """Apply context template to document with comprehensive context injection.
@@ -764,45 +778,61 @@ def split_dataset(dataset: datasets.Dataset,
         'test': test_dataset
     }
 
-def extract_code_response(response: str) -> str:
-    """Extract code from model response.
+def extract_code_response(responses, docs):
+    """Extract code from model responses (filter function for lm-eval).
     
     Args:
-        response: Raw model response
+        responses: List of model responses
+        docs: List of corresponding documents (not used)
         
     Returns:
-        str: Extracted code
+        List[str]: List of extracted code responses
     """
-    # Look for code blocks
-    code_block_pattern = r'```(?:python|javascript|java|cpp|go|rust)?\s*\n(.*?)\n```'
-    matches = re.findall(code_block_pattern, response, re.DOTALL | re.IGNORECASE)
-    
-    if matches:
-        return matches[0].strip()
-    
-    # If no code blocks, try to extract code-like content
-    lines = response.split('\n')
-    code_lines = []
-    in_code = False
-    
-    for line in lines:
-        # Simple heuristics for code detection
-        if any(keyword in line.lower() for keyword in ['def ', 'function ', 'class ', 'import ', 'from ']):
-            in_code = True
+    def _extract_single_response(response: str) -> str:
+        """Extract code from a single model response."""
+        # Look for code blocks
+        code_block_pattern = r'```(?:python|javascript|java|cpp|go|rust)?\s*\n(.*?)\n```'
+        matches = re.findall(code_block_pattern, response, re.DOTALL | re.IGNORECASE)
         
-        if in_code:
-            code_lines.append(line)
+        if matches:
+            return matches[0].strip()
+        
+        # If no code blocks, try to extract code-like content
+        lines = response.split('\n')
+        code_lines = []
+        in_code = False
+        
+        for line in lines:
+            # Simple heuristics for code detection
+            if any(keyword in line.lower() for keyword in ['def ', 'function ', 'class ', 'import ', 'from ']):
+                in_code = True
             
-        # Stop if we hit explanatory text after code
-        if in_code and line.strip() and not line.startswith((' ', '\t')) and not any(c in line for c in '(){}[];'):
-            if len(line.split()) > 10:  # Likely explanatory text
-                break
+            if in_code:
+                code_lines.append(line)
+                
+            # Stop if we hit explanatory text after code
+            if in_code and line.strip() and not line.startswith((' ', '\t')) and not any(c in line for c in '(){}[];'):
+                if len(line.split()) > 10:  # Likely explanatory text
+                    break
+        
+        if code_lines:
+            return '\n'.join(code_lines).strip()
+        
+        # Fallback: return the response as-is
+        return response.strip()
     
-    if code_lines:
-        return '\n'.join(code_lines).strip()
+    # Process all responses
+    # Handle case where responses might be nested lists
+    processed_responses = []
+    for resp in responses:
+        if isinstance(resp, list):
+            # If resp is a list, take the first element
+            actual_resp = resp[0] if resp else ""
+        else:
+            actual_resp = resp
+        processed_responses.append(_extract_single_response(str(actual_resp)))
     
-    # Fallback: return the response as-is
-    return response.strip()
+    return processed_responses
 
 # Configuration Management Integration
 try:

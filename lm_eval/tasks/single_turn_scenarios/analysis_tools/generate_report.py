@@ -16,8 +16,17 @@ import seaborn as sns
 import base64
 from io import BytesIO
 
-from .compare_models import ModelComparator, ComparisonReport
-from .context_impact import ContextAnalyzer, ContextReport
+try:
+    from .compare_models import ModelComparator, ComparisonReport
+    from .context_impact import ContextAnalyzer, ContextReport
+except ImportError:
+    # Fallback for direct execution
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent))
+    
+    from compare_models import ModelComparator, ComparisonReport
+    from context_impact import ContextAnalyzer, ContextReport
 
 
 class ReportGenerator:

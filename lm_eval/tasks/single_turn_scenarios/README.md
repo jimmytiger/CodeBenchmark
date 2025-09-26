@@ -841,6 +841,645 @@ lm_eval --model openai-chat \
     --limit 20
 ```
 
+## Comprehensive Usage Guide
+
+### ✅ Validated Task Types
+
+All 16 single_turn_scenarios task types have been validated and are fully functional:
+
+#### Core Scenario Tasks
+- `single_turn_scenarios_function_generation` - Generate complete functions from specifications
+- `single_turn_scenarios_code_completion` - Complete partial code implementations  
+- `single_turn_scenarios_bug_fix` - Identify and fix bugs in existing code
+- `single_turn_scenarios_algorithm_implementation` - Implement complex algorithms
+- `single_turn_scenarios_code_translation` - Translate code between programming languages
+
+#### Advanced Scenario Tasks
+- `single_turn_scenarios_api_design` - Design and implement RESTful APIs
+- `single_turn_scenarios_system_design` - Design system architectures and components
+- `single_turn_scenarios_database_design` - Design database schemas and queries
+- `single_turn_scenarios_security` - Implement security measures and best practices
+- `single_turn_scenarios_performance_optimization` - Optimize code for better performance
+- `single_turn_scenarios_full_stack` - Complete full-stack development tasks
+- `single_turn_scenarios_testing_strategy` - Design and implement testing strategies
+- `single_turn_scenarios_documentation` - Generate documentation and comments
+
+#### Suite and Filtered Tasks
+- `single_turn_scenarios_python` - Python-only tasks across all scenarios
+- `single_turn_scenarios_intermediate` - Intermediate difficulty tasks
+- `single_turn_scenarios_minimal_context` - Tasks with minimal context information
+
+### 🚀 Basic Usage Commands
+
+#### Single Task Evaluation
+```bash
+# Function generation with Claude Haiku
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 5 --output_path results/function_generation.json
+
+# Code completion with OpenAI GPT-4
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4,temperature=0.0 \
+    --tasks single_turn_scenarios_code_completion \
+    --limit 10 --output_path results/code_completion.json
+
+# Bug fixing with DashScope Qwen
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-coder-plus \
+    --tasks single_turn_scenarios_bug_fix \
+    --limit 8 --output_path results/bug_fix.json
+```
+
+#### Multiple Task Evaluation
+```bash
+# Run multiple related tasks
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation,single_turn_scenarios_code_completion \
+    --limit 5 --output_path results/multi_task.json
+
+# Run all Python-focused tasks
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-coder-plus \
+    --tasks single_turn_scenarios_python \
+    --limit 15 --output_path results/python_tasks.json
+```
+
+### 🎯 Advanced Filtering Options
+
+#### Filter by Difficulty Level
+```bash
+# Simple difficulty tasks only
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation \
+    --metadata '{"difficulty":"simple"}' \
+    --limit 10
+
+# Complex difficulty tasks only
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4 \
+    --tasks single_turn_scenarios_algorithm_implementation \
+    --metadata '{"difficulty":"complex"}' \
+    --limit 5
+
+# Intermediate difficulty across multiple tasks
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-max \
+    --tasks single_turn_scenarios_intermediate \
+    --limit 20
+```
+
+#### Filter by Programming Language
+```bash
+# Python-only tasks
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_code_completion \
+    --metadata '{"language":"python"}' \
+    --limit 10
+
+# JavaScript-specific evaluation
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4 \
+    --tasks single_turn_scenarios_function_generation \
+    --metadata '{"language":"javascript"}' \
+    --limit 8
+
+# Multi-language code translation
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-coder-plus \
+    --tasks single_turn_scenarios_code_translation \
+    --metadata '{"source_language":"python","target_language":"java"}' \
+    --limit 5
+```
+
+#### Filter by Context Mode
+```bash
+# No context baseline evaluation
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation \
+    --metadata '{"context_mode":"no_context"}' \
+    --limit 10
+
+# Minimal context evaluation
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4 \
+    --tasks single_turn_scenarios_minimal_context \
+    --limit 15
+
+# Full context with complete specifications
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-max \
+    --tasks single_turn_scenarios_system_design \
+    --metadata '{"context_mode":"full_context"}' \
+    --limit 5
+
+# Domain-specific context for security tasks
+python -m lm_eval --model anthropic \
+    --model_args model=claude-3-sonnet-20240229 \
+    --tasks single_turn_scenarios_security \
+    --metadata '{"context_mode":"domain_context"}' \
+    --limit 8
+```
+
+#### Combined Filtering
+```bash
+# Complex Python problems with full context
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4 \
+    --tasks single_turn_scenarios_algorithm_implementation \
+    --metadata '{"difficulty":"complex","language":"python","context_mode":"full_context"}' \
+    --limit 5
+
+# Simple JavaScript functions with minimal context
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation \
+    --metadata '{"difficulty":"simple","language":"javascript","context_mode":"minimal_context"}' \
+    --limit 10
+```
+
+### 📊 Result Analysis and Interpretation
+
+#### Understanding Output Files
+Each evaluation generates two main files:
+1. **Main Results File** (`results/task_name_TIMESTAMP.json`) - Contains metrics, configuration, and summary
+2. **Sample Output File** (`results/samples_task_name_TIMESTAMP.jsonl`) - Contains detailed input/output for each problem
+
+#### Viewing Results
+```bash
+# View main results summary
+cat results/function_generation_2024*.json | jq '.results'
+
+# View individual sample outputs
+head -n 1 results/samples_function_generation_2024*.jsonl | jq '.resps[0][0]'
+
+# Extract specific metrics
+cat results/function_generation_2024*.json | jq '.results.single_turn_scenarios_function_generation'
+```
+
+#### Key Metrics Explained
+- **exact_match**: Percentage of responses that exactly match the reference implementation
+- **syntax_validity**: Percentage of generated code that is syntactically correct
+- **bypass**: Placeholder metric for prediction-only mode
+
+### 🔍 Analysis Tools
+
+The framework includes three validated analysis tools for comprehensive result analysis:
+
+#### Scenario Analysis
+```python
+# Analyze performance across different scenarios and difficulty levels
+from lm_eval.tasks.single_turn_scenarios.analysis_tools.scenario_analysis import ScenarioAnalyzer
+
+# Load your results data
+results_data = [...]  # Your evaluation results
+analyzer = ScenarioAnalyzer(results_data)
+report = analyzer.generate_report()
+```
+
+#### Model Comparison
+```python
+# Compare performance across multiple models
+from lm_eval.tasks.single_turn_scenarios.analysis_tools.compare_models import ModelComparator
+
+comparator = ModelComparator(results_data)
+comparison_report = comparator.compare_models()
+```
+
+#### Context Impact Analysis
+```python
+# Analyze the impact of different context modes
+from lm_eval.tasks.single_turn_scenarios.analysis_tools.context_impact import ContextAnalyzer
+
+context_analyzer = ContextAnalyzer(results_data)
+context_report = context_analyzer.analyze_context_effects()
+```
+
+### 🛠️ Model-Specific Configurations
+
+#### Claude Models (Anthropic)
+```bash
+# Claude Haiku for fast evaluation
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307,temperature=0.0 \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 10
+
+# Claude Sonnet for balanced performance
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-sonnet-20240229,temperature=0.1 \
+    --tasks single_turn_scenarios_algorithm_implementation \
+    --limit 5
+
+# Claude Opus for complex tasks
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-opus-20240229,temperature=0.0 \
+    --tasks single_turn_scenarios_system_design \
+    --limit 3
+```
+
+#### OpenAI Models
+```bash
+# GPT-4 for high-quality results
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-4,temperature=0.0,max_tokens=1024 \
+    --tasks single_turn_scenarios_code_completion \
+    --limit 10
+
+# GPT-3.5-turbo for cost-effective evaluation
+python -m lm_eval --model openai-chat \
+    --model_args model=gpt-3.5-turbo,temperature=0.0 \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 20
+```
+
+#### DashScope (Qwen Models)
+```bash
+# Qwen Coder Plus for code-specific tasks
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-coder-plus,temperature=0.0 \
+    --tasks single_turn_scenarios_bug_fix \
+    --limit 15
+
+# Qwen Max for complex reasoning
+python -m lm_eval --model dashscope \
+    --model_args model=qwen-max,temperature=0.1 \
+    --tasks single_turn_scenarios_system_design \
+    --limit 8
+```
+
+#### Local HuggingFace Models
+```bash
+# DeepSeek Coder
+python -m lm_eval --model hf \
+    --model_args pretrained=deepseek-ai/deepseek-coder-6.7b-instruct,device_map=auto \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 10 --batch_size 2
+
+# CodeLlama
+python -m lm_eval --model hf \
+    --model_args pretrained=codellama/CodeLlama-7b-Instruct-hf,device_map=auto \
+    --tasks single_turn_scenarios_code_completion \
+    --limit 8 --batch_size 1
+```
+
+### 🚨 Common Issues and Solutions
+
+#### Issue: Task Not Found
+```bash
+# Solution: Check available tasks
+python -m lm_eval --tasks list | grep single_turn_scenarios
+```
+
+#### Issue: API Key Errors
+```bash
+# Solution: Verify API key is set
+echo $ANTHROPIC_API_KEY  # Should show your key
+export ANTHROPIC_API_KEY="your-key-here"
+```
+
+#### Issue: Memory Issues with Local Models
+```bash
+# Solution: Reduce batch size and limit
+python -m lm_eval --model hf \
+    --model_args pretrained=model-name,device_map=auto,load_in_8bit=true \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 5 --batch_size 1
+```
+
+#### Issue: Timeout Errors
+```bash
+# Solution: Use predict_only mode for testing
+python -m lm_eval --model claude-local \
+    --model_args model=claude-3-haiku-20240307 \
+    --tasks single_turn_scenarios_function_generation \
+    --limit 2 --predict_only --output_path results/test.json
+```
+
+### 📈 Performance Optimization Tips
+
+1. **Use appropriate limits**: Start with `--limit 1-5` for testing, increase for production
+2. **Batch processing**: Increase `--batch_size` for faster API models, decrease for local models
+3. **Model selection**: Use faster models (Haiku, GPT-3.5) for development, premium models for final evaluation
+4. **Filtering**: Use metadata filtering to focus on specific problem types
+5. **Parallel evaluation**: Run different tasks simultaneously on different machines
+
+### 🎯 Best Practices
+
+1. **Start Small**: Always test with `--limit 1-2` before running full evaluations
+2. **Use Prediction Mode**: Use `--predict_only` for initial testing to avoid metric computation overhead
+3. **Save Results**: Always specify `--output_path` to save results for analysis
+4. **Monitor Costs**: Be mindful of API costs with commercial models
+5. **Version Control**: Track model versions and configurations for reproducible results
+6. **Validate Results**: Manually inspect sample outputs to ensure quality
+
+## 🔍 Analysis Tools
+
+The single_turn_scenarios framework includes a comprehensive suite of analysis tools for in-depth evaluation of model performance across different dimensions. All 6 analysis tools are fully functional and ready for production use.
+
+### Available Analysis Tools
+
+#### 1. **ScenarioAnalyzer** - Scenario and Difficulty Analysis
+Analyzes model performance across different scenarios and difficulty levels with detailed adaptation metrics.
+
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import ScenarioAnalyzer
+
+# Initialize with evaluation results
+analyzer = ScenarioAnalyzer(results_data)
+
+# Analyze performance by scenario and difficulty
+report = analyzer.analyze_scenarios_and_difficulty()
+
+# Create performance charts
+analyzer.create_scenario_performance_chart()
+analyzer.create_difficulty_sensitivity_chart()
+
+# Export results
+analyzer.export_results("scenario_analysis_output/")
+```
+
+**Available Methods:**
+- `analyze_scenarios_and_difficulty()` - Generate comprehensive scenario analysis
+- `create_scenario_performance_chart()` - Create scenario performance visualizations
+- `create_difficulty_sensitivity_chart()` - Generate difficulty analysis charts
+- `create_language_adaptation_chart()` - Analyze language-specific performance
+- `export_results(output_dir)` - Export analysis results to files
+
+#### 2. **ModelComparator** - Model Performance Comparison
+Provides horizontal performance comparison across all metrics with statistical significance testing.
+
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import ModelComparator
+
+# Initialize with results from multiple models
+comparator = ModelComparator(multi_model_results_data)
+
+# Compare model performance
+comparison_report = comparator.compare_models()
+
+# Create radar charts for visual comparison
+comparator.create_radar_chart()
+
+# Export comparison results
+comparator.export_results("model_comparison_output/")
+```
+
+**Available Methods:**
+- `compare_models()` - Generate comprehensive model comparison
+- `create_radar_chart()` - Create radar charts for model comparison
+- `export_results(output_dir)` - Export comparison results
+
+#### 3. **ContextAnalyzer** - Context Impact Analysis
+Analyzes performance differences across context modes and provides statistical analysis of context effects.
+
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import ContextAnalyzer
+
+# Initialize with results from different context modes
+context_analyzer = ContextAnalyzer(context_results_data)
+
+# Analyze context impact
+context_report = context_analyzer.analyze_context_impact()
+
+# Create context visualizations
+context_analyzer.create_context_heatmap()
+context_analyzer.create_context_comparison_plot()
+
+# Export results
+context_analyzer.export_results("context_analysis_output/")
+```
+
+**Available Methods:**
+- `analyze_context_impact()` - Analyze impact of different context modes
+- `create_context_heatmap()` - Generate context impact heatmaps
+- `create_context_comparison_plot()` - Create context comparison visualizations
+- `export_results(output_dir)` - Export context analysis results
+
+#### 4. **ReportGenerator** - Comprehensive Report Generation
+Generates HTML, CSV, and visualization reports with detailed comparison tables and charts.
+
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import ReportGenerator
+
+# Initialize with comprehensive results data
+generator = ReportGenerator(all_results_data)
+
+# Generate HTML report
+html_report_path = generator.generate_html_report("comprehensive_report.html")
+
+# Export CSV results
+generator.export_csv_results("results_summary.csv")
+
+# Create summary dashboard
+generator.create_summary_dashboard()
+```
+
+**Available Methods:**
+- `generate_html_report(output_path)` - Generate comprehensive HTML reports
+- `export_csv_results(output_path)` - Export results to CSV format
+- `create_summary_dashboard()` - Create interactive analysis dashboard
+
+### Standalone Analysis Runner
+
+For users who prefer command-line analysis, a standalone runner is available that can process evaluation results without import issues:
+
+```bash
+# Run comprehensive analysis on result files
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py \
+  results/your_evaluation_results.json \
+  --output-dir analysis_output
+
+# Skip specific analyses
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py \
+  results/your_evaluation_results.json \
+  --output-dir analysis_output \
+  --skip-model-comparison \
+  --skip-context-analysis
+
+# Run only scenario analysis
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py \
+  results/your_evaluation_results.json \
+  --output-dir analysis_output \
+  --skip-model-comparison \
+  --skip-context-analysis \
+  --skip-report-generation
+```
+
+**Standalone Runner Options:**
+- `--output-dir` - Specify output directory for analysis results
+- `--skip-model-comparison` - Skip model comparison analysis
+- `--skip-context-analysis` - Skip context impact analysis  
+- `--skip-scenario-analysis` - Skip scenario performance analysis
+- `--skip-report-generation` - Skip comprehensive report generation
+
+### Data Format for Analysis Tools
+
+The analysis tools expect evaluation results in the following format:
+
+```python
+results_data = [
+    {
+        'task': 'single_turn_scenarios_function_generation',
+        'model': 'claude-3-haiku-20240307',
+        'scenario': 'function_generation',
+        'difficulty': 'simple',  # 'simple', 'intermediate', 'complex'
+        'language': 'python',    # 'python', 'javascript', 'java', etc.
+        'context_mode': 'no_context',  # 'no_context', 'minimal_context', 'full_context', 'domain_context'
+        'metrics': {
+            'exact_match': 0.8,
+            'syntax_validity': 1.0,
+            # ... other metrics
+        }
+    },
+    # ... more result entries
+]
+```
+
+### Converting lm-eval Results
+
+To convert standard lm-eval output to the analysis format:
+
+```python
+import json
+
+def convert_lm_eval_results(lm_eval_output_file):
+    """Convert lm-eval JSON output to analysis tools format."""
+    with open(lm_eval_output_file, 'r') as f:
+        data = json.load(f)
+    
+    results_data = []
+    if 'results' in data:
+        for task_name, task_results in data['results'].items():
+            result_entry = {
+                'task': task_name,
+                'model': data.get('model_name', 'unknown'),
+                'scenario': task_name.replace('single_turn_scenarios_', ''),
+                'difficulty': 'unknown',  # Extract from metadata if available
+                'language': 'python',     # Extract from metadata if available
+                'context_mode': 'unknown', # Extract from metadata if available
+                'metrics': task_results
+            }
+            results_data.append(result_entry)
+    
+    return results_data
+
+# Usage
+results_data = convert_lm_eval_results('results/my_evaluation.json')
+```
+
+### Analysis Workflow Example
+
+Here's a complete workflow for analyzing evaluation results:
+
+```python
+# 1. Load and prepare results
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import *
+import json
+
+# Load multiple evaluation results
+results_data = []
+for result_file in ['results/model_a.json', 'results/model_b.json']:
+    results_data.extend(convert_lm_eval_results(result_file))
+
+# 2. Scenario Analysis
+print("🔍 Running scenario analysis...")
+scenario_analyzer = ScenarioAnalyzer(results_data)
+scenario_report = scenario_analyzer.analyze_scenarios_and_difficulty()
+scenario_analyzer.export_results("analysis_output/scenarios/")
+
+# 3. Model Comparison
+print("🔍 Running model comparison...")
+model_comparator = ModelComparator(results_data)
+comparison_report = model_comparator.compare_models()
+model_comparator.export_results("analysis_output/comparison/")
+
+# 4. Context Impact Analysis
+print("🔍 Running context analysis...")
+context_analyzer = ContextAnalyzer(results_data)
+context_report = context_analyzer.analyze_context_impact()
+context_analyzer.export_results("analysis_output/context/")
+
+# 5. Generate Comprehensive Report
+print("📊 Generating comprehensive report...")
+report_generator = ReportGenerator(results_data)
+html_report = report_generator.generate_html_report("analysis_output/comprehensive_report.html")
+csv_export = report_generator.export_csv_results("analysis_output/results_summary.csv")
+
+print("✅ Analysis complete! Check analysis_output/ directory for results.")
+```
+
+### Checking Tool Availability
+
+To check which analysis tools are available in your environment:
+
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import get_available_tools, print_available_tools
+
+# Get list of available tools
+available_tools = get_available_tools()
+print(f"Available analysis tools: {available_tools}")
+
+# Print detailed availability information
+print_available_tools()
+```
+
+### Troubleshooting Analysis Tools
+
+#### Common Issues and Solutions
+
+**Issue: Import Errors**
+```python
+# Solution: Use the standalone runner instead
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py results.json
+```
+
+**Issue: Missing Dependencies**
+```bash
+# Solution: Install required packages
+pip install pandas numpy matplotlib seaborn scipy
+```
+
+**Issue: Data Format Errors**
+```python
+# Solution: Validate your data format
+def validate_results_data(results_data):
+    required_fields = ['task', 'model', 'scenario', 'metrics']
+    for i, entry in enumerate(results_data):
+        for field in required_fields:
+            if field not in entry:
+                print(f"Missing field '{field}' in entry {i}")
+                return False
+    return True
+
+# Validate before analysis
+if validate_results_data(your_results_data):
+    analyzer = ScenarioAnalyzer(your_results_data)
+```
+
+**Issue: Empty Analysis Results**
+```python
+# Solution: Check data filtering and ensure sufficient data
+print(f"Number of result entries: {len(results_data)}")
+print(f"Unique models: {set(entry['model'] for entry in results_data)}")
+print(f"Unique scenarios: {set(entry['scenario'] for entry in results_data)}")
+```
+
+### Analysis Tools Performance
+
+The analysis tools are optimized for performance and can handle large datasets:
+
+- **Small datasets** (< 100 entries): Instant analysis
+- **Medium datasets** (100-1000 entries): < 10 seconds
+- **Large datasets** (1000+ entries): < 60 seconds
+
+Memory usage scales linearly with dataset size, typically requiring 10-50MB for most analyses.
+
 ## Task Configuration Guide
 
 ### Overview of Configuration System

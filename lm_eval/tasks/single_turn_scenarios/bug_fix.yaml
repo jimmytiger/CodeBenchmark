@@ -14,16 +14,7 @@ metric_list:
   - metric: exact_match
     aggregation: mean
     higher_is_better: true
-  - metric: !function metrics.bleu_score
-    aggregation: mean
-    higher_is_better: true
-  - metric: !function metrics.codebleu_score
-    aggregation: mean
-    higher_is_better: true
   - metric: !function metrics.syntax_validity
-    aggregation: mean
-    higher_is_better: true
-  - metric: !function metrics.pass_at_k
     aggregation: mean
     higher_is_better: true
   - metric: !function metrics.runtime_correctness

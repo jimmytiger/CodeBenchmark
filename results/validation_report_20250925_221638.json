@@ -1,0 +1,155 @@
+{
+  "timestamp": "2025-09-25T22:16:38.255100",
+  "task_results": [
+    {
+      "task": "single_turn_scenarios_function_generation",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_function_generation_20250925_221107_2025-09-25T22-11-28.921058.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_code_completion",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_code_completion_20250925_221130_2025-09-25T22-11-50.139689.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_bug_fix",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_bug_fix_20250925_221151_2025-09-25T22-12-11.951658.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_algorithm_implementation",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_algorithm_implementation_20250925_221212_2025-09-25T22-12-31.419873.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_api_design",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_api_design_20250925_221232_2025-09-25T22-12-52.547530.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_system_design",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_system_design_20250925_221253_2025-09-25T22-13-14.730928.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_security",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_security_20250925_221315_2025-09-25T22-13-33.799194.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_database_design",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_database_design_20250925_221334_2025-09-25T22-13-54.000187.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_performance_optimization",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_performance_optimization_20250925_221355_2025-09-25T22-14-14.137334.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_full_stack",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_full_stack_20250925_221415_2025-09-25T22-14-34.087797.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_testing_strategy",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_testing_strategy_20250925_221435_2025-09-25T22-14-55.479164.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_documentation",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_documentation_20250925_221456_2025-09-25T22-15-14.635929.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_code_translation",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_code_translation_20250925_221515_2025-09-25T22-15-34.137984.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_python",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_python_20250925_221535_2025-09-25T22-15-54.287776.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_intermediate",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_intermediate_20250925_221555_2025-09-25T22-16-14.070343.json",
+      "sample_file": null,
+      "error": null
+    },
+    {
+      "task": "single_turn_scenarios_minimal_context",
+      "status": "success",
+      "main_file": "results/validation_single_turn_scenarios_minimal_context_20250925_221615_2025-09-25T22-16-35.071004.json",
+      "sample_file": null,
+      "error": null
+    }
+  ],
+  "analysis_results": [
+    {
+      "script": "scenario_analysis.py",
+      "status": "import_success",
+      "error": null
+    },
+    {
+      "script": "run_analysis.py",
+      "status": "import_error",
+      "error": "attempted relative import with no known parent package"
+    },
+    {
+      "script": "__init__.py",
+      "status": "import_error",
+      "error": "No module named 'analysis_module'"
+    },
+    {
+      "script": "generate_report.py",
+      "status": "import_error",
+      "error": "attempted relative import with no known parent package"
+    },
+    {
+      "script": "compare_models.py",
+      "status": "import_success",
+      "error": null
+    },
+    {
+      "script": "context_impact.py",
+      "status": "import_success",
+      "error": null
+    }
+  ],
+  "summary": {
+    "total_tasks": 16,
+    "successful_tasks": 16,
+    "failed_tasks": 0,
+    "success_rate": 100.0
+  }
+}

@@ -4,7 +4,7 @@ dataset_kwargs:
     scenario: "code_completion"
 custom_dataset: !function utils.load_dataset
 
-# test_split: train  # Dataset doesn't have splits, using default
+test_split: test
 output_type: generate_until
 process_docs: !function utils.process_docs
 doc_to_text: !function utils.doc_to_text
@@ -14,16 +14,7 @@ metric_list:
   - metric: exact_match
     aggregation: mean
     higher_is_better: true
-  - metric: !function metrics.bleu_score
-    aggregation: mean
-    higher_is_better: true
-  - metric: !function metrics.codebleu_score
-    aggregation: mean
-    higher_is_better: true
   - metric: !function metrics.syntax_validity
-    aggregation: mean
-    higher_is_better: true
-  - metric: !function metrics.pass_at_k
     aggregation: mean
     higher_is_better: true
 

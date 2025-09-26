@@ -511,4 +511,39 @@ lm_eval --model dashscope \
    - Enable `full_context` mode for better results
    - Use lower temperature (0.0-0.1) for code generation
 
+## Analysis Tools
+
+After running evaluations, use the built-in analysis tools to analyze results:
+
+### Standalone Analysis Runner
+```bash
+# Analyze evaluation results
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py \
+  results/your_evaluation.json --output-dir analysis_output
+
+# Skip specific analyses
+python lm_eval/tasks/single_turn_scenarios/analysis_tools/run_analysis_standalone.py \
+  results/your_evaluation.json --output-dir analysis_output \
+  --skip-model-comparison --skip-context-analysis
+```
+
+### Python Analysis Tools
+```python
+from lm_eval.tasks.single_turn_scenarios.analysis_tools import ScenarioAnalyzer, ModelComparator
+
+# Scenario analysis
+analyzer = ScenarioAnalyzer(results_data)
+report = analyzer.analyze_scenarios_and_difficulty()
+
+# Model comparison
+comparator = ModelComparator(results_data)
+comparison = comparator.compare_models()
+```
+
+### Available Analysis Tools
+- **ScenarioAnalyzer** - Performance by scenario and difficulty
+- **ModelComparator** - Compare multiple models
+- **ContextAnalyzer** - Context mode impact analysis
+- **ReportGenerator** - Comprehensive HTML/CSV reports
+
 For more detailed information, see the main README.md file in the single_turn_scenarios directory.
