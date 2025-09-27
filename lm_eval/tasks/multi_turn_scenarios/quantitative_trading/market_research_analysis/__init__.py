@@ -1,0 +1,1 @@
+"""Market research analysis task for quantitative trading scenarios."""

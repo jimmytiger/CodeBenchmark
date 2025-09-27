@@ -1,0 +1,1 @@
+"""High frequency trading task for quantitative trading scenarios."""

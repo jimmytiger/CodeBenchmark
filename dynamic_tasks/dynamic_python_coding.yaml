@@ -1,0 +1,37 @@
+doc_to_target: '{{expected_code}}'
+doc_to_text: 'Write a Python function to solve: {{problem_description}}\n\nRequirements:\n{{requirements}}\n\nFunction
+  signature: {{function_signature}}'
+filter_list:
+- filter:
+  - function: regex
+    group_select: 1
+    regex_pattern: '```python\n(.*)\n```'
+  name: extract_code
+generation_kwargs:
+  max_gen_toks: 500
+  temperature: 0.2
+  until:
+  - \n\n
+  - '# Test'
+  - if __name__
+metadata:
+  category: programming
+  created_at: '2025-09-27T04:27:54.532592'
+  description: Dynamic Python coding task with multiple test cases
+  difficulty: intermediate
+  name: Python Coding Challenge
+  tags:
+  - python
+  - coding
+  - algorithms
+  - dynamic
+  version: 1.0.0
+metric_list:
+- aggregation: mean
+  higher_is_better: true
+  metric: code_execution
+- aggregation: mean
+  higher_is_better: true
+  metric: syntax_validity
+output_type: generate_until
+task: dynamic_python_coding

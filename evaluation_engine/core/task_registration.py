@@ -14,7 +14,8 @@ from pathlib import Path
 import logging
 
 from lm_eval.api.task import Task
-from lm_eval.api.registry import register_task, get_task_dict
+from lm_eval.api.registry import register_task
+from lm_eval.tasks import get_task_dict
 from lm_eval.api.instance import Instance
 
 logger = logging.getLogger(__name__)
@@ -165,11 +166,13 @@ class ExtendedTaskRegistry:
     
     def _load_existing_tasks(self) -> None:
         """Load metadata for existing lm-eval tasks"""
-        existing_tasks = get_task_dict()
+        from lm_eval.tasks import TaskManager
+        task_manager = TaskManager()
+        existing_tasks = task_manager.all_tasks
         logger.info(f"Found {len(existing_tasks)} existing lm-eval tasks")
         
         # Categorize existing tasks
-        for task_name in existing_tasks.keys():
+        for task_name in existing_tasks:
             category = self._infer_category(task_name)
             if category not in self.task_hierarchy:
                 self.task_hierarchy[category] = []
@@ -231,7 +234,9 @@ class ExtendedTaskRegistry:
     
     def discover_tasks(self, filters: Optional[Dict[str, Any]] = None) -> List[str]:
         """Discover tasks based on filters"""
-        all_tasks = list(get_task_dict().keys())
+        from lm_eval.tasks import TaskManager
+        task_manager = TaskManager()
+        all_tasks = task_manager.all_tasks
         
         if not filters:
             return all_tasks
@@ -303,7 +308,9 @@ class ExtendedTaskRegistry:
         if not metadata or not metadata.dependencies:
             return True
         
-        available_tasks = set(get_task_dict().keys())
+        from lm_eval.tasks import TaskManager
+        task_manager = TaskManager()
+        available_tasks = set(task_manager.all_tasks)
         missing_deps = set(metadata.dependencies) - available_tasks
         
         if missing_deps:

@@ -1,0 +1,87 @@
+{
+  "task_id": "dynamic_multi_turn_coding",
+  "name": "Multi-Turn Coding Task",
+  "description": "Multi-turn software development task with iterative refinement",
+  "category": "multi_turn_coding",
+  "difficulty": "advanced",
+  "tags": ["multi-turn", "coding", "software-engineering", "iterative"],
+  "task_config": {
+    "output_type": "generate_until",
+    "doc_to_text": "{{phase_instruction}}\n\nContext from previous phases:\n{{previous_context}}\n\nCurrent task: {{current_task}}\n\nPlease provide your response:",
+    "doc_to_target": "{{expected_output}}",
+    "generation_kwargs": {
+      "temperature": 0.3,
+      "max_gen_toks": 800,
+      "until": ["PHASE_COMPLETE", "\n\n---", "Next phase:"]
+    },
+    "metric_list": [
+      {
+        "metric": "phase_completion",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "cross_phase_consistency",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "technical_accuracy",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "implementation_quality",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "filter_list": [
+      {
+        "name": "extract_phase_output",
+        "filter": [
+          {
+            "function": "regex",
+            "regex_pattern": "Response:\\s*(.*)\\s*PHASE_COMPLETE",
+            "group_select": 1
+          }
+        ]
+      }
+    ]
+  },
+  "scenario_config": {
+    "scenario_id": "multi_turn_software_dev",
+    "scenario_type": "software_development",
+    "max_turns": 4,
+    "conversation_timeout": 600,
+    "enable_context_retention": true,
+    "turns": [
+      {
+        "phase": "requirements",
+        "instruction": "Generate product requirements document",
+        "expected_output_type": "markdown"
+      },
+      {
+        "phase": "design", 
+        "instruction": "Create technical design based on requirements",
+        "expected_output_type": "markdown"
+      },
+      {
+        "phase": "implementation",
+        "instruction": "Implement the code based on design",
+        "expected_output_type": "python_code"
+      },
+      {
+        "phase": "testing",
+        "instruction": "Create tests for the implementation",
+        "expected_output_type": "python_test_code"
+      }
+    ]
+  },
+  "metadata": {
+    "author": "Task Template",
+    "version": "1.0.0",
+    "domain": "software_engineering",
+    "phases": ["requirements", "design", "implementation", "testing"]
+  }
+}

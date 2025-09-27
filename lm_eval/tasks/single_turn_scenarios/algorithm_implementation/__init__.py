@@ -1,0 +1,1 @@
+"""Algorithm implementation task for single-turn scenarios."""

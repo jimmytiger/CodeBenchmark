@@ -1,0 +1,57 @@
+task: single_turn_scenarios_algorithm_implementation
+dataset_kwargs:
+  metadata:
+    scenario: "algorithm_implementation"
+    difficulty_levels: ["simple", "intermediate", "complex"]
+    supported_languages: ["python", "javascript", "typescript", "java", "cpp", "go", "rust"]
+    context_modes: ["no_context", "minimal_context", "full_context", "domain_context"]
+
+custom_dataset: !function utils.load_dataset
+test_split: test
+output_type: generate_until
+process_docs: !function utils.process_docs
+doc_to_text: !function utils.doc_to_text
+doc_to_target: !function utils.doc_to_target
+
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.correctness_score
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.time_complexity_analysis
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.space_complexity_analysis
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.optimization_quality
+    aggregation: mean
+    higher_is_better: true
+
+generation_kwargs:
+  temperature: 0.0
+  max_gen_toks: 1024
+  until: []
+  do_sample: false
+
+filter_list:
+  - name: "extract_code"
+    filter:
+      - function: "custom"
+        filter_fn: !function utils.extract_code_response
+
+repeats: 1
+num_fewshot: 0
+
+tag:
+  - single_turn_scenarios
+  - algorithm_implementation
+  - advanced_scenario
+
+metadata:
+  version: 1.0
+  scenario: "algorithm_implementation"
+  description: "Algorithm implementation tasks requiring complete implementation from descriptions"
+  requirements: ["1.1", "2.1", "2.2"]

@@ -1,0 +1,182 @@
+turn_configurations:
+  requirement_analysis:
+    turn_id: "requirement_analysis"
+    turn_type: "analysis"
+    role: "quantitative_analyst"
+    description: "Analyze strategy requirements and constraints"
+    prompt_template: |
+      As a quantitative analyst, please analyze the following strategy development requirements:
+      
+      Objective: {objective}
+      Constraints: {constraints}
+      Available Data: {available_data}
+      Domain: {domain}
+      
+      Please provide:
+      1. Detailed analysis of the objective and its implications
+      2. Assessment of constraints and their impact on strategy design
+      3. Data requirements and availability analysis
+      4. Risk considerations and preliminary risk framework
+      5. Success criteria and performance benchmarks
+    
+    expected_format: "structured_analysis"
+    validation_rules:
+      - "analyzes_all_constraints"
+      - "identifies_risk_factors"
+      - "defines_success_criteria"
+    
+    evaluation_metrics:
+      - "requirement_completeness"
+      - "risk_awareness"
+      - "feasibility_assessment"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 1536
+
+  factor_selection:
+    turn_id: "factor_selection"
+    turn_type: "research"
+    role: "quantitative_researcher"
+    description: "Select and justify relevant factors for the strategy"
+    depends_on: ["requirement_analysis"]
+    prompt_template: |
+      Based on the requirement analysis, please select appropriate factors for the strategy:
+      
+      Strategy Objective: {objective}
+      Domain: {domain}
+      Available Data: {available_data}
+      Constraints: {constraints}
+      
+      Previous Analysis: {requirement_analysis}
+      
+      Please provide:
+      1. List of selected factors with detailed rationale
+      2. Factor categorization (momentum, mean reversion, fundamental, etc.)
+      3. Expected factor interactions and correlations
+      4. Data preprocessing requirements for each factor
+      5. Factor validation methodology
+    
+    expected_format: "factor_analysis_report"
+    validation_rules:
+      - "provides_factor_rationale"
+      - "considers_factor_interactions"
+      - "addresses_data_requirements"
+    
+    evaluation_metrics:
+      - "factor_relevance"
+      - "diversification_quality"
+      - "theoretical_soundness"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 2048
+
+  model_construction:
+    turn_id: "model_construction"
+    turn_type: "implementation"
+    role: "quantitative_developer"
+    description: "Implement the quantitative model based on selected factors"
+    depends_on: ["factor_selection"]
+    prompt_template: |
+      Implement the quantitative trading model based on the factor analysis:
+      
+      Selected Factors: {selected_factors}
+      Strategy Framework: {strategy_framework}
+      Technical Constraints: {technical_constraints}
+      
+      Please provide:
+      1. Complete model implementation (Python code)
+      2. Factor calculation and preprocessing functions
+      3. Signal generation logic
+      4. Position sizing and portfolio construction
+      5. Performance attribution framework
+      6. Comprehensive documentation and comments
+    
+    expected_format: "code_with_documentation"
+    validation_rules:
+      - "syntactically_correct_code"
+      - "implements_all_factors"
+      - "includes_comprehensive_documentation"
+    
+    evaluation_metrics:
+      - "code_quality"
+      - "model_sophistication"
+      - "implementation_completeness"
+    
+    generation_kwargs:
+      temperature: 0.0
+      max_tokens: 3072
+
+  risk_control:
+    turn_id: "risk_control"
+    turn_type: "risk_assessment"
+    role: "risk_manager"
+    description: "Assess risks and implement control mechanisms"
+    depends_on: ["model_construction"]
+    prompt_template: |
+      Review the implemented model and design comprehensive risk controls:
+      
+      Model Implementation: {model_code}
+      Strategy Constraints: {constraints}
+      Risk Budget: {risk_budget}
+      
+      Please provide:
+      1. Comprehensive risk assessment (market, model, operational)
+      2. Risk measurement methodology (VaR, Expected Shortfall, etc.)
+      3. Risk control mechanisms and limits
+      4. Stress testing scenarios
+      5. Risk monitoring and reporting framework
+      6. Contingency plans for risk limit breaches
+    
+    expected_format: "risk_management_framework"
+    validation_rules:
+      - "identifies_all_risk_types"
+      - "proposes_specific_controls"
+      - "includes_monitoring_framework"
+    
+    evaluation_metrics:
+      - "risk_identification_completeness"
+      - "control_mechanism_effectiveness"
+      - "monitoring_framework_quality"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 2048
+
+  validation:
+    turn_id: "validation"
+    turn_type: "validation"
+    role: "senior_quantitative_analyst"
+    description: "Validate the complete strategy and provide implementation roadmap"
+    depends_on: ["risk_control"]
+    prompt_template: |
+      Conduct final validation of the complete quantitative trading strategy:
+      
+      Complete Strategy: {complete_strategy}
+      Risk Framework: {risk_framework}
+      Implementation Details: {implementation_details}
+      
+      Please provide:
+      1. Comprehensive strategy validation report
+      2. Backtesting methodology and expected results
+      3. Implementation timeline and milestones
+      4. Resource requirements (data, infrastructure, personnel)
+      5. Regulatory and compliance considerations
+      6. Performance monitoring and strategy evolution plan
+      7. Final recommendation (Proceed/Modify/Reject)
+    
+    expected_format: "validation_report_with_recommendation"
+    validation_rules:
+      - "comprehensive_validation"
+      - "actionable_implementation_plan"
+      - "clear_recommendation"
+    
+    evaluation_metrics:
+      - "validation_thoroughness"
+      - "implementation_feasibility"
+      - "strategic_soundness"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 2048

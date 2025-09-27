@@ -1,149 +1,217 @@
+# AI Evaluation Engine - Docker Compose Configuration
+# Complete system setup with all services
+
 version: '3.8'
 
 services:
-  # Main evaluation engine service
+  # Main AI Evaluation Engine
   ai-evaluation-engine:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ai-eval-engine
+      args:
+        BUILD_DATE: ${BUILD_DATE:-$(date -u +'%Y-%m-%dT%H:%M:%SZ')}
+        VERSION: ${VERSION:-0.1.0}
+        VCS_REF: ${VCS_REF:-$(git rev-parse --short HEAD)}
+    container_name: ai-evaluation-engine
+    restart: unless-stopped
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD:-evaluation_password}@postgres:5432/${POSTGRES_DB:-ai_evaluation}
+      - EVALUATION_ENGINE_ENV=production
+      - LOG_LEVEL=INFO
     volumes:
       - ./results:/app/results
       - ./logs:/app/logs
       - ./cache:/app/cache
-      - ./.env:/app/.env
-    environment:
-      - PYTHONPATH=/app
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock  # For secure code execution
     ports:
       - "8000:8000"  # API server
-      - "8888:8888"  # Jupyter notebook
+      - "8080:8080"  # Web interface
     depends_on:
       - redis
       - postgres
     networks:
-      - ai-eval-network
+      - evaluation-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import lm_eval; import evaluation_engine; print('Health check passed')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-  # Redis for caching and task queuing
+  # Redis for caching and session management
   redis:
     image: redis:7-alpine
-    container_name: ai-eval-redis
+    container_name: ai-evaluation-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-evaluation_redis}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-evaluation_redis}
+    volumes:
+      - redis-data:/data
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
     networks:
-      - ai-eval-network
+      - evaluation-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # PostgreSQL for result storage
+  # PostgreSQL for persistent data storage
   postgres:
     image: postgres:15-alpine
-    container_name: ai-eval-postgres
+    container_name: ai-evaluation-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ai_evaluation
-      POSTGRES_USER: ai_eval_user
-      POSTGRES_PASSWORD: ai_eval_password
+      - POSTGRES_DB=${POSTGRES_DB:-ai_evaluation}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-evaluation_password}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
-      - ai-eval-network
+      - evaluation-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ai_evaluation}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Code execution sandbox containers
-  python-sandbox:
-    build:
-      context: ./lm_eval/tasks/single_turn_scenarios/docker
-      dockerfile: python.Dockerfile
-    image: ai-eval-python:latest
-    container_name: ai-eval-python-sandbox
-    network_mode: none  # No network access for security
-    read_only: true
-    tmpfs:
-      - /tmp:noexec,nosuid,size=100m
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    profiles:
-      - sandbox
-
-  node-sandbox:
-    build:
-      context: ./lm_eval/tasks/single_turn_scenarios/docker
-      dockerfile: node.Dockerfile
-    image: ai-eval-node:latest
-    container_name: ai-eval-node-sandbox
-    network_mode: none
-    read_only: true
-    tmpfs:
-      - /tmp:noexec,nosuid,size=100m
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    profiles:
-      - sandbox
-
-  java-sandbox:
-    build:
-      context: ./lm_eval/tasks/single_turn_scenarios/docker
-      dockerfile: java.Dockerfile
-    image: ai-eval-java:latest
-    container_name: ai-eval-java-sandbox
-    network_mode: none
-    read_only: true
-    tmpfs:
-      - /tmp:noexec,nosuid,size=100m
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    profiles:
-      - sandbox
-
-  # Monitoring and observability
+  # Prometheus for monitoring
   prometheus:
     image: prom/prometheus:latest
-    container_name: ai-eval-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
+    container_name: ai-evaluation-prometheus
+    restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
     networks:
-      - ai-eval-network
-    profiles:
-      - monitoring
+      - evaluation-network
+    depends_on:
+      - ai-evaluation-engine
 
+  # Grafana for visualization
   grafana:
     image: grafana/grafana:latest
-    container_name: ai-eval-grafana
-    ports:
-      - "3000:3000"
+    container_name: ai-evaluation-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-evaluation_grafana}
+      - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - grafana_data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
     networks:
-      - ai-eval-network
-    profiles:
-      - monitoring
+      - evaluation-network
+    depends_on:
+      - prometheus
 
+  # Jupyter Notebook for analysis
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-evaluation-jupyter
+    restart: unless-stopped
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=${JUPYTER_TOKEN:-evaluation_jupyter}
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-evaluation_jupyter}
+    volumes:
+      - ./notebooks:/app/notebooks
+      - ./results:/app/results
+      - ./data:/app/data
+    ports:
+      - "8888:8888"
+    networks:
+      - evaluation-network
+    depends_on:
+      - ai-evaluation-engine
+
+  # Secure code execution containers (pre-built)
+  python-executor:
+    build:
+      context: lm_eval/tasks/single_turn_scenarios/docker
+      dockerfile: python.Dockerfile
+    container_name: ai-evaluation-python-executor
+    restart: "no"
+    profiles: ["executors"]
+    networks:
+      - evaluation-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /workspace:noexec,nosuid,size=500m
+
+  node-executor:
+    build:
+      context: lm_eval/tasks/single_turn_scenarios/docker
+      dockerfile: node.Dockerfile
+    container_name: ai-evaluation-node-executor
+    restart: "no"
+    profiles: ["executors"]
+    networks:
+      - evaluation-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /workspace:noexec,nosuid,size=500m
+
+  java-executor:
+    build:
+      context: lm_eval/tasks/single_turn_scenarios/docker
+      dockerfile: java.Dockerfile
+    container_name: ai-evaluation-java-executor
+    restart: "no"
+    profiles: ["executors"]
+    networks:
+      - evaluation-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /workspace:noexec,nosuid,size=500m
+
+# Named volumes for persistent data
 volumes:
-  redis_data:
-  postgres_data:
-  prometheus_data:
-  grafana_data:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
 
+# Network for service communication
 networks:
-  ai-eval-network:
+  evaluation-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

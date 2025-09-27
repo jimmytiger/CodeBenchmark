@@ -163,24 +163,111 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e ".[dev,testing]"
+        pip install -e ".[dev,testing,evaluation_engine]"
     
     - name: Test lm-eval task discovery
       run: |
         python -c "
-        from lm_eval.api.registry import get_task_dict
+        from lm_eval.tasks import get_task_dict
+        from evaluation_engine.core.task_registration import extended_registry
+        
+        # Test basic task discovery
         tasks = get_task_dict()
         single_turn_tasks = [t for t in tasks.keys() if 'single_turn_scenarios' in t]
         multi_turn_tasks = [t for t in tasks.keys() if 'multi_turn_scenarios' in t]
-        print(f'Found {len(single_turn_tasks)} single-turn tasks')
-        print(f'Found {len(multi_turn_tasks)} multi-turn tasks')
-        assert len(single_turn_tasks) > 0, 'No single-turn tasks found'
+        python_coding_tasks = [t for t in tasks.keys() if 'python_coding' in t]
+        
+        print(f'Found {len(single_turn_tasks)} single-turn scenario tasks')
+        print(f'Found {len(multi_turn_tasks)} multi-turn scenario tasks')
+        print(f'Found {len(python_coding_tasks)} Python coding tasks')
+        print(f'Total tasks: {len(tasks)}')
+        
+        # Test extended registry functionality
+        hierarchy = extended_registry.get_task_hierarchy()
+        print(f'Task hierarchy categories: {list(hierarchy.keys())}')
+        
+        # Validate minimum task requirements
+        assert len(single_turn_tasks) >= 10, f'Expected at least 10 single-turn tasks, found {len(single_turn_tasks)}'
+        assert len(multi_turn_tasks) >= 5, f'Expected at least 5 multi-turn tasks, found {len(multi_turn_tasks)}'
+        
         print('lm-eval compatibility test passed')
+        "
+    
+    - name: Test evaluation engine integration
+      run: |
+        python -c "
+        from evaluation_engine.core.unified_framework import unified_framework, EvaluationRequest
+        
+        # Test framework initialization
+        print('Testing unified framework...')
+        
+        # Test task listing
+        tasks = unified_framework.list_available_tasks('single_turn_scenarios')
+        print(f'Available single-turn tasks: {len(tasks)}')
+        
+        # Test task info retrieval
+        if tasks:
+            task_info = unified_framework.get_task_info(tasks[0])
+            print(f'Task info for {tasks[0]}: {task_info is not None}')
+        
+        # Test request validation
+        request = EvaluationRequest(
+            model='dummy',
+            tasks=['single_turn_scenarios_function_generation'],
+            limit=1
+        )
+        issues = unified_framework.validate_evaluation_request(request)
+        print(f'Validation issues: {len(issues)}')
+        
+        print('Evaluation engine integration test passed')
         "
     
     - name: Test basic evaluation workflow
       run: |
         python -m lm_eval --model dummy --tasks single_turn_scenarios_function_generation --limit 1 --log_samples
+    
+    - name: Test multi-turn task compatibility
+      run: |
+        python -c "
+        from lm_eval.tasks import get_task_dict
+        
+        # Check for multi-turn tasks
+        tasks = get_task_dict()
+        multi_turn_tasks = [t for t in tasks.keys() if 'multi_turn' in t]
+        
+        if multi_turn_tasks:
+            print(f'Multi-turn tasks available: {multi_turn_tasks[:3]}')
+            # Test loading a multi-turn task
+            try:
+                from lm_eval.api.task import get_task
+                task = get_task(multi_turn_tasks[0])
+                print(f'Successfully loaded multi-turn task: {multi_turn_tasks[0]}')
+            except Exception as e:
+                print(f'Multi-turn task loading test: {e}')
+        else:
+            print('No multi-turn tasks found - this is expected in basic setup')
+        "
+    
+    - name: Test Docker integration (if available)
+      run: |
+        if command -v docker &> /dev/null; then
+          echo "Testing Docker integration..."
+          python -c "
+          try:
+              import docker
+              client = docker.from_env()
+              print('Docker client initialized successfully')
+              
+              # Test if we can list images
+              images = client.images.list()
+              print(f'Found {len(images)} Docker images')
+              
+          except Exception as e:
+              print(f'Docker integration test (optional): {e}')
+          "
+        else
+          echo "Docker not available - skipping Docker integration test"
+        fi
 
   # Performance benchmarks
   performance-test:

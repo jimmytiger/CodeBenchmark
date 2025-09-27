@@ -1,0 +1,1 @@
+"""Quantitative trading scenarios for multi-turn evaluation."""

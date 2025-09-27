@@ -1,0 +1,1 @@
+"""Code completion task for single-turn scenarios."""

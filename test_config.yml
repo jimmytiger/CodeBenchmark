@@ -1,0 +1,199 @@
+# Comprehensive Test Configuration for AI Evaluation Engine
+
+# Test execution settings
+execution:
+  parallel: true
+  max_workers: 4
+  timeout: 300  # seconds
+  retry_failed: true
+  max_retries: 2
+
+# Test categories and their configurations
+test_categories:
+  unit:
+    enabled: true
+    path: "evaluation_engine_tests/unit/"
+    coverage_threshold: 90
+    timeout: 600
+    markers: ["unit"]
+    
+  integration:
+    enabled: true
+    path: "evaluation_engine_tests/integration/"
+    timeout: 900
+    markers: ["integration"]
+    requires:
+      - redis
+      - postgres
+    
+  e2e:
+    enabled: true
+    path: "evaluation_engine_tests/e2e/"
+    timeout: 1200
+    markers: ["e2e", "not slow"]
+    requires:
+      - docker
+    
+  performance:
+    enabled: false  # Only run on demand or nightly
+    path: "evaluation_engine_tests/performance/"
+    timeout: 1800
+    markers: ["performance", "benchmark"]
+    
+  security:
+    enabled: true
+    path: "evaluation_engine_tests/security/"
+    timeout: 900
+    markers: ["security", "not slow"]
+
+# Coverage settings
+coverage:
+  enabled: true
+  source: ["evaluation_engine"]
+  omit:
+    - "*/tests/*"
+    - "*/test_*"
+    - "*/__pycache__/*"
+    - "*/migrations/*"
+  fail_under: 90
+  show_missing: true
+  skip_covered: false
+  
+  # Coverage reports
+  reports:
+    - type: "html"
+      directory: "htmlcov"
+    - type: "xml"
+      file: "coverage.xml"
+    - type: "term-missing"
+
+# Quality checks
+quality:
+  enabled: true
+  tools:
+    black:
+      enabled: true
+      line_length: 100
+      target_version: ["py39"]
+      
+    isort:
+      enabled: true
+      profile: "black"
+      line_length: 100
+      
+    flake8:
+      enabled: true
+      max_line_length: 100
+      ignore: ["E203", "W503"]
+      
+    mypy:
+      enabled: true
+      ignore_missing_imports: true
+      strict_optional: true
+      
+    pylint:
+      enabled: true
+      disable: ["C0114", "C0115", "C0116"]  # Missing docstrings
+
+# Security scanning
+security:
+  enabled: true
+  tools:
+    bandit:
+      enabled: true
+      severity_threshold: "medium"
+      confidence_threshold: "medium"
+      
+    safety:
+      enabled: true
+      ignore_vulnerabilities: []
+      
+    semgrep:
+      enabled: false  # Optional
+      config: "auto"
+
+# Performance benchmarking
+benchmarks:
+  enabled: false  # Only run on demand
+  compare_to_baseline: true
+  baseline_file: "benchmark_baseline.json"
+  regression_threshold: 1.2  # 20% regression threshold
+  
+  # Benchmark categories
+  categories:
+    - name: "metrics_calculation"
+      pattern: "*metrics*"
+    - name: "task_execution"
+      pattern: "*task*"
+    - name: "model_inference"
+      pattern: "*model*"
+
+# Test data and fixtures
+test_data:
+  # Sample datasets for testing
+  datasets:
+    small: 100
+    medium: 1000
+    large: 5000
+    
+  # Mock configurations
+  mock_models:
+    - name: "fast_mock"
+      response_time: 0.001
+    - name: "slow_mock"
+      response_time: 0.1
+    - name: "error_mock"
+      error_rate: 0.1
+
+# Reporting
+reporting:
+  enabled: true
+  formats: ["html", "json", "junit"]
+  
+  html:
+    template: "comprehensive"
+    include_coverage: true
+    include_performance: true
+    include_security: true
+    
+  notifications:
+    enabled: false
+    slack_webhook: ""
+    email_recipients: []
+
+# Environment-specific settings
+environments:
+  ci:
+    parallel: true
+    coverage_fail_under: 85
+    timeout_multiplier: 1.5
+    
+  local:
+    parallel: true
+    coverage_fail_under: 80
+    verbose: true
+    
+  nightly:
+    include_slow_tests: true
+    include_performance: true
+    full_security_scan: true
+
+# Docker settings for containerized tests
+docker:
+  enabled: true
+  images:
+    test_runner: "python:3.9-slim"
+    redis: "redis:7-alpine"
+    postgres: "postgres:15"
+  
+  networks:
+    - name: "test_network"
+      driver: "bridge"
+
+# Cleanup settings
+cleanup:
+  enabled: true
+  remove_temp_files: true
+  remove_test_containers: true
+  remove_test_networks: true
+  keep_artifacts_on_failure: true

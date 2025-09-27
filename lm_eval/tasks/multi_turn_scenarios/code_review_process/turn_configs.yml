@@ -1,0 +1,114 @@
+turn_configurations:
+  initial_review:
+    turn_id: "initial_review"
+    turn_type: "review"
+    role: "senior_developer"
+    description: "Conduct initial code review identifying issues and areas for improvement"
+    prompt_template: |
+      You are a senior developer conducting a code review. Please review the following code and provide structured feedback:
+      
+      Code to review:
+      ```{language}
+      {code}
+      ```
+      
+      Review criteria: {review_criteria}
+      
+      Please provide:
+      1. Issues identified (security, performance, style, logic)
+      2. Specific recommendations for improvement
+      3. Priority level for each issue (High/Medium/Low)
+      4. Overall assessment
+    
+    expected_format: "structured_feedback"
+    validation_rules:
+      - "identifies_security_issues"
+      - "provides_specific_recommendations"
+      - "assigns_priority_levels"
+    
+    evaluation_metrics:
+      - "issue_identification_accuracy"
+      - "recommendation_quality"
+      - "review_thoroughness"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 1024
+
+  code_revision:
+    turn_id: "code_revision"
+    turn_type: "implementation"
+    role: "developer"
+    description: "Implement fixes based on review feedback"
+    depends_on: ["initial_review"]
+    prompt_template: |
+      Based on the code review feedback, please implement the necessary fixes:
+      
+      Original code:
+      ```{language}
+      {original_code}
+      ```
+      
+      Review feedback:
+      {review_feedback}
+      
+      Please provide:
+      1. Updated code with fixes implemented
+      2. Explanation of changes made
+      3. How each issue was addressed
+    
+    expected_format: "code_with_explanation"
+    validation_rules:
+      - "valid_syntax"
+      - "addresses_feedback"
+      - "maintains_functionality"
+    
+    evaluation_metrics:
+      - "fix_completeness"
+      - "code_quality_improvement"
+      - "maintains_original_intent"
+    
+    generation_kwargs:
+      temperature: 0.0
+      max_tokens: 1536
+
+  follow_up_review:
+    turn_id: "follow_up_review"
+    turn_type: "validation"
+    role: "senior_developer"
+    description: "Review the implemented fixes and provide final assessment"
+    depends_on: ["code_revision"]
+    prompt_template: |
+      Please review the updated code and assess whether the issues have been properly addressed:
+      
+      Original issues:
+      {original_issues}
+      
+      Updated code:
+      ```{language}
+      {updated_code}
+      ```
+      
+      Developer's explanation:
+      {developer_explanation}
+      
+      Please provide:
+      1. Assessment of each fix
+      2. Any remaining issues
+      3. Final approval status (Approved/Needs more work)
+      4. Additional recommendations if any
+    
+    expected_format: "final_assessment"
+    validation_rules:
+      - "evaluates_all_fixes"
+      - "provides_clear_verdict"
+      - "justifies_decision"
+    
+    evaluation_metrics:
+      - "assessment_accuracy"
+      - "standards_compliance"
+      - "final_code_quality"
+    
+    generation_kwargs:
+      temperature: 0.1
+      max_tokens: 1024

@@ -1,0 +1,94 @@
+task: multi_turn_scenarios_code_review_process
+scenario_type: "multi_turn"
+dataset_kwargs:
+  metadata:
+    scenario: "code_review_process"
+    max_turns: 5
+    conversation_timeout: 300
+    enable_context_retention: true
+
+custom_dataset: !function utils.load_multi_turn_dataset
+test_split: test
+output_type: generate_until
+process_docs: !function utils.process_multi_turn_docs
+doc_to_text: !function utils.multi_turn_doc_to_text
+doc_to_target: !function utils.multi_turn_doc_to_target
+
+scenario_config:
+  max_turns: 5
+  conversation_timeout: 300
+  enable_context_retention: true
+  success_criteria:
+    review_thoroughness: 0.8
+    improvement_quality: 0.7
+    standards_compliance: 0.9
+
+turns:
+  - turn_id: "initial_review"
+    turn_type: "review"
+    role: "reviewer"
+    prompt_template: "templates/initial_review.txt"
+    expected_format: "structured_feedback"
+    validation_rules: ["has_feedback", "identifies_issues"]
+    evaluation_metrics: ["review_thoroughness", "issue_identification"]
+    temperature: 0.1
+    max_tokens: 512
+  
+  - turn_id: "code_revision"
+    turn_type: "implementation"
+    role: "developer"
+    prompt_template: "templates/code_revision.txt"
+    expected_format: "code_with_explanation"
+    depends_on: ["initial_review"]
+    validation_rules: ["valid_code", "addresses_feedback"]
+    evaluation_metrics: ["improvement_quality", "code_standards"]
+    temperature: 0.0
+    max_tokens: 1024
+  
+  - turn_id: "follow_up_review"
+    turn_type: "review"
+    role: "reviewer"
+    prompt_template: "templates/follow_up_review.txt"
+    expected_format: "structured_feedback"
+    depends_on: ["code_revision"]
+    validation_rules: ["evaluates_changes", "provides_verdict"]
+    evaluation_metrics: ["review_accuracy", "standards_compliance"]
+    temperature: 0.1
+    max_tokens: 512
+
+metric_list:
+  - metric: !function metrics.review_thoroughness
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.improvement_quality
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.code_standards_compliance
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.context_retention_score
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.goal_achievement_score
+    aggregation: mean
+    higher_is_better: true
+
+generation_kwargs:
+  temperature: 0.1
+  max_gen_toks: 1024
+  until: []
+  do_sample: false
+
+repeats: 1
+num_fewshot: 0
+
+tag:
+  - multi_turn_scenarios
+  - code_review
+  - collaborative_scenario
+
+metadata:
+  version: 1.0
+  scenario: "code_review_process"
+  description: "Interactive code review and improvement process with multiple turns"
+  requirements: ["7.1", "7.2", "7.3"]

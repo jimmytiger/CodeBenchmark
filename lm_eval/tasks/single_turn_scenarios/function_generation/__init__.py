@@ -1,0 +1,1 @@
+"""Function generation task for single-turn scenarios."""

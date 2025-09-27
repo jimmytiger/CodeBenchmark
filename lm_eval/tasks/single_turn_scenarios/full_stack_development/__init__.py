@@ -1,0 +1,1 @@
+"""Full stack development task for single-turn scenarios."""

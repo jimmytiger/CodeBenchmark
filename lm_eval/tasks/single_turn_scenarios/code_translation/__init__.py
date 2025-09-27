@@ -1,0 +1,1 @@
+"""Code translation task for single-turn scenarios."""

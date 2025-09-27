@@ -1,0 +1,1 @@
+"""Technical quantitative analysis task for quantitative trading scenarios."""

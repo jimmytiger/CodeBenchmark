@@ -1,0 +1,1 @@
+"""Multifactor model construction task for quantitative trading scenarios."""

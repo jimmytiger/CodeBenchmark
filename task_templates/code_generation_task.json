@@ -1,0 +1,53 @@
+{
+  "task_id": "dynamic_code_generation",
+  "name": "Code Generation Task",
+  "description": "Generate Python code based on natural language descriptions",
+  "category": "code_generation",
+  "difficulty": "intermediate",
+  "tags": ["python", "coding", "generation", "programming"],
+  "task_config": {
+    "output_type": "generate_until",
+    "doc_to_text": "Write a Python function that {{task_description}}.\n\nRequirements:\n{{requirements}}\n\nFunction signature: {{signature}}\n\n```python",
+    "doc_to_target": "{{expected_code}}",
+    "generation_kwargs": {
+      "temperature": 0.2,
+      "max_gen_toks": 300,
+      "until": ["```", "\n\n# Test", "if __name__ == '__main__'"]
+    },
+    "metric_list": [
+      {
+        "metric": "syntax_validity",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "code_execution",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "functional_correctness",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ],
+    "filter_list": [
+      {
+        "name": "extract_code",
+        "filter": [
+          {
+            "function": "regex",
+            "regex_pattern": "```python\\n(.*)\\n```",
+            "group_select": 1
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {
+    "author": "Task Template",
+    "version": "1.0.0",
+    "programming_language": "python",
+    "domain": "software_engineering"
+  }
+}

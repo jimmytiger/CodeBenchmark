@@ -1,0 +1,173 @@
+{
+  "timestamp": "2025-09-26T09:26:14.101848",
+  "python_version": "3.12.2",
+  "total_validations": 13,
+  "passed_validations": 10,
+  "results": [
+    {
+      "name": "Python Version",
+      "passed": true,
+      "message": "Python 3.12.2 \u2713",
+      "details": {
+        "version": "3.12.2"
+      }
+    },
+    {
+      "name": "Core Imports",
+      "passed": true,
+      "message": "All 7 core packages imported successfully \u2713",
+      "details": {
+        "lm_eval": "0.4.9.1",
+        "evaluation_engine": "0.1.0",
+        "torch": "2.7.1",
+        "transformers": "4.54.0",
+        "datasets": "3.6.0",
+        "numpy": "1.26.4",
+        "pandas": "2.2.1"
+      }
+    },
+    {
+      "name": "lm-eval Integration",
+      "passed": true,
+      "message": "lm-eval integration working, 64 tasks available \u2713",
+      "details": {
+        "task_count": 64,
+        "sample_tasks": [
+          "advanced_scenario",
+          "algorithm_implementation",
+          "api_design",
+          "basic_scenario",
+          "bug_fix"
+        ]
+      }
+    },
+    {
+      "name": "Evaluation Engine",
+      "passed": true,
+      "message": "Evaluation engine components loaded successfully \u2713",
+      "details": {
+        "framework_initialized": true,
+        "available_tasks_count": 64,
+        "request_validation": true
+      }
+    },
+    {
+      "name": "Task Discovery",
+      "passed": true,
+      "message": "Task discovery working, found 26 custom tasks \u2713",
+      "details": {
+        "categories": {
+          "single_turn_scenarios": 18,
+          "multi_turn_scenarios": 0,
+          "python_coding": 3,
+          "multi_turn_coding": 5
+        },
+        "sample_tasks": {
+          "single_turn_scenarios": [
+            "single_turn_scenarios",
+            "single_turn_scenarios_algorithm_implementation",
+            "single_turn_scenarios_api_design"
+          ],
+          "python_coding": [
+            "python_coding",
+            "python_coding_context_comparison",
+            "python_coding_suite"
+          ],
+          "multi_turn_coding": [
+            "multi_turn_coding_eval_claude_code",
+            "multi_turn_coding_eval_deepseek",
+            "multi_turn_coding_eval_openai"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Extended Registry",
+      "passed": true,
+      "message": "Extended registry working, 4 categories \u2713",
+      "details": {
+        "categories": [
+          "general",
+          "multi_turn_coding",
+          "python_coding",
+          "single_turn_scenarios"
+        ],
+        "single_turn_tasks": 18,
+        "multi_turn_tasks": 0
+      }
+    },
+    {
+      "name": "Docker Setup",
+      "passed": false,
+      "message": "Docker setup validation failed: Error while fetching server API version: ('Connection aborted.', ConnectionRefusedError(61, 'Connection refused'))",
+      "details": {}
+    },
+    {
+      "name": "Configuration Files",
+      "passed": true,
+      "message": "Configuration files present: pyproject.toml, docker-compose.yml, Dockerfile \u2713",
+      "details": {
+        "found": [
+          "pyproject.toml",
+          "docker-compose.yml",
+          "Dockerfile"
+        ],
+        "missing": [
+          ".env"
+        ]
+      }
+    },
+    {
+      "name": "Directory Structure",
+      "passed": true,
+      "message": "Directory structure valid, 4/5 directories found \u2713",
+      "details": {
+        "found": [
+          "lm_eval/tasks/single_turn_scenarios",
+          "lm_eval/tasks/multi_turn_scenarios",
+          "evaluation_engine/core",
+          "results"
+        ],
+        "missing": [
+          "logs"
+        ]
+      }
+    },
+    {
+      "name": "Dependencies",
+      "passed": true,
+      "message": "Key dependencies validated \u2713",
+      "details": {
+        "torch": "2.7.1",
+        "transformers": "4.54.0",
+        "datasets": "3.6.0"
+      }
+    },
+    {
+      "name": "API Keys",
+      "passed": true,
+      "message": "API keys configured: ANTHROPIC_API_KEY \u2713",
+      "details": {
+        "configured_keys": [
+          "ANTHROPIC_API_KEY"
+        ]
+      }
+    },
+    {
+      "name": "Database Connection",
+      "passed": false,
+      "message": "Database URL not configured (optional)",
+      "details": {
+        "database_configured": false
+      }
+    },
+    {
+      "name": "Redis Connection",
+      "passed": false,
+      "message": "Redis URL not configured (optional)",
+      "details": {
+        "redis_configured": false
+      }
+    }
+  ]
+}

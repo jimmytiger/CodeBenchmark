@@ -1,0 +1,1 @@
+"""System design task for single-turn scenarios."""

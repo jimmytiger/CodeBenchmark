@@ -1,0 +1,1 @@
+"""Documentation generation task for single-turn scenarios."""

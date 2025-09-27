@@ -1,0 +1,35 @@
+{
+  "task_id": "dynamic_simple_qa",
+  "name": "Simple Q&A Task",
+  "description": "A simple question-answering task for testing basic comprehension",
+  "category": "question_answering",
+  "difficulty": "easy",
+  "tags": ["qa", "comprehension", "simple"],
+  "task_config": {
+    "output_type": "generate_until",
+    "doc_to_text": "Question: {{question}}\nAnswer:",
+    "doc_to_target": "{{answer}}",
+    "generation_kwargs": {
+      "temperature": 0.1,
+      "max_gen_toks": 50,
+      "until": ["\n", "Question:", "Q:"]
+    },
+    "metric_list": [
+      {
+        "metric": "exact_match",
+        "aggregation": "mean",
+        "higher_is_better": true
+      },
+      {
+        "metric": "bleu",
+        "aggregation": "mean",
+        "higher_is_better": true
+      }
+    ]
+  },
+  "metadata": {
+    "author": "Task Template",
+    "version": "1.0.0",
+    "domain": "general"
+  }
+}

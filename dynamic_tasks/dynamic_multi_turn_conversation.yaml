@@ -1,0 +1,29 @@
+doc_to_target: '{{expected_response}}'
+doc_to_text: 'Continue this conversation:\n{{conversation_history}}\n\nUser: {{user_input}}\nAssistant:'
+generation_kwargs:
+  max_gen_toks: 200
+  temperature: 0.7
+  until:
+  - '\nUser:'
+  - \n\n
+metadata:
+  category: conversation
+  created_at: '2025-09-27T04:27:54.598986'
+  description: Dynamic multi-turn conversation evaluation
+  difficulty: advanced
+  name: Multi-Turn Conversation Task
+  tags:
+  - conversation
+  - multi-turn
+  - dialogue
+  - dynamic
+  version: 1.0.0
+metric_list:
+- aggregation: mean
+  higher_is_better: true
+  metric: conversation_coherence
+- aggregation: mean
+  higher_is_better: true
+  metric: response_relevance
+output_type: generate_until
+task: dynamic_multi_turn_conversation

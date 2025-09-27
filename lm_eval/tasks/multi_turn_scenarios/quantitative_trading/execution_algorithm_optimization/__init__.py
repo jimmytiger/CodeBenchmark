@@ -1,0 +1,1 @@
+"""Execution algorithm optimization task for quantitative trading scenarios."""

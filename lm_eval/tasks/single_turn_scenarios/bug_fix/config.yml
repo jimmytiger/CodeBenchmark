@@ -1,0 +1,58 @@
+task: single_turn_scenarios_bug_fix
+dataset_kwargs:
+  metadata:
+    scenario: "bug_fix"
+    difficulty_levels: ["simple", "intermediate", "complex"]
+    supported_languages: ["python", "javascript", "typescript", "java", "cpp", "go", "rust"]
+    context_modes: ["no_context", "minimal_context", "full_context", "domain_context"]
+    security_analysis_enabled: true
+
+custom_dataset: !function utils.load_dataset
+test_split: test
+output_type: generate_until
+process_docs: !function utils.process_docs
+doc_to_text: !function utils.doc_to_text
+doc_to_target: !function utils.doc_to_target
+
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.bug_resolution_accuracy
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.code_quality_improvement
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.test_pass_rate
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.security_vulnerability_fix
+    aggregation: mean
+    higher_is_better: true
+
+generation_kwargs:
+  temperature: 0.0
+  max_gen_toks: 512
+  until: []
+  do_sample: false
+
+filter_list:
+  - name: "extract_code"
+    filter:
+      - function: "custom"
+        filter_fn: !function utils.extract_code_response
+
+repeats: 1
+num_fewshot: 0
+
+tag:
+  - single_turn_scenarios
+  - bug_fix
+  - basic_scenario
+
+metadata:
+  version: 1.0
+  scenario: "bug_fix"
+  description: "Bug fixing tasks with identified bugs requiring resolution and security analysis"
+  requirements: ["1.1", "2.1", "2.2"]

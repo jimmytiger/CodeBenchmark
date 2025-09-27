@@ -16,7 +16,7 @@ from pathlib import Path
 from datetime import datetime
 
 from lm_eval.evaluator import simple_evaluate
-from lm_eval.api.registry import get_task_dict
+from lm_eval.tasks import get_task_dict
 from lm_eval.api.model import LM
 
 logger = logging.getLogger(__name__)
@@ -154,39 +154,44 @@ class UnifiedEvaluationFramework:
             logger.info(f"Starting evaluation {evaluation_id} for tasks: {request.tasks}")
             result.status = ExecutionStatus.RUNNING
             
-            # Validate tasks exist
-            available_tasks = set(get_task_dict().keys())
-            missing_tasks = set(request.tasks) - available_tasks
-            if missing_tasks:
-                raise ValueError(f"Tasks not found: {missing_tasks}")
+            # Validate tasks exist by attempting to load them
+            try:
+                task_dict = get_task_dict(request.tasks)
+                available_tasks = set(task_dict.keys())
+            except Exception as e:
+                raise ValueError(f"Error loading tasks {request.tasks}: {e}")
             
-            # Execute evaluation using lm-eval
-            lm_eval_results = simple_evaluate(
-                model=request.model,
-                tasks=request.tasks,
-                limit=request.limit,
-                num_fewshot=request.num_fewshot,
-                batch_size=request.batch_size,
-                device=request.device,
-                use_cache=request.use_cache,
-                cache_requests=request.cache_requests,
-                rewrite_requests_cache=request.rewrite_requests_cache,
-                delete_requests_cache=request.delete_requests_cache,
-                description=request.description,
-                write_out=request.write_out,
-                output_base_path=request.output_base_path,
-                verbosity=request.verbosity,
-                log_samples=request.log_samples,
-                show_config=request.show_config,
-                include_path=request.include_path,
-                gen_kwargs=request.gen_kwargs,
-                task_manager=request.task_manager,
-                predict_only=request.predict_only,
-                random_seed=request.random_seed,
-                numpy_random_seed=request.numpy_random_seed,
-                torch_random_seed=request.torch_random_seed,
-                fewshot_random_seed=request.fewshot_random_seed
-            )
+            # Execute evaluation using lm-eval (filter out unsupported parameters)
+            eval_params = {
+                "model": request.model,
+                "tasks": request.tasks,
+                "limit": request.limit,
+                "num_fewshot": request.num_fewshot,
+                "batch_size": request.batch_size,
+                "device": request.device,
+                "use_cache": request.use_cache,
+                "cache_requests": request.cache_requests,
+                "rewrite_requests_cache": request.rewrite_requests_cache,
+                "delete_requests_cache": request.delete_requests_cache,
+                "write_out": request.write_out,
+                # "output_base_path": request.output_base_path,  # 这个参数在某些版本中不支持
+                "verbosity": request.verbosity,
+                "log_samples": request.log_samples,
+                # "show_config": request.show_config,  # 这个参数在某些版本中不支持
+                "include_path": request.include_path,
+                "gen_kwargs": request.gen_kwargs,
+                "task_manager": request.task_manager,
+                "predict_only": request.predict_only,
+                "random_seed": request.random_seed,
+                "numpy_random_seed": request.numpy_random_seed,
+                "torch_random_seed": request.torch_random_seed,
+                "fewshot_random_seed": request.fewshot_random_seed
+            }
+            
+            # Filter out None values
+            eval_params = {k: v for k, v in eval_params.items() if v is not None}
+            
+            lm_eval_results = simple_evaluate(**eval_params)
             
             # Process and enhance results
             result.results = lm_eval_results.get("results", {})
@@ -257,16 +262,26 @@ class UnifiedEvaluationFramework:
         if category:
             return self.extended_registry.discover_tasks({"category": category})
         else:
-            return list(get_task_dict().keys())
+            # Get all available tasks from task manager
+            from lm_eval.tasks import TaskManager
+            task_manager = TaskManager()
+            return task_manager.all_tasks
     
     def get_task_info(self, task_name: str) -> Optional[Dict[str, Any]]:
         """Get detailed information about a task"""
         metadata = self.extended_registry.get_task_metadata(task_name)
         scenario_config = self.extended_registry.get_scenario_config(task_name)
         
+        try:
+            # 检查任务是否可用
+            task_dict = get_task_dict([task_name])
+            available = task_name in task_dict
+        except:
+            available = False
+        
         info = {
             "task_name": task_name,
-            "available": task_name in get_task_dict(),
+            "available": available,
             "metadata": metadata.__dict__ if metadata else None,
             "scenario_config": scenario_config.__dict__ if scenario_config else None,
             "is_multi_turn": scenario_config is not None
@@ -278,11 +293,11 @@ class UnifiedEvaluationFramework:
         """Validate evaluation request and return list of issues"""
         issues = []
         
-        # Check if tasks exist
-        available_tasks = set(get_task_dict().keys())
-        missing_tasks = set(request.tasks) - available_tasks
-        if missing_tasks:
-            issues.append(f"Tasks not found: {missing_tasks}")
+        # Check if tasks exist by attempting to load them
+        try:
+            task_dict = get_task_dict(request.tasks)
+        except Exception as e:
+            issues.append(f"Error loading tasks {request.tasks}: {e}")
         
         # Check task dependencies
         for task_name in request.tasks:

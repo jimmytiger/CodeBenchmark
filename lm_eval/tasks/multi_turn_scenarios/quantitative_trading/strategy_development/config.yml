@@ -1,0 +1,118 @@
+task: multi_turn_scenarios_quantitative_strategy_development
+scenario_type: "multi_turn"
+dataset_kwargs:
+  metadata:
+    scenario: "quantitative_strategy_development"
+    max_turns: 5
+    conversation_timeout: 600
+    enable_context_retention: true
+    domain: "quantitative_finance"
+
+custom_dataset: !function utils.load_multi_turn_dataset
+test_split: test
+output_type: generate_until
+process_docs: !function utils.process_multi_turn_docs
+doc_to_text: !function utils.multi_turn_doc_to_text
+doc_to_target: !function utils.multi_turn_doc_to_target
+
+scenario_config:
+  max_turns: 5
+  conversation_timeout: 600
+  enable_context_retention: true
+  success_criteria:
+    strategy_quality: 0.8
+    risk_management: 0.9
+    implementation_feasibility: 0.7
+
+turns:
+  - turn_id: "requirement_analysis"
+    turn_type: "analysis"
+    role: "quant_analyst"
+    prompt_template: "templates/requirement_analysis.txt"
+    expected_format: "structured_analysis"
+    validation_rules: ["identifies_objectives", "defines_constraints"]
+    evaluation_metrics: ["requirement_completeness", "risk_awareness"]
+    temperature: 0.1
+    max_tokens: 1024
+  
+  - turn_id: "factor_selection"
+    turn_type: "selection"
+    role: "quant_researcher"
+    prompt_template: "templates/factor_selection.txt"
+    expected_format: "factor_list_with_rationale"
+    depends_on: ["requirement_analysis"]
+    validation_rules: ["valid_factors", "provides_rationale"]
+    evaluation_metrics: ["factor_relevance", "diversification_quality"]
+    temperature: 0.1
+    max_tokens: 1024
+  
+  - turn_id: "model_construction"
+    turn_type: "implementation"
+    role: "quant_developer"
+    prompt_template: "templates/model_construction.txt"
+    expected_format: "code_with_documentation"
+    depends_on: ["factor_selection"]
+    validation_rules: ["valid_code", "includes_documentation"]
+    evaluation_metrics: ["model_sophistication", "code_quality"]
+    temperature: 0.0
+    max_tokens: 2048
+  
+  - turn_id: "risk_control"
+    turn_type: "validation"
+    role: "risk_manager"
+    prompt_template: "templates/risk_control.txt"
+    expected_format: "risk_assessment_with_controls"
+    depends_on: ["model_construction"]
+    validation_rules: ["identifies_risks", "proposes_controls"]
+    evaluation_metrics: ["risk_identification", "control_effectiveness"]
+    temperature: 0.1
+    max_tokens: 1024
+  
+  - turn_id: "validation"
+    turn_type: "validation"
+    role: "quant_validator"
+    prompt_template: "templates/strategy_validation.txt"
+    expected_format: "validation_report"
+    depends_on: ["risk_control"]
+    validation_rules: ["comprehensive_validation", "actionable_recommendations"]
+    evaluation_metrics: ["validation_thoroughness", "implementation_feasibility"]
+    temperature: 0.1
+    max_tokens: 1024
+
+metric_list:
+  - metric: !function metrics.strategy_quality
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.risk_management_score
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.implementation_feasibility
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.financial_domain_expertise
+    aggregation: mean
+    higher_is_better: true
+  - metric: !function metrics.context_retention_score
+    aggregation: mean
+    higher_is_better: true
+
+generation_kwargs:
+  temperature: 0.1
+  max_gen_toks: 2048
+  until: []
+  do_sample: false
+
+repeats: 1
+num_fewshot: 0
+
+tag:
+  - multi_turn_scenarios
+  - quantitative_trading
+  - strategy_development
+  - financial_scenario
+
+metadata:
+  version: 1.0
+  scenario: "quantitative_strategy_development"
+  description: "Multi-turn quantitative trading strategy development with requirement analysis, factor selection, model construction, risk control, and validation"
+  requirements: ["7.1", "7.2", "7.4", "7.5"]

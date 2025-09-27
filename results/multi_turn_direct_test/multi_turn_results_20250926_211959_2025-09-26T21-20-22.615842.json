@@ -1,0 +1,223 @@
+{
+  "results": {
+    "multi_turn_coding_eval_claude_code": {
+      "alias": "multi_turn_coding_eval_claude_code",
+      "file_existence_check,extract_responses": 1.0,
+      "file_existence_check_stderr,extract_responses": "N/A",
+      "prd_quality_from_file,extract_responses": 0.7,
+      "prd_quality_from_file_stderr,extract_responses": "N/A",
+      "design_coherence_from_file,extract_responses": 0.19333333333333336,
+      "design_coherence_from_file_stderr,extract_responses": "N/A",
+      "code_execution_test,extract_responses": 0.0,
+      "code_execution_test_stderr,extract_responses": "N/A",
+      "project_structure_validation,extract_responses": 0.0,
+      "project_structure_validation_stderr,extract_responses": "N/A",
+      "integration_test,extract_responses": 0.060267857142857144,
+      "integration_test_stderr,extract_responses": "N/A",
+      "architecture_quality_assessment,extract_responses": 0.045,
+      "architecture_quality_assessment_stderr,extract_responses": "N/A",
+      "policy_utilization_score,extract_responses": 0.5170278637770898,
+      "policy_utilization_score_stderr,extract_responses": "N/A",
+      "policy_adherence_score,extract_responses": 0.5,
+      "policy_adherence_score_stderr,extract_responses": "N/A",
+      "technical_constraint_adherence,extract_responses": 0.0,
+      "technical_constraint_adherence_stderr,extract_responses": "N/A",
+      "performance_requirement_coverage,extract_responses": 0.15,
+      "performance_requirement_coverage_stderr,extract_responses": "N/A",
+      "security_compliance_check,extract_responses": 0.4,
+      "security_compliance_check_stderr,extract_responses": "N/A",
+      "execution_time_efficiency,extract_responses": 0.0015575885772705078,
+      "execution_time_efficiency_stderr,extract_responses": "N/A",
+      "token_cost_estimation,extract_responses": 0.025497000000000002,
+      "token_cost_estimation_stderr,extract_responses": "N/A"
+    }
+  },
+  "group_subtasks": {
+    "multi_turn_coding_eval_claude_code": []
+  },
+  "configs": {
+    "multi_turn_coding_eval_claude_code": {
+      "task": "multi_turn_coding_eval_claude_code",
+      "custom_dataset": "def load_dataset(**kwargs):\n    \"\"\"Load the multi-turn coding dataset.\"\"\"\n    current_dir = os.path.dirname(__file__)\n    dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n    \n    with open(dataset_path, 'r') as f:\n        data = json.load(f)\n    \n    # Check for difficulty filter in metadata\n    difficulty_filter = None\n    if 'metadata' in kwargs:\n        metadata = kwargs['metadata']\n        if isinstance(metadata, dict) and 'difficulty_filter' in metadata:\n            difficulty_filter = metadata['difficulty_filter']\n    \n    # Process data for lm-eval format\n    processed_data = []\n    for item in data:\n        # Apply difficulty filter if specified\n        if difficulty_filter and item['complexity'] != difficulty_filter:\n            continue\n            \n        doc = {\n            'problem_id': item['problem_id'],\n            'complexity': item['complexity'],\n            'domain': item['domain'],\n            'problem_description': item['problem_description'],\n            'prd_context': item.get('prd_context'),\n            'design_context': item.get('design_context'),\n            'code_context': item.get('code_context'),\n            'quality_context': item.get('quality_context')\n        }\n        processed_data.append(doc)\n    \n    dataset = Dataset.from_list(processed_data)\n    return {\"test\": dataset}\n",
+      "test_split": "test",
+      "process_docs": "def process_docs(dataset):\n    \"\"\"Process the dataset to match the expected format.\"\"\"\n    return dataset\n",
+      "doc_to_text": "def format_combined_prompt(doc):\n    \"\"\"Format combined prompt for all phases in sequence.\"\"\"\n    config = get_context_config()\n    \n    # Build context sections\n    contexts = []\n    \n    if config['enable_prd_context'] and doc.get('prd_context'):\n        contexts.append(f\"PRD Context: {doc['prd_context']}\")\n    \n    if config['enable_design_context'] and doc.get('design_context'):\n        contexts.append(f\"Design Context: {doc['design_context']}\")\n    \n    if config['enable_code_context'] and doc.get('code_context'):\n        contexts.append(f\"Code Context: {doc['code_context']}\")\n    \n    if config['enable_quality_context'] and doc.get('quality_context'):\n        contexts.append(f\"Quality Context: {doc['quality_context']}\")\n    \n    context_section = \"\\n\".join(contexts) if contexts else \"No specific context requirements\"\n    \n    return f\"\"\"Multi-Turn Software Engineering Task\n\n{context_section}\n\nProblem: {doc['problem_description']}\n\nYou will complete this software engineering project in 3 phases. For each phase, create the required deliverables and save them to the specified locations.\n\nIMPORTANT CONSTRAINTS:\n- Maximum 2 iterations per phase (do not over-iterate)\n- For testing: Run tests maximum 2 times, partial pass is acceptable\n- Focus on functional implementation over perfect test coverage\n- Prioritize completion over perfection\n\nPHASE 1: Product Requirements Document (PRD)\nCreate a concise and precise PRD (max 500 words) covering:\n- Problem statement and objectives\n- User stories and acceptance criteria\n- Functional and non-functional requirements\n- Success metrics\n\nSave to: ./output/{doc['problem_id']}/prd.md\nConfirm with: \"PRD saved to [filepath]\"\nIteration limit: Maximum 2 attempts\n\nPHASE 2: Technical Design\nBased on your PRD, create a concise and precise technical design (max 500 words) covering:\n- System architecture and components\n- API specifications and data models\n- Technology stack and infrastructure\n- Security and scalability considerations\n\nSave to: ./output/{doc['problem_id']}/design.md\nConfirm with: \"Design saved to [filepath]\"\nIteration limit: Maximum 2 attempts\n\nPHASE 3: Implementation\nImplement the complete solution as a Python project:\n- Create project structure in ./output/{doc['problem_id']}/src/\n- Include main modules, classes, and functions\n- Add comprehensive tests\n\nTesting guidelines:\n- Run tests maximum 2 times\n- Partial test pass is acceptable (no need for 100% pass rate)\n- Focus on core functionality over comprehensive testing\n\nConfirm with: \"Implementation complete in [dirpath]\"\nIteration limit: Maximum 2 attempts\n\nPlease complete all 3 phases in sequence with the specified constraints:\"\"\"\n",
+      "doc_to_target": "{{problem_description}}",
+      "unsafe_code": false,
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "def file_existence_check(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Check if all required files were created.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n        \n        base_path = _get_output_base_path()\n        required_files = [\n            f\"{base_path}/{problem_id}/prd.md\",\n            f\"{base_path}/{problem_id}/design.md\", \n            f\"{base_path}/{problem_id}/src/\"\n        ]\n        \n        files_exist = 0\n        for file_path in required_files:\n            if os.path.exists(file_path):\n                files_exist += 1\n        \n        score = files_exist / len(required_files)\n        total_score += score\n    \n    return {'file_existence_check': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def prd_quality_from_file(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Evaluate PRD quality from saved files.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        base_path = _get_output_base_path()\n        prd_path = f\"{base_path}/{problem_id}/prd.md\"\n        \n        if not os.path.exists(prd_path):\n            continue\n            \n        try:\n            with open(prd_path, 'r', encoding='utf-8') as f:\n                prd_content = f.read()\n            \n            score = _evaluate_prd_content(prd_content)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error reading PRD file {prd_path}: {e}\")\n            continue\n    \n    return {'prd_quality_from_file': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def design_coherence_from_file(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Evaluate design document coherence from saved files.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        base_path = _get_output_base_path()\n        design_path = f\"{base_path}/{problem_id}/design.md\"\n        \n        if not os.path.exists(design_path):\n            continue\n            \n        try:\n            with open(design_path, 'r', encoding='utf-8') as f:\n                design_content = f.read()\n            \n            score = _evaluate_design_content(design_content)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error reading design file {design_path}: {e}\")\n            continue\n    \n    return {'design_coherence_from_file': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def code_execution_test(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Test if generated code can be executed without errors.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        base_path = _get_output_base_path()\n        src_path = f\"{base_path}/{problem_id}/src\"\n        \n        if not os.path.exists(src_path):\n            continue\n            \n        score = _test_code_execution(src_path)\n        total_score += score\n    \n    return {'code_execution_test': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def project_structure_validation(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Validate Python project structure.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        base_path = _get_output_base_path()\n        src_path = f\"{base_path}/{problem_id}/src\"\n        \n        if not os.path.exists(src_path):\n            continue\n            \n        score = _validate_project_structure(src_path)\n        total_score += score\n    \n    return {'project_structure_validation': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def integration_test(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Test integration between PRD, Design, and Code.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n        \n        # Check if all artifacts exist\n        base_path = _get_output_base_path()\n        prd_path = f\"{base_path}/{problem_id}/prd.md\"\n        design_path = f\"{base_path}/{problem_id}/design.md\"\n        src_path = f\"{base_path}/{problem_id}/src\"\n        \n        if not all(os.path.exists(p) for p in [prd_path, design_path, src_path]):\n            continue\n            \n        score = _test_integration(prd_path, design_path, src_path)\n        total_score += score\n    \n    return {'integration_test': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def architecture_quality_assessment(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Assess architecture quality based on design decisions and implementation.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        base_path = _get_output_base_path()\n        design_path = f\"{base_path}/{problem_id}/design.md\"\n        src_path = f\"{base_path}/{problem_id}/src\"\n        \n        if not os.path.exists(design_path) or not os.path.exists(src_path):\n            continue\n            \n        score = _assess_architecture_quality(design_path, src_path)\n        total_score += score\n    \n    return {'architecture_quality_assessment': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def policy_utilization_score(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Assess how well the solution utilizes the provided context.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Load the original problem context\n        try:\n            # Read the problems.jsonl to get context for this problem\n            current_dir = os.path.dirname(__file__)\n            dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n            \n            with open(dataset_path, 'r') as f:\n                data = json.load(f)\n            \n            problem_data = None\n            for item in data:\n                if item['problem_id'] == problem_id:\n                    problem_data = item\n                    break\n            \n            if not problem_data:\n                continue\n                \n            base_path = _get_output_base_path()\n            prd_path = f\"{base_path}/{problem_id}/prd.md\"\n            design_path = f\"{base_path}/{problem_id}/design.md\"\n            src_path = f\"{base_path}/{problem_id}/src\"\n            \n            score = _assess_context_utilization(problem_data, prd_path, design_path, src_path)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error assessing context utilization for {problem_id}: {e}\")\n            continue\n    \n    return {'policy_utilization_score': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def policy_adherence_score(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Check if specific requirements from context are addressed in the solution.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Load the original problem context\n        try:\n            current_dir = os.path.dirname(__file__)\n            dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n            \n            with open(dataset_path, 'r') as f:\n                data = json.load(f)\n            \n            problem_data = None\n            for item in data:\n                if item['problem_id'] == problem_id:\n                    problem_data = item\n                    break\n            \n            if not problem_data:\n                continue\n                \n            base_path = _get_output_base_path()\n            prd_path = f\"{base_path}/{problem_id}/prd.md\"\n            design_path = f\"{base_path}/{problem_id}/design.md\"\n            src_path = f\"{base_path}/{problem_id}/src\"\n            \n            score = _check_specific_requirements(problem_data, prd_path, design_path, src_path)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error checking specific requirements for {problem_id}: {e}\")\n            continue\n    \n    return {'policy_adherence_score': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def technical_constraint_adherence(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Check adherence to technical constraints specified in context.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Load the original problem context\n        try:\n            current_dir = os.path.dirname(__file__)\n            dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n            \n            with open(dataset_path, 'r') as f:\n                data = json.load(f)\n            \n            problem_data = None\n            for item in data:\n                if item['problem_id'] == problem_id:\n                    problem_data = item\n                    break\n            \n            if not problem_data:\n                continue\n                \n            base_path = _get_output_base_path()\n            src_path = f\"{base_path}/{problem_id}/src\"\n            design_path = f\"{base_path}/{problem_id}/design.md\"\n            \n            score = _check_technical_constraints(problem_data, design_path, src_path)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error checking technical constraints for {problem_id}: {e}\")\n            continue\n    \n    return {'technical_constraint_adherence': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def performance_requirement_coverage(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Check if performance requirements from context are addressed.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Load the original problem context\n        try:\n            current_dir = os.path.dirname(__file__)\n            dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n            \n            with open(dataset_path, 'r') as f:\n                data = json.load(f)\n            \n            problem_data = None\n            for item in data:\n                if item['problem_id'] == problem_id:\n                    problem_data = item\n                    break\n            \n            if not problem_data:\n                continue\n                \n            base_path = _get_output_base_path()\n            prd_path = f\"{base_path}/{problem_id}/prd.md\"\n            design_path = f\"{base_path}/{problem_id}/design.md\"\n            src_path = f\"{base_path}/{problem_id}/src\"\n            \n            score = _check_performance_requirements(problem_data, prd_path, design_path, src_path)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error checking performance requirements for {problem_id}: {e}\")\n            continue\n    \n    return {'performance_requirement_coverage': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def security_compliance_check(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Check if security and compliance requirements from context are addressed.\"\"\"\n    total_score = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Load the original problem context\n        try:\n            current_dir = os.path.dirname(__file__)\n            dataset_path = os.path.join(current_dir, \"problems.jsonl\")\n            \n            with open(dataset_path, 'r') as f:\n                data = json.load(f)\n            \n            problem_data = None\n            for item in data:\n                if item['problem_id'] == problem_id:\n                    problem_data = item\n                    break\n            \n            if not problem_data:\n                continue\n                \n            base_path = _get_output_base_path()\n            prd_path = f\"{base_path}/{problem_id}/prd.md\"\n            design_path = f\"{base_path}/{problem_id}/design.md\"\n            src_path = f\"{base_path}/{problem_id}/src\"\n            \n            score = _check_security_compliance(problem_data, prd_path, design_path, src_path)\n            total_score += score\n            \n        except Exception as e:\n            print(f\"Error checking security compliance for {problem_id}: {e}\")\n            continue\n    \n    return {'security_compliance_check': total_score / total_problems if total_problems > 0 else 0.0}\n",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "def execution_time_efficiency(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Measure execution time efficiency - lower is better.\"\"\"\n    total_time = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        # Try to extract timing information from the evaluation logs\n        try:\n            # Look for timing information in the current evaluation context\n            # This will be populated by the evaluation framework\n            execution_time = _extract_execution_time(problem_id)\n            total_time += execution_time\n            \n        except Exception as e:\n            print(f\"Error extracting execution time for {problem_id}: {e}\")\n            # Use a default time if extraction fails\n            total_time += 60.0  # Default 60 seconds\n            continue\n    \n    # Return average execution time in seconds\n    avg_time = total_time / total_problems if total_problems > 0 else 0.0\n    return {'execution_time_efficiency': avg_time}\n",
+          "aggregation": "mean",
+          "higher_is_better": false
+        },
+        {
+          "metric": "def token_cost_estimation(references: List[str], predictions: List[List[str]]) -> Dict[str, float]:\n    \"\"\"Estimate token cost based on generated content - lower is better.\"\"\"\n    total_cost = 0.0\n    total_problems = len(predictions)\n    \n    # Get all available problem directories\n    output_dirs = _get_available_problem_dirs()\n    \n    for i, pred_list in enumerate(predictions):\n        if not pred_list:\n            continue\n            \n        # Get the problem_id for this index\n        if i < len(output_dirs):\n            problem_id = output_dirs[i]\n        else:\n            continue\n            \n        try:\n            # Calculate cost based on generated content and API usage\n            cost = _calculate_token_cost(problem_id, pred_list)\n            total_cost += cost\n            \n        except Exception as e:\n            print(f\"Error calculating token cost for {problem_id}: {e}\")\n            continue\n    \n    # Return average cost in USD\n    avg_cost = total_cost / total_problems if total_problems > 0 else 0.0\n    return {'token_cost_estimation': avg_cost}\n",
+          "aggregation": "mean",
+          "higher_is_better": false
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "temperature": 0.0,
+        "max_gen_toks": 800,
+        "until": [],
+        "do_sample": false
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "name": "extract_responses",
+          "filter": [
+            {
+              "function": "custom",
+              "filter_fn": "<function build_predictions at 0x31e271a80>"
+            }
+          ]
+        }
+      ],
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 1.0,
+        "description": "Multi-turn coding evaluation with Claude Code SDK integration",
+        "author": "LM Evaluation Harness",
+        "tags": [
+          "multi_turn",
+          "coding",
+          "claude_code_sdk",
+          "file_system",
+          "software_engineering"
+        ],
+        "model": "claude-3-haiku-20240307"
+      }
+    }
+  },
+  "versions": {
+    "multi_turn_coding_eval_claude_code": 1.0
+  },
+  "n-shot": {
+    "multi_turn_coding_eval_claude_code": 0
+  },
+  "higher_is_better": {
+    "multi_turn_coding_eval_claude_code": {
+      "file_existence_check": true,
+      "prd_quality_from_file": true,
+      "design_coherence_from_file": true,
+      "code_execution_test": true,
+      "project_structure_validation": true,
+      "integration_test": true,
+      "architecture_quality_assessment": true,
+      "policy_utilization_score": true,
+      "policy_adherence_score": true,
+      "technical_constraint_adherence": true,
+      "performance_requirement_coverage": true,
+      "security_compliance_check": true,
+      "execution_time_efficiency": false,
+      "token_cost_estimation": false
+    }
+  },
+  "n-samples": {
+    "multi_turn_coding_eval_claude_code": {
+      "original": 45,
+      "effective": 1
+    }
+  },
+  "config": {
+    "model": "claude-local",
+    "model_args": "model=claude-3-haiku-20240307",
+    "batch_size": "1",
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": 1.0,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "git_hash": "c3a9fe26",
+  "date": 1758946811.924835,
+  "pretty_env_info": "PyTorch version: 2.7.1\nIs debug build: False\nCUDA used to build PyTorch: None\nROCM used to build PyTorch: N/A\n\nOS: macOS 15.7 (arm64)\nGCC version: Could not collect\nClang version: 17.0.0 (clang-1700.3.19.1)\nCMake version: Could not collect\nLibc version: N/A\n\nPython version: 3.12.2 | packaged by conda-forge | (main, Feb 16 2024, 20:54:21) [Clang 16.0.6 ] (64-bit runtime)\nPython platform: macOS-15.7-arm64-arm-64bit\nIs CUDA available: False\nCUDA runtime version: No CUDA\nCUDA_MODULE_LOADING set to: N/A\nGPU models and configuration: No CUDA\nNvidia driver version: No CUDA\ncuDNN version: No CUDA\nHIP runtime version: N/A\nMIOpen runtime version: N/A\nIs XNNPACK available: True\n\nCPU:\nApple M1 Pro\n\nVersions of relevant libraries:\n[pip3] numpy==1.26.4\n[pip3] optree==0.14.0\n[pip3] torch==2.7.1\n[pip3] torchmetrics==1.8.0\n[pip3] torchtext==0.18.0\n[conda] numpy                        1.26.4           pypi_0              pypi\n[conda] optree                       0.14.0           pypi_0              pypi\n[conda] torch                        2.7.1            pypi_0              pypi\n[conda] torchmetrics                 1.8.0            pypi_0              pypi\n[conda] torchtext                    0.18.0           pypi_0              pypi",
+  "transformers_version": "4.54.0",
+  "lm_eval_version": "0.4.9.1",
+  "upper_git_hash": null,
+  "task_hashes": {
+    "multi_turn_coding_eval_claude_code": "02f86c5c29e583ea705cdc6fb2f8e9e98dc7c673d14070e74f54d72fc53f77e9"
+  },
+  "model_source": "claude-local",
+  "model_name": "claude-3-haiku-20240307",
+  "model_name_sanitized": "claude-3-haiku-20240307",
+  "system_instruction": null,
+  "system_instruction_sha": null,
+  "fewshot_as_multiturn": false,
+  "chat_template": null,
+  "chat_template_sha": null,
+  "start_time": 139042.96916575,
+  "end_time": 139053.688852666,
+  "total_evaluation_time_seconds": "10.719686916010687"
+}
