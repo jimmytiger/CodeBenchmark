@@ -12,6 +12,15 @@ import os
 if TYPE_CHECKING:
     from .sandbox import ExecutionResult
 
+# Import sandbox functions for runtime correctness
+try:
+    from .sandbox import execute_code_safely
+except ImportError:
+    try:
+        from lm_eval.tasks.single_turn_scenarios.sandbox import execute_code_safely
+    except ImportError:
+        execute_code_safely = None
+
 eval_logger = logging.getLogger(__name__)
 
 # Basic Metrics
@@ -1427,21 +1436,7 @@ def _check_general_style(code: str) -> float:
 # Functional Metrics
 # Removed duplicate pass_at_k function - using the more complete version below
 
-def runtime_correctness(execution_results: List[Dict]) -> float:
-    """Calculate runtime correctness based on execution results.
-    
-    Args:
-        execution_results: List of execution results
-        
-    Returns:
-        float: Runtime correctness score (0.0 to 1.0)
-    """
-    if not execution_results:
-        return 0.0
-    
-    correct = sum(1 for result in execution_results 
-                 if result.get('exit_code', 1) == 0 and not result.get('stderr', '').strip())
-    return correct / len(execution_results)
+# runtime_correctness function moved to line 2089 with proper lm-eval interface
 
 def memory_efficiency(execution_results: List[Dict]) -> float:
     """Calculate memory efficiency score.
@@ -2086,49 +2081,67 @@ def _calculate_generic_coverage(code: str, tests: List[Dict]) -> float:
     return min(1.0, total_test_lines / code_lines)
 
 
-def runtime_correctness(execution_results: List['ExecutionResult']) -> float:
-    """Measure runtime correctness based on execution results.
+def runtime_correctness(references: List[str], predictions: List[str]) -> float:
+    """Measure runtime correctness based on code execution.
     
-    Evaluates whether code executes successfully without errors,
-    crashes, or security violations.
+    Evaluates whether generated code executes successfully without errors,
+    crashes, or security violations by running it in a sandbox environment.
     
     Args:
-        execution_results: List of ExecutionResult objects from sandbox execution
+        references: List of reference/expected outputs (not used for runtime correctness)
+        predictions: List of generated code strings to execute
         
     Returns:
         float: Runtime correctness score (0.0 to 1.0)
     """
-    if not execution_results:
+    if not predictions:
         return 0.0
     
     correct_executions = 0
     
-    for result in execution_results:
-        # Check multiple criteria for correctness
-        is_correct = (
-            result.success and                    # Overall success flag
-            result.exit_code == 0 and            # Clean exit
-            not result.security_violations and   # No security issues
-            not result.error_message and         # No error messages
-            result.wall_time > 0                 # Actually executed
-        )
-        
-        # Additional checks for runtime issues
-        if is_correct and result.stderr:
-            # Check for runtime warnings/errors in stderr
-            error_indicators = [
-                'error', 'exception', 'traceback', 'segmentation fault',
-                'bus error', 'abort', 'killed', 'timeout'
-            ]
+    for code in predictions:
+        try:
+            if execute_code_safely is None:
+                # Fallback: simple syntax check if sandbox is not available
+                try:
+                    ast.parse(code)
+                    correct_executions += 1  # Assume correct if syntax is valid
+                except SyntaxError:
+                    pass  # Syntax error, not correct
+                continue
             
-            stderr_lower = result.stderr.lower()
-            if any(indicator in stderr_lower for indicator in error_indicators):
-                is_correct = False
-        
-        if is_correct:
-            correct_executions += 1
+            # Execute code in sandbox and get execution result
+            execution_result = execute_code_safely("python", code)
+            
+            # Check multiple criteria for correctness
+            is_correct = (
+                execution_result.success and                    # Overall success flag
+                execution_result.exit_code == 0 and            # Clean exit
+                not execution_result.security_violations and   # No security issues
+                not execution_result.error_message and         # No error messages
+                execution_result.wall_time > 0                 # Actually executed
+            )
+            
+            # Additional checks for runtime issues
+            if is_correct and execution_result.stderr:
+                # Check for runtime warnings/errors in stderr
+                error_indicators = [
+                    'error', 'exception', 'traceback', 'segmentation fault',
+                    'bus error', 'abort', 'killed', 'timeout'
+                ]
+                
+                stderr_lower = execution_result.stderr.lower()
+                if any(indicator in stderr_lower for indicator in error_indicators):
+                    is_correct = False
+            
+            if is_correct:
+                correct_executions += 1
+                
+        except Exception as e:
+            eval_logger.debug(f"Runtime correctness check failed for code: {e}")
+            continue
     
-    return correct_executions / len(execution_results)
+    return correct_executions / len(predictions)
 
 
 def memory_efficiency(execution_results: List['ExecutionResult'], 

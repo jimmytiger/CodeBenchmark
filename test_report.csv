@@ -1,4 +1,0 @@
-id,model,config,scenario,difficulty,language,context_mode,timestamp,metric_alias,"metric_bypass,extract_code","metric_bypass_stderr,extract_code",runtime_time_s,runtime_peak_memory_mb
-,claude-3-haiku-20240307,,code_completion,simple,python,no_context,,single_turn_scenarios_code_completion,999,N/A,,
-,claude-3-haiku-20240307,,minimal_context,simple,python,no_context,,single_turn_scenarios_minimal_context,999,N/A,,
-,claude-3-haiku-20240307,,algorithm_implementation,simple,python,no_context,,single_turn_scenarios_algorithm_implementation,999,N/A,,
