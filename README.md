@@ -86,7 +86,7 @@ python -m lm_eval --help
 python -m lm_eval --model dummy --tasks single_turn_scenarios_function_generation --limit 1
 ```
 
-## � l*m-eval Framework Usage
+## l*m-eval Framework Usage
 
 ### Basic Commands
 
@@ -569,7 +569,7 @@ The framework includes ready-to-use scripts in `evaluation_engine/docs/`:
 | `dashscope` | Qwen Models (Qwen-Turbo, Qwen-Plus, etc.) | Alibaba Cloud |
 | `dummy` | Test Model | Built-in |
 
-## �  Dataset Format & Examples
+## Dataset Format & Examples
 
 ### Dataset Structure
 
