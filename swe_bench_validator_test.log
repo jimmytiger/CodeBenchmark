@@ -1,0 +1,243 @@
+2025-09-28 20:29:11,641 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:29:11,642 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:29:11,686 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:29:11,687 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:29:11,709 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:29:11,710 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:29:11,974 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:29:11,975 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:29:12,379 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:29:12,379 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:29:12,379 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:29:12,380 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_94eypfr2
+2025-09-28 20:29:12,394 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:29:12,417 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:29:12,418 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:29:12,418 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:29:12,418 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:29:12,451 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:29:12,452 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:29:12,452 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:29:12,452 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:29:12,486 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:29:12,486 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:29:12,506 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:29:12,506 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:29:12,717 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:29:12,718 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:29:13,047 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:29:13,048 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:29:13,048 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:29:13,049 - SWEBenchAdapterValidator - ERROR - TestFrameworkError: name 'TestType' is not defined
+2025-09-28 20:29:13,050 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_94eypfr2
+2025-09-28 20:29:13,050 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter validation completed: error
+2025-09-28 20:29:13,050 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:29:13,050 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: test_mock_task_001
+2025-09-28 20:29:13,050 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - ERROR - Error during software task testing: name 'TestType' is not defined
+2025-09-28 20:29:13,051 - SWEBenchAdapterValidator - ERROR - TestFrameworkError: name 'TestType' is not defined
+2025-09-28 20:32:25,313 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:32:25,313 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:32:25,336 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:32:25,336 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:32:25,363 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:32:25,363 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:32:25,612 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:32:25,612 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:32:25,953 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:32:25,953 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:32:25,953 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:32:25,954 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_na04a2uj
+2025-09-28 20:32:25,969 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:32:25,998 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:32:25,999 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:32:25,999 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:32:25,999 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:32:26,015 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:32:26,015 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:32:26,015 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:32:26,015 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:32:26,052 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:32:26,052 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:32:26,070 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:32:26,070 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:32:26,274 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:32:26,274 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:32:26,561 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_na04a2uj
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: test_mock_task_001
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: test_mock_task_001
+2025-09-28 20:32:26,562 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: passed
+2025-09-28 20:43:00,560 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:43:00,560 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:43:00,605 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:43:00,605 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:43:00,633 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:43:00,633 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:43:00,904 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:43:00,904 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:43:01,310 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:43:01,310 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:43:01,310 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:43:01,311 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_dax807zw
+2025-09-28 20:43:01,323 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:43:01,350 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:43:01,351 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:43:01,351 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:43:01,351 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:43:01,368 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:43:01,368 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:43:01,368 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:43:01,368 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:43:01,408 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:43:01,409 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:43:01,435 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:43:01,435 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:43:01,641 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:43:01,642 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:43:01,945 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:43:01,945 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:43:01,945 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:43:01,946 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_dax807zw
+2025-09-28 20:43:01,946 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:43:01,946 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: simple_real_task_001
+2025-09-28 20:43:01,946 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: simple_real_task_001
+2025-09-28 20:43:01,947 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - ERROR - Real task execution failed: TurnData.__init__() got an unexpected keyword argument 'expected_output'
+2025-09-28 20:43:01,947 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: failed
+2025-09-28 20:43:57,922 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:43:57,922 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:43:57,965 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:43:57,966 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:43:57,984 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:43:57,984 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:43:58,235 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:43:58,235 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:43:58,661 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:43:58,661 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:43:58,661 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:43:58,662 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_h86_jegk
+2025-09-28 20:43:58,678 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:43:58,706 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:43:58,707 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:43:58,707 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:43:58,707 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:43:58,722 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:43:58,722 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:43:58,723 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:43:58,723 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:43:58,755 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:43:58,755 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:43:58,777 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:43:58,777 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:43:58,981 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:43:58,981 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:43:59,284 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:43:59,285 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:43:59,285 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:43:59,285 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_h86_jegk
+2025-09-28 20:43:59,286 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:43:59,286 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: simple_real_task_001
+2025-09-28 20:43:59,286 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: simple_real_task_001
+2025-09-28 20:43:59,286 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:43:59,286 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_hjo1saf2
+2025-09-28 20:43:59,300 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:43:59,322 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:43:59,322 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:43:59,892 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: passed
+2025-09-28 20:47:00,240 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:47:00,241 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:47:00,274 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:47:00,275 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:47:00,291 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:47:00,291 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:47:00,571 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:47:00,572 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:47:00,982 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:47:00,982 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:47:00,982 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:47:00,991 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_kr799q58
+2025-09-28 20:47:00,999 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:47:01,019 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:47:01,020 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:47:01,020 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:47:01,020 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:47:01,041 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:47:01,041 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:47:01,041 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:47:01,041 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:47:01,068 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:47:01,069 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:47:01,085 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:47:01,086 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:47:01,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:47:01,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:47:01,677 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:47:01,678 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:47:01,678 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:47:01,678 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_kr799q58
+2025-09-28 20:47:01,679 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:47:01,679 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: simple_real_task_001
+2025-09-28 20:47:01,679 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: simple_real_task_001
+2025-09-28 20:47:01,679 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:47:01,680 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_0e989yiv
+2025-09-28 20:47:01,689 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:47:01,715 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:47:01,716 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:47:02,448 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: passed
+2025-09-28 20:56:25,886 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:56:25,887 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:56:25,928 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:56:25,929 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:56:25,945 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:56:25,945 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:56:26,219 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:56:26,219 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:56:26,622 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:56:26,622 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:56:26,622 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:56:26,630 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_loasl_zi
+2025-09-28 20:56:26,640 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:56:26,665 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:56:26,666 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:56:26,666 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Starting SWE-bench adapter integration validation
+2025-09-28 20:56:26,666 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking SWE-bench adapter module availability
+2025-09-28 20:56:26,686 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter module loaded successfully
+2025-09-28 20:56:26,687 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing and validating dependencies
+2025-09-28 20:56:26,687 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Installing SWE-bench adapter dependencies
+2025-09-28 20:56:26,687 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: git
+2025-09-28 20:56:26,730 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency git is available
+2025-09-28 20:56:26,731 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: python
+2025-09-28 20:56:26,750 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency python is available
+2025-09-28 20:56:26,751 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pip
+2025-09-28 20:56:27,011 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pip is available
+2025-09-28 20:56:27,012 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Checking dependency: pytest
+2025-09-28 20:56:27,326 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Dependency pytest is available
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - All required dependencies are available
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing basic adapter functionality
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Adapter info retrieved successfully
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Adapter does not have validate_config method (optional)
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Adapter instantiated successfully
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing environment setup capabilities
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:56:27,327 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_j5_xepya
+2025-09-28 20:56:27,341 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:56:27,369 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:56:27,370 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:56:27,371 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing with real SWE-bench task
+2025-09-28 20:56:27,371 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:56:27,371 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: simple_real_task_001
+2025-09-28 20:56:27,371 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: simple_real_task_001
+2025-09-28 20:56:28,009 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: passed
+2025-09-28 20:56:28,032 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Cleaned up work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_j5_xepya
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - SWE-bench adapter validation completed: passed
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing 1 SWE-bench software engineering tasks
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Testing task 1/1: simple_real_task_001
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Executing SWE-bench task: simple_real_task_001
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Setting up SWE-bench testing environment
+2025-09-28 20:56:28,033 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Created work directory: /var/folders/p5/2ntk04qj37b16lz714vjplbc0000gr/T/swe_bench_test_t7clgyau
+2025-09-28 20:56:28,045 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Python version: Python 3.12.2
+2025-09-28 20:56:28,070 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Git version: git version 2.50.1 (Apple Git-155)
+2025-09-28 20:56:28,071 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Environment setup completed successfully
+2025-09-28 20:56:28,612 - EvaluationEngineV1_0_tests.core.swe_bench_adapter_validator.SWEBenchAdapterValidator - INFO - Task 1 completed: passed

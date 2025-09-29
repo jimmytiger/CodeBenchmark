@@ -1,0 +1,68 @@
+# Advanced Multi-Turn Evaluation Configuration
+# Comprehensive configuration with detailed settings for complex evaluations
+
+# Model configuration
+model_id: "gpt-4"
+
+# Task configuration
+task_ids:
+  - "advanced_coding_task_1"
+  - "advanced_coding_task_2"
+  - "debugging_task_complex"
+  - "multi_file_refactoring"
+
+# Execution settings
+max_turns: 20
+timeout_seconds: 14400  # 4 hours
+max_execution_time: 600  # 10 minutes per action
+
+# Feedback processing configuration
+feedback_strategy: "full"
+context_strategy: "adaptive"
+max_feedback_length: 20000
+max_context_length: 100000
+enable_stack_summarization: true
+enable_file_context: true
+top_k_assertions: 10
+
+# Safety configuration
+safety_level: "moderate"
+enable_sandboxing: true
+allowed_tools:
+  - "python"
+  - "bash"
+  - "git"
+  - "curl"
+  - "wget"
+  - "pip"
+  - "npm"
+
+# Resource limits
+resource_limits:
+  max_memory_mb: 4096
+  max_cpu_percent: 80
+  max_disk_mb: 2048
+  max_network_requests: 100
+
+# Dangerous patterns to block
+dangerous_patterns:
+  - "rm -rf"
+  - "sudo.*rm"
+  - "chmod 777"
+  - "dd if=/dev/zero"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+
+# Metadata
+metadata:
+  description: "Advanced multi-turn evaluation with comprehensive monitoring"
+  created_by: "advanced_user"
+  use_case: "complex_scenarios"
+  experiment_id: "exp_001"
+  monitoring_level: "detailed"
+  expected_duration: "2-4 hours"

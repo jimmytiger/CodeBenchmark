@@ -1,0 +1,151 @@
+# Basic Test Configuration for EvaluationEngineV1_0 Testing Framework
+# This configuration provides a simple setup for getting started with testing
+
+# General Test Configuration
+test_type: "pipeline"
+name: "Basic Test Configuration"
+description: "Simple configuration for basic testing scenarios"
+timeout: 300  # 5 minutes
+retry_count: 1
+real_execution_required: true
+
+# Target Adapters to Test
+target_adapters:
+  - "lm_eval"
+
+# Task Selection Configuration
+task_selection:
+  builtin_tasks:
+    count: 1
+    tasks: ["hellaswag"]
+    types: ["single_turn"]
+    difficulty: ["easy"]
+  custom_tasks:
+    enabled: false  # Disabled for basic testing
+    directory: "lm_eval/tasks"
+    count: 0
+
+# Execution Parameters
+execution_params:
+  timeout: 180  # 3 minutes
+  verbose: true
+  parallel: false
+  max_workers: 1
+  log_level: "INFO"
+  save_artifacts: true
+  limit: 5  # Small sample size for quick testing
+
+# Output Configuration
+output_config:
+  format: "json"
+  include_logs: true
+  include_artifacts: false  # Disabled to reduce output size
+  include_performance_charts: false
+  output_directory: "test_results/basic"
+
+# CLI Test Configuration
+cli_config:
+  tasks:
+    - "hellaswag"
+  adapters:
+    - "lm_eval"
+  execution_timeout: 180
+  output_format: "json"
+  verbose: true
+  parallel_execution: false
+  max_workers: 1
+  limit: 5
+
+# API Test Configuration
+api_config:
+  server_host: "localhost"
+  server_port: 8000
+  test_endpoints:
+    - "/health"
+    - "/api/v1/tasks"
+    - "/api/v1/evaluations"
+  concurrent_requests: 1  # Sequential for basic testing
+  timeout: 30
+  ssl_verify: false
+
+# Adapter Test Configuration
+adapter_configs:
+  lm_eval:
+    adapter_name: "lm_eval"
+    adapter_type: "lm_eval"
+    test_task_count: 1
+    dependency_check: true
+    performance_benchmark: false  # Disabled for basic testing
+    installation_timeout: 300
+    test_timeout: 180
+    real_execution_only: true
+    custom_task_dir: null
+
+# Report Configuration
+report_config:
+  output_dir: "reports/basic"
+  formats:
+    - "json"
+  include_logs: true
+  include_artifacts: false
+  include_performance_charts: false
+  custom_sections: []
+
+# Metrics Collection Configuration
+metrics_config:
+  collection_interval: 2.0  # Less frequent for basic testing
+  enable_system_metrics: true
+  enable_performance_profiling: false
+  memory_tracking: true
+  api_monitoring: true
+
+# Security Configuration
+security_config:
+  enable_sandboxing: false  # Disabled for simplicity
+  resource_limits:
+    max_memory_mb: 2048
+    max_cpu_percent: 50
+    max_execution_time: 300
+  allowed_commands:
+    - "python"
+    - "pip"
+  dangerous_patterns:
+    - "rm -rf"
+    - "sudo"
+
+# Logging Configuration
+logging_config:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  file: "basic_test.log"
+  max_size_mb: 50
+  backup_count: 2
+
+# Environment Configuration
+environment_config:
+  python_version: "3.8+"
+  required_packages:
+    - "lm-eval"
+    - "datasets"
+    - "transformers"
+  optional_packages: []
+  
+  environment_variables:
+    PYTHONPATH: "."
+    TOKENIZERS_PARALLELISM: "false"
+  
+  working_directory: "."
+  temp_directory: "/tmp/basic_evaluation_tests"
+
+# Test Data Configuration
+test_data_config:
+  use_sample_data: false  # Use real data
+  sample_size: 5  # Small sample for quick testing
+  data_sources:
+    - "huggingface"
+  cache_directory: ".cache/basic_test_data"
+
+# Example Usage:
+# CLI: python -m cli.cli_test_runner --config examples/configs/basic_test_config.yaml
+# API: Use this config with API test client for basic endpoint testing
+# Validation: Suitable for quick validation and smoke testing

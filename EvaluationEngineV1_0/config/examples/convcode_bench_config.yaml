@@ -1,0 +1,318 @@
+# ConvCodeBench Evaluation Configuration
+# Conversational code generation and programming assistance
+
+model_id: "gpt-4"
+task_ids:
+  # Web development conversations
+  - "convcode_web_development_rest_api"
+  - "convcode_web_development_frontend_react"
+  - "convcode_web_development_database_design"
+  
+  # Data analysis conversations
+  - "convcode_data_analysis_pandas"
+  - "convcode_data_analysis_visualization"
+  - "convcode_data_analysis_machine_learning"
+  
+  # System programming conversations
+  - "convcode_system_programming_cli_tool"
+  - "convcode_system_programming_file_processing"
+  
+  # API integration conversations
+  - "convcode_api_integration_rest_client"
+  - "convcode_api_integration_webhook_handler"
+
+# Evaluation parameters
+max_turns: 20
+timeout_seconds: 5400  # 1.5 hours per conversation
+enable_context_retention: true
+
+# Feedback processing configuration optimized for conversations
+feedback_strategy: "adaptive"
+feedback_config:
+  context_strategy: "conversational"
+  max_feedback_length: 10000
+  enable_conversation_history: true
+  conversation_window: 10  # Keep last 10 turns in context
+  enable_user_simulation: true
+  user_response_generation: true
+  
+  # Conversation-specific processing
+  extract_code_blocks: true
+  validate_code_syntax: true
+  track_conversation_flow: true
+  identify_clarification_requests: true
+
+# Safety configuration for conversational coding
+safety_level: "moderate"
+safety_config:
+  allowed_tools:
+    - "python"
+    - "node"
+    - "npm"
+    - "pip"
+    - "git"
+    - "curl"
+    - "wget"
+    - "docker"
+    - "make"
+    - "gcc"
+    - "javac"
+    - "mvn"
+    - "gradle"
+  
+  blocked_commands:
+    - "rm -rf /"
+    - "del /f /q"
+    - "format"
+    - "fdisk"
+    - "sudo rm"
+    - "chmod 777"
+  
+  enable_sandboxing: true
+  max_execution_time: 300  # 5 minutes per command
+  
+  resource_limits:
+    memory: "4GB"
+    cpu_time: "180s"
+    disk_space: "2GB"
+    network_requests: 100
+  
+  # Code safety patterns
+  dangerous_code_patterns:
+    - "eval("
+    - "exec("
+    - "__import__"
+    - "subprocess.call"
+    - "os.system"
+    - "input()"  # Avoid interactive input in automated evaluation
+
+# Conversation simulation configuration
+conversation_config:
+  # User persona simulation
+  user_personas:
+    - name: "beginner_developer"
+      characteristics:
+        - "asks basic questions"
+        - "needs detailed explanations"
+        - "makes common mistakes"
+      response_style: "curious_but_cautious"
+    
+    - name: "experienced_developer"
+      characteristics:
+        - "asks specific technical questions"
+        - "understands advanced concepts"
+        - "focuses on best practices"
+      response_style: "direct_and_technical"
+    
+    - name: "product_manager"
+      characteristics:
+        - "focuses on business requirements"
+        - "asks about timelines and feasibility"
+        - "needs high-level explanations"
+      response_style: "business_focused"
+  
+  # Conversation flow patterns
+  conversation_patterns:
+    - "requirement_gathering"
+    - "iterative_development"
+    - "code_review_and_improvement"
+    - "debugging_assistance"
+    - "architecture_discussion"
+  
+  # Response generation
+  user_response_config:
+    response_delay: 2  # seconds
+    typing_simulation: true
+    realistic_questions: true
+    follow_up_probability: 0.7
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "conversation_stalled"
+  - "user_satisfaction_achieved"
+
+# Export configuration
+export_config:
+  formats: ["json", "html", "markdown"]
+  include_turn_details: true
+  include_conversation_flow: true
+  include_code_evolution: true
+  generate_conversation_summary: true
+  generate_code_documentation: true
+  create_tutorial_format: true
+
+# Custom metrics for conversational coding
+custom_metrics:
+  - name: "conversation_quality"
+    calculator: "conversation_quality_calculator"
+    weight: 0.25
+    description: "Quality of conversational interaction"
+  
+  - name: "code_generation_accuracy"
+    calculator: "code_accuracy_calculator"
+    weight: 0.3
+    description: "Accuracy of generated code"
+  
+  - name: "requirement_understanding"
+    calculator: "requirement_understanding_calculator"
+    weight: 0.2
+    description: "How well requirements were understood and addressed"
+  
+  - name: "user_satisfaction"
+    calculator: "user_satisfaction_calculator"
+    weight: 0.15
+    description: "Simulated user satisfaction with the interaction"
+  
+  - name: "educational_value"
+    calculator: "educational_value_calculator"
+    weight: 0.1
+    description: "Educational value of explanations provided"
+
+# Adapter-specific configuration
+adapter_config:
+  convcode_bench:
+    # Conversation management
+    conversation_timeout: 300  # 5 minutes per turn
+    max_conversation_length: 50000  # characters
+    conversation_persistence: true
+    
+    # Code execution and validation
+    code_execution_enabled: true
+    code_validation_enabled: true
+    syntax_checking: true
+    
+    # User simulation
+    user_simulation_enabled: true
+    user_response_variability: 0.3
+    realistic_delays: true
+    
+    # Context management
+    context_compression: true
+    context_summarization: true
+    key_information_retention: true
+
+# Task-specific configurations
+task_configs:
+  web_development:
+    focus_areas: ["REST APIs", "frontend frameworks", "database integration"]
+    technologies: ["Python", "JavaScript", "React", "Flask", "FastAPI", "PostgreSQL"]
+    complexity_levels: ["basic", "intermediate", "advanced"]
+    
+  data_analysis:
+    focus_areas: ["data processing", "visualization", "statistical analysis"]
+    technologies: ["Python", "pandas", "matplotlib", "seaborn", "scikit-learn"]
+    datasets: ["sample_sales_data", "user_behavior_data", "financial_data"]
+    
+  system_programming:
+    focus_areas: ["CLI tools", "file processing", "system integration"]
+    technologies: ["Python", "Bash", "C", "Go"]
+    platforms: ["Linux", "macOS", "Windows"]
+    
+  api_integration:
+    focus_areas: ["REST clients", "webhook handling", "authentication"]
+    technologies: ["Python", "JavaScript", "curl", "Postman"]
+    protocols: ["HTTP", "WebSocket", "GraphQL"]
+
+# Quality assurance configuration
+quality_assurance:
+  # Code quality checks
+  code_quality_checks:
+    - "syntax_validation"
+    - "style_checking"
+    - "security_scanning"
+    - "performance_analysis"
+  
+  # Conversation quality checks
+  conversation_quality_checks:
+    - "coherence_analysis"
+    - "relevance_scoring"
+    - "completeness_assessment"
+    - "clarity_evaluation"
+  
+  # Automated testing
+  automated_testing:
+    unit_test_generation: true
+    integration_test_creation: true
+    test_execution: true
+    coverage_analysis: true
+
+# Metadata for tracking and analysis
+metadata:
+  scenario: "convcode_bench"
+  experiment_name: "conversational_programming_evaluation"
+  description: "Evaluation of AI agents on conversational code generation and programming assistance"
+  researcher: "conversational_ai_team"
+  version: "1.0"
+  
+  # Conversation characteristics
+  conversation_types:
+    - "requirement_gathering"
+    - "code_generation"
+    - "debugging_assistance"
+    - "code_review"
+    - "architecture_design"
+  
+  # Domain distribution
+  domain_distribution:
+    web_development: 3
+    data_analysis: 3
+    system_programming: 2
+    api_integration: 2
+  
+  # Expected outcomes
+  expected_success_rate: 0.8
+  expected_avg_turns: 12.5
+  expected_conversation_quality: 0.75
+  
+  # Benchmarks
+  benchmarks:
+    min_conversation_quality: 0.6
+    max_acceptable_turns: 25
+    min_code_accuracy: 0.7
+    min_user_satisfaction: 0.65
+
+# Logging configuration
+logging:
+  level: "INFO"
+  include_conversation_details: true
+  include_code_generation_steps: true
+  include_user_simulation: true
+  log_file: "convcode_evaluation.log"
+  
+  # Conversation logging
+  log_user_messages: true
+  log_agent_responses: true
+  log_code_blocks: true
+  log_execution_results: true
+
+# Real-time monitoring
+monitoring:
+  enable_conversation_monitoring: true
+  track_conversation_flow: true
+  monitor_code_quality: true
+  alert_on_conversation_issues: true
+  
+  # Conversation analytics
+  conversation_analytics:
+    track_turn_length: true
+    monitor_response_time: true
+    analyze_conversation_patterns: true
+    detect_conversation_problems: true
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_conversation_quality_issues: true
+  webhook_url: "https://your-webhook-url.com/convcode-notifications"
+  
+  # Conversation-specific notifications
+  conversation_notifications:
+    on_long_conversation: true
+    on_user_dissatisfaction: true
+    on_code_quality_issues: true

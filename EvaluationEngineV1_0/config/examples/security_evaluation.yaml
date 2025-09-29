@@ -1,0 +1,94 @@
+# Security-Focused Multi-Turn Evaluation Configuration
+# Configuration with strict security controls for security analysis tasks
+
+# Model configuration
+model_id: "gpt-4"
+
+# Security analysis tasks
+task_ids:
+  - "security_vulnerability_analysis"
+  - "security_code_review"
+  - "security_threat_modeling"
+  - "security_penetration_testing"
+
+# Execution settings with security focus
+max_turns: 18
+timeout_seconds: 14400  # 4 hours
+max_execution_time: 180  # 3 minutes per action (strict limit)
+
+# Feedback processing for security tasks
+feedback_strategy: "adaptive"
+context_strategy: "adaptive"
+max_feedback_length: 12000
+max_context_length: 60000
+enable_stack_summarization: true
+enable_file_context: true
+top_k_assertions: 6
+
+# Strict security settings
+safety_level: "strict"
+enable_sandboxing: true
+allowed_tools:
+  - "python"
+  - "bash"  # Limited bash access
+
+# Strict resource limits
+resource_limits:
+  max_memory_mb: 1024
+  max_cpu_percent: 50
+  max_disk_mb: 512
+  max_network_requests: 5
+
+# Comprehensive dangerous patterns list
+dangerous_patterns:
+  - "rm.*-rf"
+  - "sudo"
+  - "chmod.*777"
+  - "wget.*http"
+  - "curl.*-X.*POST"
+  - "nc.*-l"
+  - "netcat"
+  - "nmap"
+  - "sqlmap"
+  - "metasploit"
+  - "msfconsole"
+  - "hydra"
+  - "john"
+  - "hashcat"
+  - "aircrack"
+  - "wireshark"
+  - "tcpdump"
+  - "dd.*if="
+  - "mkfs"
+  - "format"
+  - "fdisk"
+  - "parted"
+
+# Termination conditions with safety priority
+termination_conditions:
+  - "safety_violation"  # Check safety first
+  - "success"
+  - "max_turns"
+  - "timeout"
+
+# Security-specific metadata
+metadata:
+  description: "Security-focused evaluation with strict controls"
+  use_case: "security_analysis"
+  security_level: "high"
+  created_by: "security_researcher"
+  expected_duration: "2-4 hours"
+  difficulty: "high"
+  compliance:
+    - "SOC2"
+    - "ISO27001"
+  audit_required: true
+  task_types:
+    - "vulnerability_assessment"
+    - "code_security_review"
+    - "threat_modeling"
+    - "security_testing"
+  restrictions:
+    - "no_network_access"
+    - "limited_file_system"
+    - "monitored_execution"

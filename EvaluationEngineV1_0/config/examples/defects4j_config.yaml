@@ -1,0 +1,440 @@
+# Defects4J Evaluation Configuration
+# Java-specific bug fixing tasks from real open-source projects
+
+model_id: "gpt-4"
+task_ids:
+  # Commons Lang bugs
+  - "defects4j_lang_1"
+  - "defects4j_lang_2"
+  - "defects4j_lang_3"
+  
+  # Commons Math bugs
+  - "defects4j_math_1"
+  - "defects4j_math_2"
+  - "defects4j_math_3"
+  
+  # Gson bugs
+  - "defects4j_gson_1"
+  - "defects4j_gson_2"
+  
+  # JFreeChart bugs
+  - "defects4j_chart_1"
+  - "defects4j_chart_2"
+  
+  # Closure Compiler bugs
+  - "defects4j_closure_1"
+
+# Evaluation parameters
+max_turns: 20
+timeout_seconds: 10800  # 3 hours per bug
+enable_context_retention: true
+
+# Feedback processing configuration for Java debugging
+feedback_strategy: "full"
+feedback_config:
+  context_strategy: "adaptive"
+  max_feedback_length: 25000
+  enable_stack_summarization: true
+  enable_file_context: true
+  java_specific_processing: true
+  
+  # Java-specific feedback features
+  include_compilation_errors: true
+  include_junit_output: true
+  include_stack_traces: true
+  include_classpath_info: true
+  include_dependency_analysis: true
+  
+  # Code analysis features
+  ast_analysis: true
+  static_analysis: true
+  code_complexity_analysis: true
+  test_coverage_analysis: true
+  javadoc_analysis: true
+
+# Safety configuration for Java development
+safety_level: "moderate"
+safety_config:
+  allowed_tools:
+    - "java"
+    - "javac"
+    - "javadoc"
+    - "jar"
+    - "maven"
+    - "mvn"
+    - "gradle"
+    - "ant"
+    - "junit"
+    - "git"
+    - "grep"
+    - "find"
+    - "cat"
+    - "less"
+    - "head"
+    - "tail"
+    - "vim"
+    - "nano"
+    - "diff"
+    - "patch"
+  
+  blocked_commands:
+    - "rm -rf /"
+    - "del /f /q"
+    - "format"
+    - "fdisk"
+    - "sudo"
+    - "chmod 777"
+  
+  enable_sandboxing: true
+  max_execution_time: 1800  # 30 minutes per command
+  
+  resource_limits:
+    memory: "8GB"  # Java applications can be memory-intensive
+    cpu_time: "900s"
+    disk_space: "10GB"  # Maven dependencies can be large
+    max_processes: 50
+  
+  # Java-specific safety patterns
+  dangerous_java_patterns:
+    - "Runtime.getRuntime().exec"
+    - "ProcessBuilder"
+    - "System.exit"
+    - "System.setProperty"
+    - "Class.forName"
+    - "Method.invoke"
+    - "Field.set"
+    - "Unsafe"
+
+# Java environment configuration
+java_config:
+  # Java version management
+  java_versions: ["8", "11", "17", "21"]
+  default_version: "11"
+  version_switching: true
+  
+  # Build tools
+  build_tools:
+    maven:
+      version: "3.8.6"
+      settings: "default"
+      offline_mode: false
+      skip_tests: false
+    gradle:
+      version: "7.6"
+      daemon: true
+      parallel: true
+    ant:
+      version: "1.10.12"
+  
+  # JVM configuration
+  jvm_config:
+    heap_size: "4G"
+    stack_size: "2M"
+    gc_algorithm: "G1GC"
+    enable_assertions: true
+  
+  # Testing frameworks
+  testing_frameworks:
+    - "junit4"
+    - "junit5"
+    - "testng"
+    - "mockito"
+  
+  # Code quality tools
+  quality_tools:
+    - "checkstyle"
+    - "pmd"
+    - "spotbugs"
+    - "jacoco"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "compilation_failure_limit"  # Too many compilation failures
+  - "test_regression"
+  - "build_system_corruption"
+
+# Export configuration
+export_config:
+  formats: ["json", "csv", "html", "xml"]
+  include_turn_details: true
+  include_code_changes: true
+  include_compilation_logs: true
+  include_test_results: true
+  include_coverage_reports: true
+  generate_bug_analysis_report: true
+  generate_fix_quality_report: true
+
+# Custom metrics for Java bug fixing
+custom_metrics:
+  - name: "bug_fix_accuracy"
+    calculator: "java_bug_fix_calculator"
+    weight: 0.35
+    description: "Accuracy of the bug fix"
+  
+  - name: "compilation_success_rate"
+    calculator: "java_compilation_calculator"
+    weight: 0.15
+    description: "Rate of successful compilations"
+  
+  - name: "test_pass_rate"
+    calculator: "java_test_calculator"
+    weight: 0.25
+    description: "Percentage of tests passing after fix"
+  
+  - name: "code_quality_improvement"
+    calculator: "java_code_quality_calculator"
+    weight: 0.15
+    description: "Improvement in code quality metrics"
+  
+  - name: "fix_minimality"
+    calculator: "fix_minimality_calculator"
+    weight: 0.1
+    description: "Minimality of the fix"
+
+# Adapter-specific configuration
+adapter_config:
+  defects4j:
+    # Defects4J tool configuration
+    defects4j_home: "/opt/defects4j"
+    checkout_timeout: 300
+    compile_timeout: 600
+    test_timeout: 1800
+    
+    # Project management
+    clean_workspace: true
+    preserve_git_history: true
+    backup_original: true
+    
+    # Bug reproduction
+    reproduction_attempts: 3
+    verify_bug_reproduction: true
+    capture_failing_tests: true
+    
+    # Build system integration
+    build_system_detection: true
+    dependency_resolution: true
+    incremental_compilation: true
+    
+    # Testing configuration
+    test_discovery: true
+    test_isolation: true
+    test_parallel: false  # Some tests may not be thread-safe
+    test_verbose: true
+    test_coverage: true
+    
+    # Fix validation
+    validate_fix: true
+    run_relevant_tests: true
+    run_full_test_suite: false  # Can be time-consuming
+    check_code_style: true
+    static_analysis: true
+
+# Project-specific configurations
+project_configs:
+  lang:
+    java_version: "8"
+    build_tool: "maven"
+    test_command: "mvn test"
+    compile_command: "mvn compile"
+    main_source_dir: "src/main/java"
+    test_source_dir: "src/test/java"
+    
+  math:
+    java_version: "8"
+    build_tool: "maven"
+    test_command: "mvn test"
+    compile_command: "mvn compile"
+    main_source_dir: "src/main/java"
+    test_source_dir: "src/test/java"
+    
+  gson:
+    java_version: "8"
+    build_tool: "maven"
+    test_command: "mvn test"
+    compile_command: "mvn compile"
+    main_source_dir: "gson/src/main/java"
+    test_source_dir: "gson/src/test/java"
+    
+  chart:
+    java_version: "8"
+    build_tool: "ant"
+    test_command: "ant test"
+    compile_command: "ant compile"
+    main_source_dir: "source"
+    test_source_dir: "tests"
+    
+  closure:
+    java_version: "8"
+    build_tool: "ant"
+    test_command: "ant test"
+    compile_command: "ant compile"
+    main_source_dir: "src"
+    test_source_dir: "test"
+
+# Bug categorization for Java
+bug_categories:
+  null_pointer_exceptions:
+    description: "NullPointerException and related issues"
+    examples: ["missing null checks", "uninitialized variables"]
+    
+  concurrency_issues:
+    description: "Thread safety and concurrency problems"
+    examples: ["race conditions", "deadlocks", "synchronization issues"]
+    
+  api_misuse:
+    description: "Incorrect usage of APIs"
+    examples: ["wrong method calls", "parameter misuse"]
+    
+  logic_errors:
+    description: "Incorrect algorithm or business logic"
+    examples: ["wrong calculations", "incorrect conditions"]
+    
+  resource_management:
+    description: "Resource handling issues"
+    examples: ["memory leaks", "unclosed resources"]
+    
+  exception_handling:
+    description: "Improper exception handling"
+    examples: ["swallowed exceptions", "wrong exception types"]
+
+# Code quality configuration
+code_quality:
+  # Static analysis tools
+  static_analysis:
+    checkstyle:
+      enabled: true
+      config: "google_checks.xml"
+      severity: "warning"
+    
+    pmd:
+      enabled: true
+      ruleset: "java-basic,java-design"
+      severity: "warning"
+    
+    spotbugs:
+      enabled: true
+      effort: "default"
+      threshold: "medium"
+  
+  # Code coverage
+  coverage:
+    tool: "jacoco"
+    minimum_coverage: 0.8
+    exclude_patterns: ["**/test/**", "**/Test*.java"]
+  
+  # Code formatting
+  formatting:
+    tool: "google-java-format"
+    line_length: 100
+    indent_size: 2
+
+# Metadata for tracking and analysis
+metadata:
+  scenario: "defects4j"
+  experiment_name: "java_bug_fixing_evaluation"
+  description: "Evaluation of AI agents on real Java bugs from Defects4J benchmark"
+  researcher: "java_debugging_team"
+  version: "1.0"
+  
+  # Project distribution
+  project_distribution:
+    lang: 3
+    math: 3
+    gson: 2
+    chart: 2
+    closure: 1
+  
+  # Bug type distribution
+  bug_type_distribution:
+    null_pointer_exceptions: 3
+    logic_errors: 4
+    api_misuse: 2
+    concurrency_issues: 1
+    exception_handling: 1
+  
+  # Difficulty levels
+  difficulty_distribution:
+    easy: 2
+    medium: 6
+    hard: 3
+  
+  # Expected outcomes
+  expected_success_rate: 0.65
+  expected_avg_turns: 12.5
+  expected_avg_time: 6000  # 1.67 hours
+  
+  # Java-specific benchmarks
+  java_benchmarks:
+    min_compilation_success_rate: 0.9
+    min_test_pass_rate: 0.95
+    max_acceptable_fix_size: 100  # lines of code
+    min_code_quality_score: 0.75
+
+# Logging configuration
+logging:
+  level: "DEBUG"
+  include_java_specifics: true
+  include_compilation_logs: true
+  include_test_execution: true
+  include_build_system_logs: true
+  include_dependency_resolution: true
+  log_file: "defects4j_evaluation.log"
+  
+  # Java-specific logging
+  log_java_version: true
+  log_classpath: true
+  log_jvm_options: true
+  log_build_tool_output: true
+  log_test_discovery: true
+  log_coverage_reports: true
+
+# Development environment
+dev_environment:
+  # IDE integration (for analysis purposes)
+  ide_support:
+    eclipse: true
+    intellij: true
+    vscode: true
+  
+  # Debugging tools
+  debugging_tools:
+    jdb: true
+    profilers: ["jvisualvm", "jprofiler"]
+    heap_analyzers: ["mat", "jhat"]
+  
+  # Build optimization
+  build_optimization:
+    parallel_compilation: true
+    incremental_compilation: true
+    dependency_caching: true
+    test_result_caching: true
+
+# Performance monitoring
+performance_monitoring:
+  # JVM monitoring
+  jvm_monitoring:
+    heap_usage: true
+    gc_activity: true
+    thread_activity: true
+    cpu_usage: true
+  
+  # Build performance
+  build_performance:
+    compilation_time: true
+    test_execution_time: true
+    dependency_resolution_time: true
+    overall_build_time: true
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_compilation_failure: true
+  on_test_regression: true
+  on_build_system_issues: true
+  webhook_url: "https://your-webhook-url.com/defects4j-notifications"

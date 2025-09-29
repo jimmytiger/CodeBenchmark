@@ -1,0 +1,192 @@
+# SWE-bench Evaluation Configuration
+# Real-world software engineering tasks including bug fixing and feature implementation
+
+model_id: "gpt-4"
+task_ids:
+  # Django framework tasks
+  - "swe_bench_lite_django__django-11099"
+  - "swe_bench_lite_django__django-12184"
+  - "swe_bench_lite_django__django-13028"
+  
+  # Requests library tasks
+  - "swe_bench_lite_psf__requests-2317"
+  - "swe_bench_lite_psf__requests-2674"
+  
+  # Scikit-learn tasks
+  - "swe_bench_lite_scikit-learn__scikit-learn-10297"
+  - "swe_bench_lite_scikit-learn__scikit-learn-12471"
+
+# Evaluation parameters
+max_turns: 15
+timeout_seconds: 7200  # 2 hours per task
+enable_context_retention: true
+
+# Feedback processing configuration
+feedback_strategy: "adaptive"
+feedback_config:
+  context_strategy: "adaptive"
+  max_feedback_length: 15000
+  enable_stack_summarization: true
+  enable_file_context: true
+  top_k_assertions: 5
+  include_git_diff: true
+  include_test_output: true
+
+# Safety configuration for code execution
+safety_level: "moderate"
+safety_config:
+  allowed_tools:
+    - "python"
+    - "bash"
+    - "git"
+    - "pytest"
+    - "pip"
+    - "python3"
+    - "grep"
+    - "find"
+    - "cat"
+    - "ls"
+    - "cd"
+    - "mkdir"
+    - "touch"
+    - "vim"
+    - "nano"
+  
+  blocked_commands:
+    - "rm -rf /"
+    - "del /f /q"
+    - "format"
+    - "fdisk"
+    - "mkfs"
+    - "dd if="
+  
+  enable_sandboxing: true
+  max_execution_time: 600  # 10 minutes per command
+  
+  resource_limits:
+    memory: "4GB"
+    cpu_time: "300s"
+    disk_space: "2GB"
+    network_requests: 50
+  
+  dangerous_patterns:
+    - "eval("
+    - "exec("
+    - "__import__"
+    - "subprocess.call"
+    - "os.system"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "repository_corruption"
+
+# Export configuration
+export_config:
+  formats: ["json", "csv", "html"]
+  include_turn_details: true
+  include_code_changes: true
+  include_test_results: true
+  generate_summary_report: true
+  generate_diff_report: true
+
+# Custom metrics for SWE-bench
+custom_metrics:
+  - name: "test_pass_rate"
+    calculator: "swe_bench_test_calculator"
+    weight: 0.4
+    description: "Percentage of tests passing after fix"
+  
+  - name: "code_quality"
+    calculator: "code_quality_calculator"
+    weight: 0.2
+    description: "Quality of code changes"
+  
+  - name: "fix_precision"
+    calculator: "fix_precision_calculator"
+    weight: 0.3
+    description: "Precision of the fix (minimal changes)"
+  
+  - name: "regression_safety"
+    calculator: "regression_calculator"
+    weight: 0.1
+    description: "No new test failures introduced"
+
+# Adapter-specific configuration
+adapter_config:
+  swe_bench:
+    # Repository management
+    clone_timeout: 300
+    checkout_timeout: 60
+    clean_workspace: true
+    preserve_git_history: true
+    
+    # Test execution
+    test_timeout: 1800  # 30 minutes
+    test_parallel: false
+    test_verbose: true
+    
+    # Environment setup
+    python_version: "auto"  # Use repository's Python version
+    install_dependencies: true
+    setup_timeout: 600
+    
+    # Patch application
+    patch_validation: true
+    backup_original: true
+    rollback_on_failure: true
+
+# Metadata for tracking and analysis
+metadata:
+  scenario: "swe_bench"
+  experiment_name: "software_engineering_evaluation"
+  description: "Evaluation of AI agents on real-world software engineering tasks"
+  researcher: "evaluation_team"
+  version: "1.0"
+  
+  # Task categorization
+  task_categories:
+    - "bug_fixing"
+    - "feature_implementation"
+    - "code_refactoring"
+  
+  # Difficulty levels
+  difficulty_distribution:
+    easy: 2
+    medium: 3
+    hard: 2
+  
+  # Programming languages
+  languages:
+    - "python"
+  
+  # Frameworks
+  frameworks:
+    - "django"
+    - "requests"
+    - "scikit-learn"
+  
+  # Expected outcomes
+  expected_success_rate: 0.65
+  expected_avg_turns: 8.5
+  expected_avg_time: 3600  # 1 hour
+
+# Logging configuration
+logging:
+  level: "INFO"
+  include_git_operations: true
+  include_test_execution: true
+  include_file_modifications: true
+  log_file: "swe_bench_evaluation.log"
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  webhook_url: "https://your-webhook-url.com/notifications"
+  email_recipients:
+    - "team@company.com"

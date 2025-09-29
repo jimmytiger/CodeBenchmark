@@ -1,0 +1,18 @@
+# Security Components Requirements
+# Additional dependencies needed for security features
+
+# System monitoring and resource management
+psutil>=5.9.0
+
+# JWT token handling
+PyJWT>=2.8.0
+
+# Cryptographic operations (for secure hashing and tokens)
+cryptography>=41.0.0
+
+# Additional security utilities
+secrets  # Built-in Python module (Python 3.6+)
+
+# For testing security components
+pytest>=7.0.0
+pytest-mock>=3.10.0

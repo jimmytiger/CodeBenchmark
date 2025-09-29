@@ -1,0 +1,570 @@
+# Milestone Baseline Configuration
+# Comprehensive configuration for major releases and thorough evaluation
+
+model_id: "candidate-model"
+task_ids:
+  # Comprehensive task suite covering all scenarios and difficulty levels
+  
+  # SWE-bench tasks (various difficulty levels)
+  - "swe_bench_lite_django_001"
+  - "swe_bench_lite_django_002"
+  - "swe_bench_lite_django_003"
+  - "swe_bench_lite_requests_001"
+  - "swe_bench_lite_requests_002"
+  - "swe_bench_lite_scikit_001"
+  - "swe_bench_lite_scikit_002"
+  
+  # InterCode tasks (all environments)
+  - "intercode_python_basic_001"
+  - "intercode_python_intermediate_001"
+  - "intercode_python_advanced_001"
+  - "intercode_bash_basic_001"
+  - "intercode_bash_intermediate_001"
+  - "intercode_sql_basic_001"
+  - "intercode_sql_intermediate_001"
+  
+  # ConvCodeBench tasks (various domains)
+  - "convcode_web_development_001"
+  - "convcode_web_development_002"
+  - "convcode_data_analysis_001"
+  - "convcode_data_analysis_002"
+  - "convcode_system_programming_001"
+  - "convcode_api_integration_001"
+  
+  # BugsInPy tasks (multiple projects)
+  - "bugs_in_py_pandas_001"
+  - "bugs_in_py_pandas_002"
+  - "bugs_in_py_numpy_001"
+  - "bugs_in_py_requests_001"
+  - "bugs_in_py_matplotlib_001"
+  
+  # Defects4J tasks (multiple projects)
+  - "defects4j_lang_001"
+  - "defects4j_lang_002"
+  - "defects4j_math_001"
+  - "defects4j_math_002"
+  - "defects4j_gson_001"
+  - "defects4j_chart_001"
+
+# Maximum evaluation parameters for thoroughness
+max_turns: 20
+timeout_seconds: 7200  # 2 hours per task
+enable_context_retention: true
+
+# Full feedback processing for maximum information
+feedback_strategy: "full"
+feedback_config:
+  context_strategy: "full"
+  max_feedback_length: 20000
+  enable_stack_summarization: true
+  enable_file_context: true
+  enable_conversation_history: true
+  top_k_assertions: 10
+  include_execution_history: true
+  include_git_diff: true
+  include_test_output: true
+  conversation_window: 15
+  
+  # Advanced processing features
+  ast_analysis: true
+  static_analysis: true
+  code_complexity_analysis: true
+  test_coverage_analysis: true
+  dependency_analysis: true
+
+# Strict safety configuration for production readiness
+safety_level: "strict"
+safety_config:
+  allowed_tools: 
+    - "python"
+    - "python3"
+    - "bash"
+    - "git"
+    - "pytest"
+    - "maven"
+    - "gradle"
+    - "npm"
+    - "node"
+    - "javac"
+    - "java"
+    - "gcc"
+    - "make"
+  
+  blocked_commands:
+    - "rm -rf /"
+    - "del /f /q"
+    - "format"
+    - "fdisk"
+    - "mkfs"
+    - "dd if="
+    - "sudo rm"
+    - "chmod 777"
+  
+  enable_sandboxing: true
+  max_execution_time: 600  # 10 minutes per command
+  
+  resource_limits:
+    memory: "8GB"
+    cpu_time: "300s"
+    disk_space: "10GB"
+    network_requests: 100
+    max_processes: 50
+  
+  # Comprehensive safety patterns
+  dangerous_patterns:
+    - "eval("
+    - "exec("
+    - "__import__"
+    - "subprocess.call"
+    - "os.system"
+    - "Runtime.getRuntime().exec"
+    - "ProcessBuilder"
+    - "System.exit"
+
+# Comprehensive termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "resource_exhaustion"
+  - "compilation_failure_limit"
+  - "test_regression"
+  - "environment_corruption"
+
+# Comprehensive export configuration
+export_config:
+  formats: ["json", "csv", "html", "pdf", "xml"]
+  include_turn_details: true
+  include_code_changes: true
+  include_test_results: true
+  include_coverage_reports: true
+  include_performance_metrics: true
+  include_safety_analysis: true
+  generate_summary_report: true
+  generate_detailed_analysis: true
+  generate_comparison_charts: true
+  generate_trend_analysis: true
+  create_executive_summary: true
+
+# Comprehensive metrics suite
+custom_metrics:
+  # Task Success Metrics
+  - name: "resolved_percentage"
+    calculator: "task_success_calculator"
+    weight: 0.15
+    description: "Percentage of tasks resolved successfully"
+  
+  - name: "recall_score"
+    calculator: "recall_calculator"
+    weight: 0.1
+    description: "Ability to identify and address all task aspects"
+  
+  - name: "mrr_score"
+    calculator: "mrr_calculator"
+    weight: 0.1
+    description: "Mean reciprocal rank of solutions"
+  
+  # Efficiency Metrics
+  - name: "avg_turns"
+    calculator: "efficiency_calculator"
+    weight: 0.08
+    description: "Average number of turns per task"
+  
+  - name: "avg_steps"
+    calculator: "steps_calculator"
+    weight: 0.07
+    description: "Average number of steps per task"
+  
+  - name: "redundancy_rate"
+    calculator: "redundancy_calculator"
+    weight: 0.05
+    description: "Rate of redundant actions"
+  
+  # Quality Metrics
+  - name: "edit_churn"
+    calculator: "edit_churn_calculator"
+    weight: 0.08
+    description: "Amount of code modification"
+  
+  - name: "files_touched"
+    calculator: "files_touched_calculator"
+    weight: 0.05
+    description: "Number of files modified"
+  
+  - name: "solution_elegance"
+    calculator: "elegance_calculator"
+    weight: 0.07
+    description: "Elegance and simplicity of solutions"
+  
+  # Robustness Metrics
+  - name: "recovery_rate"
+    calculator: "recovery_calculator"
+    weight: 0.08
+    description: "Ability to recover from errors"
+  
+  - name: "stability_score"
+    calculator: "stability_calculator"
+    weight: 0.07
+    description: "Consistency across similar tasks"
+  
+  # Cost Metrics
+  - name: "wall_time_per_solved"
+    calculator: "time_cost_calculator"
+    weight: 0.05
+    description: "Time cost per solved task"
+  
+  - name: "tokens_per_solved"
+    calculator: "token_cost_calculator"
+    weight: 0.03
+    description: "Token usage per solved task"
+  
+  - name: "cost_per_solved"
+    calculator: "monetary_cost_calculator"
+    weight: 0.02
+    description: "Monetary cost per solved task"
+
+# Comprehensive adapter configurations
+adapter_config:
+  swe_bench:
+    clone_timeout: 300
+    checkout_timeout: 120
+    test_timeout: 1800
+    setup_timeout: 900
+    patch_validation: true
+    backup_original: true
+    rollback_on_failure: true
+    full_test_suite: true
+  
+  intercode:
+    execution_timeout: 120
+    container_memory: "4GB"
+    container_cpu: "2.0"
+    preserve_state: true
+    capture_intermediate_outputs: true
+    syntax_checking: true
+  
+  convcode_bench:
+    conversation_timeout: 300
+    max_conversation_length: 50000
+    user_simulation_enabled: true
+    realistic_delays: true
+    context_compression: true
+  
+  bugs_in_py:
+    setup_timeout: 900
+    test_timeout: 1800
+    reproduction_attempts: 3
+    validate_fix: true
+    run_full_test_suite: true
+    static_analysis: true
+  
+  defects4j:
+    compile_timeout: 600
+    test_timeout: 1800
+    build_system_detection: true
+    dependency_resolution: true
+    validate_fix: true
+    static_analysis: true
+
+# Comprehensive environment configurations
+environment_configs:
+  python:
+    versions: ["3.8", "3.9", "3.10", "3.11"]
+    packages: 
+      - "numpy"
+      - "pandas"
+      - "matplotlib"
+      - "scikit-learn"
+      - "requests"
+      - "pytest"
+      - "black"
+      - "flake8"
+      - "mypy"
+    timeout_per_execution: 120
+    memory_limit: "2GB"
+  
+  java:
+    versions: ["8", "11", "17"]
+    build_tools: ["maven", "gradle", "ant"]
+    heap_size: "4G"
+    gc_algorithm: "G1GC"
+    enable_assertions: true
+  
+  javascript:
+    versions: ["14", "16", "18"]
+    package_managers: ["npm", "yarn"]
+    timeout_per_execution: 60
+  
+  bash:
+    shell: "/bin/bash"
+    timeout_per_execution: 120
+    working_directory: "/tmp/evaluation_workspace"
+
+# Metadata for milestone evaluation
+metadata:
+  baseline_type: "milestone"
+  purpose: "Comprehensive evaluation for major releases and production readiness"
+  thoroughness: "maximum"
+  test_coverage: "comprehensive"
+  
+  # Performance expectations
+  expected_execution_time: 43200  # 12 hours total
+  expected_success_rate: 0.75
+  expected_avg_turns: 12.5
+  expected_avg_cost: 15.00
+  
+  # Quality gates
+  quality_gates:
+    min_success_rate: 0.7
+    max_avg_turns: 18
+    max_execution_time: 57600  # 16 hours
+    max_cost_per_task: 25.00
+    max_safety_incidents: 0
+    min_code_quality_score: 0.8
+  
+  # Test characteristics
+  test_environment: "production_candidate"
+  automated: false  # Requires manual oversight
+  frequency: "major_releases"
+  
+  # Comprehensive coverage
+  scenario_coverage:
+    swe_bench: 7
+    intercode: 7
+    convcode_bench: 6
+    bugs_in_py: 5
+    defects4j: 6
+  
+  # Difficulty distribution
+  difficulty_distribution:
+    easy: 8
+    medium: 15
+    hard: 8
+  
+  # Language distribution
+  language_distribution:
+    python: 18
+    java: 8
+    javascript: 3
+    bash: 2
+  
+  # Expected outcomes by scenario
+  scenario_expectations:
+    swe_bench:
+      success_rate: 0.7
+      avg_turns: 10
+      avg_time: 5400
+    intercode:
+      success_rate: 0.8
+      avg_turns: 8
+      avg_time: 2700
+    convcode_bench:
+      success_rate: 0.85
+      avg_turns: 15
+      avg_time: 4500
+    bugs_in_py:
+      success_rate: 0.75
+      avg_turns: 12
+      avg_time: 6300
+    defects4j:
+      success_rate: 0.65
+      avg_turns: 14
+      avg_time: 7200
+
+# Comprehensive logging configuration
+logging:
+  level: "DEBUG"
+  include_turn_details: true
+  include_execution_logs: true
+  include_performance_metrics: true
+  include_safety_analysis: true
+  include_code_analysis: true
+  include_test_results: true
+  include_environment_details: true
+  log_file: "milestone_evaluation.log"
+  
+  # Advanced logging features
+  structured_logging: true
+  log_correlation_ids: true
+  performance_profiling: true
+  memory_profiling: true
+  
+  # Log management
+  log_rotation: true
+  max_log_size: "500MB"
+  backup_count: 10
+  compression: true
+
+# Comprehensive monitoring
+monitoring:
+  enable_real_time_updates: true
+  update_frequency: 5  # seconds
+  track_resource_usage: true
+  performance_monitoring: true
+  health_monitoring: true
+  
+  # Advanced monitoring
+  distributed_tracing: true
+  metrics_collection: true
+  anomaly_detection: true
+  predictive_analysis: true
+  
+  # Alerting system
+  alerting:
+    on_long_execution: true
+    on_high_resource_usage: true
+    on_safety_incidents: true
+    on_performance_degradation: true
+    on_quality_gate_failure: true
+    
+    # Alert thresholds
+    long_execution_threshold: 3600  # 1 hour
+    high_memory_threshold: 0.9
+    high_cpu_threshold: 0.9
+    safety_incident_threshold: 1
+
+# Comprehensive notification system
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_performance_degradation: true
+  on_quality_gate_failure: true
+  on_milestone_achievement: true
+  
+  # Multiple notification channels
+  notification_channels:
+    email:
+      recipients:
+        - "engineering-leads@company.com"
+        - "product-managers@company.com"
+        - "qa-team@company.com"
+      include_detailed_report: true
+    
+    slack:
+      webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+      channels: ["#engineering", "#releases"]
+      mention_on_failure: true
+    
+    webhook:
+      url: "https://your-webhook-url.com/milestone-notifications"
+      include_full_payload: true
+    
+    dashboard:
+      update_executive_dashboard: true
+      create_status_page: true
+
+# Quality assurance framework
+quality_assurance:
+  # Comprehensive automated checks
+  automated_checks:
+    - "syntax_validation"
+    - "security_scanning"
+    - "performance_analysis"
+    - "regression_detection"
+    - "code_quality_analysis"
+    - "test_coverage_analysis"
+    - "dependency_vulnerability_scan"
+    - "compliance_checking"
+  
+  # Validation framework
+  validation_rules:
+    - "no_critical_safety_violations"
+    - "success_rate_above_threshold"
+    - "execution_time_reasonable"
+    - "cost_within_budget"
+    - "code_quality_acceptable"
+    - "no_security_vulnerabilities"
+    - "performance_within_limits"
+  
+  # Review requirements
+  review_requirements:
+    manual_review_required: true
+    expert_review_required: true
+    stakeholder_approval_required: true
+    security_review_required: true
+    
+    # Review criteria
+    review_criteria:
+      technical_review: true
+      business_review: true
+      security_review: true
+      performance_review: true
+      cost_review: true
+
+# Performance optimization and scaling
+performance_optimization:
+  parallel_execution: true
+  max_parallel_tasks: 4
+  cache_enabled: true
+  incremental_evaluation: false  # Full evaluation for milestones
+  
+  # Advanced optimization
+  resource_management:
+    memory_monitoring: true
+    cpu_throttling: true
+    disk_cleanup: true
+    network_optimization: true
+    container_optimization: true
+  
+  # Scaling configuration
+  scaling:
+    auto_scaling: true
+    max_workers: 8
+    resource_based_scaling: true
+    queue_based_scaling: true
+
+# Integration and deployment
+integration:
+  # CI/CD integration
+  ci_cd:
+    integration_enabled: true
+    pipeline_stage: "milestone_gate"
+    failure_action: "block"  # Block deployment on failure
+    success_criteria: "comprehensive"
+    
+    # Gate conditions
+    gate_conditions:
+      - "all_quality_gates_passed"
+      - "no_critical_issues"
+      - "stakeholder_approval"
+      - "security_clearance"
+  
+  # Version control
+  version_control:
+    tag_results: true
+    commit_metadata: true
+    branch_tracking: true
+    release_notes_generation: true
+  
+  # External integrations
+  external_tools:
+    jira_integration: true
+    confluence_integration: true
+    slack_integration: true
+    dashboard_updates: true
+    metrics_export: true
+
+# Compliance and governance
+compliance:
+  # Regulatory compliance
+  regulatory:
+    gdpr_compliance: true
+    sox_compliance: true
+    hipaa_compliance: false
+    pci_compliance: false
+  
+  # Data governance
+  data_governance:
+    data_retention_policy: "2_years"
+    data_anonymization: true
+    audit_trail: true
+    access_control: true
+  
+  # Security compliance
+  security:
+    vulnerability_scanning: true
+    penetration_testing: false
+    security_audit: true
+    compliance_reporting: true

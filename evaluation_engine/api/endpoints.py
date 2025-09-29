@@ -14,6 +14,7 @@ from datetime import datetime
 from .models import *
 from .auth import AuthManager, PermissionChecker
 from .websocket import WebSocketManager
+from .config_endpoints import router as config_router
 
 logger = logging.getLogger(__name__)
 

@@ -1,0 +1,212 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: evaluation-engine-config
+  namespace: evaluation-engine
+data:
+  production.yaml: |
+    environment: production
+    debug: false
+    host: "0.0.0.0"
+    port: 8000
+    app_name: "Multi-Turn Evaluation Engine"
+    version: "1.0.0"
+    
+    database:
+      host: "postgres-service"
+      port: 5432
+      database: "evaluation_engine"
+      username: "eval_user"
+      ssl_mode: "require"
+      pool_size: 10
+      max_overflow: 20
+      pool_timeout: 30
+    
+    redis:
+      host: "redis-service"
+      port: 6379
+      database: 0
+      ssl: false
+      max_connections: 50
+      socket_timeout: 5
+      socket_connect_timeout: 5
+    
+    security:
+      jwt_expiration_hours: 24
+      api_key_header: "X-API-Key"
+      cors_origins:
+        - "https://your-domain.com"
+        - "https://api.your-domain.com"
+      rate_limit_per_minute: 100
+      max_request_size_mb: 10
+      enable_https_only: true
+    
+    performance:
+      max_concurrent_evaluations: 10
+      worker_processes: 4
+      worker_threads_per_process: 8
+      cache_size_mb: 512
+      cache_ttl_seconds: 3600
+      request_timeout_seconds: 300
+      max_memory_usage_mb: 2048
+      enable_profiling: false
+    
+    monitoring:
+      enable_metrics: true
+      metrics_port: 9090
+      health_check_interval: 30
+      log_level: "INFO"
+      log_format: "json"
+      enable_tracing: true
+      jaeger_endpoint: "http://jaeger-collector:14268"
+      prometheus_endpoint: "http://prometheus:9090"
+    
+    storage:
+      results_storage_type: "filesystem"
+      results_storage_path: "/app/results"
+      max_result_size_mb: 100
+      retention_days: 30
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: evaluation-engine
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        upstream evaluation_engine {
+            server evaluation-engine-service:8000;
+        }
+        
+        server {
+            listen 80;
+            server_name _;
+            
+            # Redirect HTTP to HTTPS
+            return 301 https://$server_name$request_uri;
+        }
+        
+        server {
+            listen 443 ssl http2;
+            server_name _;
+            
+            ssl_certificate /etc/nginx/ssl/tls.crt;
+            ssl_certificate_key /etc/nginx/ssl/tls.key;
+            ssl_protocols TLSv1.2 TLSv1.3;
+            ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+            ssl_prefer_server_ciphers off;
+            
+            client_max_body_size 10M;
+            
+            location / {
+                proxy_pass http://evaluation_engine;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_connect_timeout 60s;
+                proxy_send_timeout 60s;
+                proxy_read_timeout 60s;
+            }
+            
+            location /health {
+                proxy_pass http://evaluation_engine/health;
+                access_log off;
+            }
+            
+            location /metrics {
+                proxy_pass http://evaluation_engine/metrics;
+                allow 10.0.0.0/8;
+                allow 172.16.0.0/12;
+                allow 192.168.0.0/16;
+                deny all;
+            }
+        }
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: evaluation-engine
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+    
+    rule_files:
+      - "evaluation_engine_rules.yml"
+    
+    scrape_configs:
+      - job_name: 'evaluation-engine'
+        static_configs:
+          - targets: ['evaluation-engine-service:9090']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+      
+      - job_name: 'postgres'
+        static_configs:
+          - targets: ['postgres-exporter:9187']
+      
+      - job_name: 'redis'
+        static_configs:
+          - targets: ['redis-exporter:9121']
+      
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - evaluation-engine
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+
+  evaluation_engine_rules.yml: |
+    groups:
+      - name: evaluation_engine_alerts
+        rules:
+          - alert: HighErrorRate
+            expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.1
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High error rate detected"
+              description: "Error rate is {{ $value }} errors per second"
+          
+          - alert: HighMemoryUsage
+            expr: process_resident_memory_bytes / 1024 / 1024 > 1024
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High memory usage"
+              description: "Memory usage is {{ $value }}MB"
+          
+          - alert: ServiceDown
+            expr: up == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Service is down"
+              description: "{{ $labels.instance }} is down"

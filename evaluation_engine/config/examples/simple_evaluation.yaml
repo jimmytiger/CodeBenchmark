@@ -1,0 +1,87 @@
+# Simple Evaluation Configuration Example
+# This demonstrates basic configuration-driven evaluation
+
+metadata:
+  name: "Simple LLM Evaluation"
+  version: "1.0"
+  author: "Evaluation Team"
+  description: "Basic evaluation of language models on common benchmarks"
+
+# Variable definitions for reuse
+variables:
+  output_dir: "./results"
+  default_batch_size: 16
+  default_fewshot: 5
+
+# Model configurations
+models:
+  gpt35:
+    name: "gpt35"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.7
+      max_tokens: 1000
+    system_prompt: "You are a helpful assistant. Please answer the following question accurately."
+    prompt_template: "Question: {question}\nAnswer:"
+  
+  claude:
+    name: "claude"
+    type: "anthropic"
+    model_name: "claude-3-sonnet-20240229"
+    parameters:
+      temperature: 0.7
+      max_tokens: 1000
+    system_prompt: "You are Claude, an AI assistant. Please provide accurate and helpful responses."
+    prompt_template: "Human: {question}\n\nAssistant:"
+
+# Default configuration values
+defaults:
+  num_fewshot: "${default_fewshot}"
+  batch_size: "${default_batch_size}"
+  output:
+    format: ["json", "csv"]
+    save_predictions: true
+
+# Evaluation tasks
+tasks:
+  - name: "hellaswag_gpt35"
+    description: "HellaSwag commonsense reasoning with GPT-3.5"
+    model_ref: "gpt35"
+    task_name: "hellaswag"
+    num_fewshot: 10
+    batch_size: 8
+    depends_on: []
+
+  - name: "arc_easy_gpt35"
+    description: "ARC Easy reasoning with GPT-3.5"
+    model_ref: "gpt35"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    batch_size: 4
+    depends_on: []
+
+  - name: "hellaswag_claude"
+    description: "HellaSwag commonsense reasoning with Claude"
+    model_ref: "claude"
+    task_name: "hellaswag"
+    num_fewshot: 10
+    batch_size: 8
+    depends_on: ["hellaswag_gpt35"]  # Run after GPT-3.5 for comparison
+
+  - name: "truthfulqa_comparison"
+    description: "TruthfulQA comparison across models"
+    model_ref: "gpt35"
+    task_name: "truthfulqa_mc"
+    task_config:
+      limit: 100  # Limit to 100 samples for faster testing
+    num_fewshot: 0  # Zero-shot evaluation
+    depends_on: ["hellaswag_gpt35", "hellaswag_claude"]
+
+# Output configuration
+output:
+  directory: "${output_dir}"
+  formats: ["json", "html", "csv"]
+  include_raw_responses: true
+  generate_report: true
+  compare_models: true

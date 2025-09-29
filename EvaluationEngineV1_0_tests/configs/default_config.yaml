@@ -1,0 +1,171 @@
+# Default Configuration for EvaluationEngineV1_0 Testing Framework
+
+# General Test Configuration
+test_type: "pipeline"
+name: "Default Test Suite"
+description: "Default configuration for comprehensive testing"
+timeout: 600  # 10 minutes
+retry_count: 1
+real_execution_required: true
+
+# Target Adapters to Test
+target_adapters:
+  - "lm_eval"
+  - "swe_bench"
+
+# Task Selection Configuration
+task_selection:
+  builtin_tasks:
+    count: 2
+    types: ["single_turn", "multi_turn"]
+    difficulty: ["easy", "medium"]
+  custom_tasks:
+    enabled: true
+    directory: "lm_eval/tasks"
+    count: 1
+
+# Execution Parameters
+execution_params:
+  timeout: 300
+  verbose: true
+  parallel: false
+  max_workers: 2
+  log_level: "INFO"
+  save_artifacts: true
+
+# Output Configuration
+output_config:
+  format: "json"
+  include_logs: true
+  include_artifacts: true
+  include_performance_charts: true
+  output_directory: "test_results"
+
+# CLI Test Configuration
+cli_config:
+  tasks:
+    - "hellaswag"
+    - "arc_easy"
+  adapters:
+    - "lm_eval"
+  execution_timeout: 300
+  output_format: "json"
+  verbose: true
+  parallel_execution: false
+  max_workers: 2
+
+# API Test Configuration
+api_config:
+  server_host: "localhost"
+  server_port: 8000
+  test_endpoints:
+    - "/api/v1/evaluations"
+    - "/api/v1/tasks"
+    - "/api/v1/adapters"
+    - "/api/v1/status"
+  concurrent_requests: 5
+  timeout: 30
+  ssl_verify: false
+
+# Adapter Test Configuration
+adapter_configs:
+  lm_eval:
+    adapter_name: "lm_eval"
+    adapter_type: "lm_eval"
+    test_task_count: 2
+    dependency_check: true
+    performance_benchmark: true
+    installation_timeout: 600
+    test_timeout: 300
+    real_execution_only: true
+    custom_task_dir: "lm_eval/tasks"
+  
+  swe_bench:
+    adapter_name: "swe_bench"
+    adapter_type: "swe_bench"
+    test_task_count: 1
+    dependency_check: true
+    performance_benchmark: true
+    installation_timeout: 900  # 15 minutes for SWE-bench setup
+    test_timeout: 600  # 10 minutes per test
+    real_execution_only: true
+
+# Report Configuration
+report_config:
+  output_dir: "reports"
+  formats:
+    - "html"
+    - "json"
+    - "markdown"
+  include_logs: true
+  include_artifacts: true
+  include_performance_charts: true
+  custom_sections:
+    - "adapter_validation"
+    - "performance_analysis"
+    - "troubleshooting"
+
+# Metrics Collection Configuration
+metrics_config:
+  collection_interval: 1.0  # seconds
+  enable_system_metrics: true
+  enable_performance_profiling: true
+  memory_tracking: true
+  api_monitoring: true
+
+# Security Configuration
+security_config:
+  enable_sandboxing: true
+  resource_limits:
+    max_memory_mb: 4096
+    max_cpu_percent: 80
+    max_execution_time: 600
+  allowed_commands:
+    - "python"
+    - "pip"
+    - "git"
+    - "pytest"
+  dangerous_patterns:
+    - "rm -rf"
+    - "sudo"
+    - "chmod 777"
+
+# Logging Configuration
+logging_config:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "test_framework.log"
+  max_size_mb: 100
+  backup_count: 5
+
+# Environment Configuration
+environment_config:
+  python_version: "3.8+"
+  required_packages:
+    - "lm-eval"
+    - "datasets"
+    - "transformers"
+    - "torch"
+    - "requests"
+    - "psutil"
+    - "pyyaml"
+  optional_packages:
+    - "matplotlib"
+    - "seaborn"
+    - "jupyter"
+  
+  environment_variables:
+    PYTHONPATH: "."
+    TOKENIZERS_PARALLELISM: "false"
+  
+  working_directory: "."
+  temp_directory: "/tmp/evaluation_tests"
+
+# Test Data Configuration
+test_data_config:
+  use_sample_data: false  # Use real data for validation
+  sample_size: 10  # When using sample data
+  data_sources:
+    - "huggingface"
+    - "local_files"
+  cache_directory: ".cache/test_data"

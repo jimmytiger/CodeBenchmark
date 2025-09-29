@@ -1,0 +1,77 @@
+# Basic evaluation configuration example
+metadata:
+  name: "Basic LLM Evaluation"
+  version: "1.0"
+  author: "Evaluation Team"
+  description: "Basic configuration demonstrating config-driven evaluation"
+
+# Define reusable variables
+variables:
+  output_dir: "./results"
+  default_batch_size: 32
+
+# Model configurations
+models:
+  gpt35:
+    name: "gpt35"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.7
+      max_tokens: 1000
+    system_prompt: "You are a helpful assistant. Please answer the following question accurately."
+    prompt_template: "Question: {question}\nAnswer:"
+  
+  claude:
+    name: "claude"
+    type: "anthropic"
+    model_name: "claude-3-sonnet-20240229"
+    parameters:
+      temperature: 0.7
+      max_tokens: 1000
+    system_prompt: "You are Claude, an AI assistant. Please provide accurate and helpful responses."
+    prompt_template: "Human: {question}\n\nAssistant:"
+
+# Default configuration values
+defaults:
+  num_fewshot: 5
+  batch_size: "${default_batch_size}"
+  output:
+    format: ["json", "csv"]
+    save_predictions: true
+
+# Evaluation tasks
+tasks:
+  - name: "hellaswag_gpt35"
+    description: "HellaSwag commonsense reasoning with GPT-3.5"
+    model_ref: "gpt35"
+    task_name: "hellaswag"
+    num_fewshot: 10
+    batch_size: 16
+    depends_on: []
+
+  - name: "arc_easy_claude"
+    description: "ARC Easy reasoning with Claude"
+    model_ref: "claude"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    batch_size: 8
+    depends_on: []
+
+  - name: "gsm8k_comparison"
+    description: "GSM8K math reasoning comparison"
+    model_ref: "gpt35"
+    task_name: "gsm8k"
+    task_config:
+      limit: 100  # Limit test samples for faster evaluation
+    num_fewshot: 5
+    batch_size: 4
+    depends_on: ["hellaswag_gpt35"]
+
+# Output configuration
+output:
+  directory: "${output_dir}"
+  formats: ["json", "html", "csv"]
+  include_raw_responses: true
+  generate_report: true
+  compare_models: true

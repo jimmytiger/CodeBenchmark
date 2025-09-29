@@ -1,0 +1,264 @@
+# Mid-Fidelity Baseline Configuration
+# Balanced configuration for regular testing and development
+
+model_id: "production-model"
+task_ids:
+  # Representative sample across all scenarios
+  - "swe_bench_lite_django_001"
+  - "swe_bench_lite_requests_001"
+  - "intercode_python_intermediate_001"
+  - "intercode_bash_basic_001"
+  - "convcode_web_development_001"
+  - "convcode_data_analysis_001"
+  - "bugs_in_py_pandas_001"
+  - "defects4j_lang_001"
+
+# Moderate evaluation parameters
+max_turns: 10
+timeout_seconds: 3600  # 1 hour per task
+enable_context_retention: true
+
+# Adaptive feedback processing
+feedback_strategy: "adaptive"
+feedback_config:
+  context_strategy: "adaptive"
+  max_feedback_length: 10000
+  enable_stack_summarization: true
+  enable_file_context: true
+  top_k_assertions: 5
+  include_execution_history: true
+
+# Standard safety configuration
+safety_level: "moderate"
+safety_config:
+  allowed_tools: ["python", "bash", "git", "pytest", "maven", "npm"]
+  enable_sandboxing: true
+  max_execution_time: 300
+  resource_limits:
+    memory: "4GB"
+    cpu_time: "180s"
+    disk_space: "2GB"
+    network_requests: 50
+
+# Standard termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "resource_exhaustion"
+
+# Comprehensive export configuration
+export_config:
+  formats: ["json", "csv", "html"]
+  include_turn_details: true
+  include_code_changes: true
+  generate_summary_report: true
+  generate_performance_analysis: true
+
+# Balanced metrics suite
+custom_metrics:
+  - name: "task_success_rate"
+    calculator: "task_success_calculator"
+    weight: 0.3
+    description: "Overall task completion rate"
+  
+  - name: "efficiency_score"
+    calculator: "efficiency_calculator"
+    weight: 0.25
+    description: "Turn and time efficiency"
+  
+  - name: "code_quality_score"
+    calculator: "code_quality_calculator"
+    weight: 0.2
+    description: "Quality of generated/modified code"
+  
+  - name: "safety_compliance"
+    calculator: "safety_calculator"
+    weight: 0.15
+    description: "Safety and security compliance"
+  
+  - name: "cost_efficiency"
+    calculator: "cost_calculator"
+    weight: 0.1
+    description: "Token and time cost efficiency"
+
+# Standard adapter configurations
+adapter_config:
+  swe_bench:
+    clone_timeout: 180
+    test_timeout: 900
+    setup_timeout: 300
+  
+  intercode:
+    execution_timeout: 60
+    container_memory: "2GB"
+  
+  convcode_bench:
+    conversation_timeout: 180
+    max_conversation_length: 20000
+  
+  bugs_in_py:
+    setup_timeout: 600
+    test_timeout: 900
+  
+  defects4j:
+    compile_timeout: 300
+    test_timeout: 1200
+
+# Environment-specific configurations
+environment_configs:
+  python:
+    version: "3.9"
+    packages: ["numpy", "pandas", "requests", "pytest"]
+    timeout_per_execution: 60
+  
+  java:
+    version: "11"
+    build_tool: "maven"
+    heap_size: "2G"
+  
+  javascript:
+    version: "16"
+    package_manager: "npm"
+
+# Metadata for mid-fidelity testing
+metadata:
+  baseline_type: "mid_fidelity"
+  purpose: "Balanced evaluation for regular testing and development"
+  sample_size: "medium"
+  test_coverage: "representative"
+  
+  # Performance expectations
+  expected_execution_time: 7200  # 2 hours total
+  expected_success_rate: 0.7
+  expected_avg_turns: 6.5
+  expected_avg_cost: 2.50
+  
+  # Quality thresholds
+  quality_thresholds:
+    min_success_rate: 0.6
+    max_avg_turns: 12
+    max_execution_time: 10800  # 3 hours
+    max_cost_per_task: 5.00
+  
+  # Test characteristics
+  test_environment: "development"
+  automated: true
+  frequency: "daily"
+  
+  # Scenario distribution
+  scenario_distribution:
+    swe_bench: 2
+    intercode: 2
+    convcode_bench: 2
+    bugs_in_py: 1
+    defects4j: 1
+  
+  # Difficulty distribution
+  difficulty_distribution:
+    easy: 2
+    medium: 4
+    hard: 2
+
+# Logging configuration
+logging:
+  level: "INFO"
+  include_turn_details: true
+  include_execution_logs: true
+  include_performance_metrics: true
+  log_file: "mid_fidelity_evaluation.log"
+  
+  # Rotation settings
+  log_rotation: true
+  max_log_size: "100MB"
+  backup_count: 5
+
+# Monitoring configuration
+monitoring:
+  enable_real_time_updates: true
+  update_frequency: 10  # seconds
+  track_resource_usage: true
+  performance_monitoring: true
+  
+  # Alerting
+  alerting:
+    on_long_execution: true
+    on_high_resource_usage: true
+    on_safety_incidents: true
+    long_execution_threshold: 1800  # 30 minutes
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_performance_degradation: true
+  
+  # Notification channels
+  email_recipients:
+    - "dev-team@company.com"
+  webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+  
+  # Notification conditions
+  notification_conditions:
+    success_rate_below: 0.6
+    execution_time_above: 10800
+    safety_incidents_above: 0
+
+# Quality assurance
+quality_assurance:
+  # Automated checks
+  automated_checks:
+    - "syntax_validation"
+    - "security_scanning"
+    - "performance_analysis"
+    - "regression_detection"
+  
+  # Validation rules
+  validation_rules:
+    - "no_critical_safety_violations"
+    - "success_rate_within_threshold"
+    - "execution_time_reasonable"
+    - "cost_within_budget"
+  
+  # Review requirements
+  review_requirements:
+    manual_review_threshold: 0.5  # Manual review if success rate below 50%
+    expert_review_required: false
+    automated_approval: true
+
+# Performance optimization
+performance_optimization:
+  parallel_execution: true
+  max_parallel_tasks: 2
+  cache_enabled: true
+  incremental_evaluation: true
+  
+  # Resource management
+  resource_management:
+    memory_monitoring: true
+    cpu_throttling: true
+    disk_cleanup: true
+    network_optimization: true
+
+# Integration settings
+integration:
+  # CI/CD integration
+  ci_cd:
+    integration_enabled: true
+    pipeline_stage: "test"
+    failure_action: "warn"  # Don't block deployment
+    success_criteria: "basic"
+  
+  # Version control
+  version_control:
+    tag_results: true
+    commit_metadata: true
+    branch_tracking: true
+  
+  # External tools
+  external_tools:
+    jira_integration: false
+    slack_integration: true
+    dashboard_updates: true

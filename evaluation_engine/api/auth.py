@@ -10,7 +10,7 @@ import bcrypt
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, List
 import logging
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import secrets
 import hashlib

@@ -1,0 +1,306 @@
+# Advanced Test Configuration for EvaluationEngineV1_0 Testing Framework
+# This configuration provides comprehensive testing with advanced features
+
+# General Test Configuration
+test_type: "comprehensive"
+name: "Advanced Test Configuration"
+description: "Comprehensive configuration for advanced testing scenarios with full feature coverage"
+timeout: 1800  # 30 minutes
+retry_count: 3
+real_execution_required: true
+
+# Target Adapters to Test
+target_adapters:
+  - "lm_eval"
+  - "swe_bench"
+
+# Task Selection Configuration
+task_selection:
+  builtin_tasks:
+    count: 5
+    tasks: ["hellaswag", "arc_easy", "arc_challenge", "winogrande", "piqa"]
+    types: ["single_turn", "multi_turn"]
+    difficulty: ["easy", "medium", "hard"]
+  custom_tasks:
+    enabled: true
+    directory: "lm_eval/tasks"
+    count: 3
+    patterns: ["*.yaml", "*.json"]
+    exclude_patterns: ["*test*", "*debug*"]
+
+# Execution Parameters
+execution_params:
+  timeout: 900  # 15 minutes per test
+  verbose: true
+  parallel: true
+  max_workers: 4
+  log_level: "DEBUG"
+  save_artifacts: true
+  limit: 20  # Larger sample size for comprehensive testing
+  batch_size: 5
+  checkpoint_interval: 100
+
+# Output Configuration
+output_config:
+  format: "json"
+  include_logs: true
+  include_artifacts: true
+  include_performance_charts: true
+  include_debug_info: true
+  output_directory: "test_results/advanced"
+  compression: "gzip"
+  retention_days: 30
+
+# CLI Test Configuration
+cli_config:
+  tasks:
+    - "hellaswag"
+    - "arc_easy"
+    - "arc_challenge"
+    - "winogrande"
+    - "piqa"
+  adapters:
+    - "lm_eval"
+    - "swe_bench"
+  execution_timeout: 900
+  output_format: "json"
+  verbose: true
+  parallel_execution: true
+  max_workers: 4
+  limit: 20
+  batch_processing: true
+  checkpoint_enabled: true
+
+# API Test Configuration
+api_config:
+  server_host: "localhost"
+  server_port: 8000
+  test_endpoints:
+    - "/health"
+    - "/api/v1/tasks"
+    - "/api/v1/adapters"
+    - "/api/v1/evaluations"
+    - "/api/v1/status"
+    - "/api/v1/metrics"
+  concurrent_requests: 10
+  timeout: 60
+  ssl_verify: false
+  rate_limiting:
+    requests_per_second: 5
+    burst_size: 10
+  authentication:
+    enabled: false
+    type: "bearer"
+    token: null
+
+# Adapter Test Configuration
+adapter_configs:
+  lm_eval:
+    adapter_name: "lm_eval"
+    adapter_type: "lm_eval"
+    test_task_count: 5
+    dependency_check: true
+    performance_benchmark: true
+    installation_timeout: 600
+    test_timeout: 900
+    real_execution_only: true
+    custom_task_dir: "lm_eval/tasks"
+    advanced_features:
+      few_shot_testing: true
+      batch_processing: true
+      caching: true
+      model_parallelism: false
+    
+  swe_bench:
+    adapter_name: "swe_bench"
+    adapter_type: "swe_bench"
+    test_task_count: 2
+    dependency_check: true
+    performance_benchmark: true
+    installation_timeout: 1200  # 20 minutes for complex setup
+    test_timeout: 1800  # 30 minutes per test
+    real_execution_only: true
+    environment_setup: true
+    advanced_features:
+      docker_isolation: true
+      resource_monitoring: true
+      artifact_collection: true
+
+# Report Configuration
+report_config:
+  output_dir: "reports/advanced"
+  formats:
+    - "html"
+    - "json"
+    - "markdown"
+    - "pdf"
+  include_logs: true
+  include_artifacts: true
+  include_performance_charts: true
+  include_comparison_charts: true
+  custom_sections:
+    - "adapter_validation"
+    - "performance_analysis"
+    - "resource_utilization"
+    - "error_analysis"
+    - "troubleshooting"
+    - "recommendations"
+  template_customization:
+    theme: "professional"
+    logo: null
+    custom_css: null
+
+# Metrics Collection Configuration
+metrics_config:
+  collection_interval: 0.5  # High frequency for detailed monitoring
+  enable_system_metrics: true
+  enable_performance_profiling: true
+  memory_tracking: true
+  api_monitoring: true
+  custom_metrics:
+    - "token_throughput"
+    - "model_latency"
+    - "cache_hit_rate"
+    - "error_rate"
+  aggregation_intervals:
+    - "1m"
+    - "5m"
+    - "15m"
+    - "1h"
+  retention_period: "7d"
+
+# Security Configuration
+security_config:
+  enable_sandboxing: true
+  resource_limits:
+    max_memory_mb: 8192
+    max_cpu_percent: 90
+    max_execution_time: 1800
+    max_disk_usage_mb: 10240
+    max_network_connections: 100
+  allowed_commands:
+    - "python"
+    - "pip"
+    - "git"
+    - "pytest"
+    - "docker"
+  dangerous_patterns:
+    - "rm -rf"
+    - "sudo"
+    - "chmod 777"
+    - "wget"
+    - "curl"
+  network_restrictions:
+    allowed_domains:
+      - "huggingface.co"
+      - "github.com"
+      - "pypi.org"
+    blocked_ips: []
+
+# Logging Configuration
+logging_config:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
+  file: "advanced_test.log"
+  max_size_mb: 200
+  backup_count: 10
+  structured_logging: true
+  log_rotation: "daily"
+  remote_logging:
+    enabled: false
+    endpoint: null
+    api_key: null
+
+# Environment Configuration
+environment_config:
+  python_version: "3.8+"
+  required_packages:
+    - "lm-eval>=0.4.0"
+    - "datasets>=2.0.0"
+    - "transformers>=4.20.0"
+    - "torch>=1.12.0"
+    - "requests>=2.28.0"
+    - "psutil>=5.9.0"
+    - "pyyaml>=6.0"
+    - "numpy>=1.21.0"
+    - "pandas>=1.5.0"
+  optional_packages:
+    - "matplotlib>=3.5.0"
+    - "seaborn>=0.11.0"
+    - "jupyter>=1.0.0"
+    - "plotly>=5.0.0"
+    - "docker>=6.0.0"
+  
+  environment_variables:
+    PYTHONPATH: "."
+    TOKENIZERS_PARALLELISM: "false"
+    CUDA_VISIBLE_DEVICES: "0"
+    HF_DATASETS_CACHE: ".cache/huggingface/datasets"
+    TRANSFORMERS_CACHE: ".cache/huggingface/transformers"
+  
+  working_directory: "."
+  temp_directory: "/tmp/advanced_evaluation_tests"
+  cleanup_on_exit: true
+
+# Test Data Configuration
+test_data_config:
+  use_sample_data: false  # Use full datasets
+  sample_size: 100  # Larger sample for comprehensive testing
+  data_sources:
+    - "huggingface"
+    - "local_files"
+    - "remote_urls"
+  cache_directory: ".cache/advanced_test_data"
+  data_validation: true
+  preprocessing:
+    enabled: true
+    steps:
+      - "tokenization"
+      - "normalization"
+      - "filtering"
+
+# Performance Optimization
+performance_config:
+  enable_caching: true
+  cache_directory: ".cache/performance"
+  parallel_processing: true
+  batch_optimization: true
+  memory_optimization: true
+  gpu_acceleration: false  # Set to true if GPU available
+  model_quantization: false
+  
+# Monitoring and Alerting
+monitoring_config:
+  enabled: true
+  metrics_endpoint: "http://localhost:9090"
+  alert_thresholds:
+    memory_usage_percent: 85
+    cpu_usage_percent: 90
+    execution_time_minutes: 25
+    error_rate_percent: 10
+  notification_channels:
+    - "console"
+    - "file"
+
+# Integration Configuration
+integration_config:
+  ci_cd:
+    enabled: false
+    platform: "github_actions"
+    config_file: ".github/workflows/test.yml"
+  
+  external_services:
+    wandb:
+      enabled: false
+      project: "evaluation-engine-tests"
+      api_key: null
+    
+    mlflow:
+      enabled: false
+      tracking_uri: "http://localhost:5000"
+      experiment_name: "evaluation-tests"
+
+# Example Usage:
+# CLI: python -m cli.cli_test_runner --config examples/configs/advanced_test_config.yaml
+# API: Use this config for comprehensive API testing with all features
+# CI/CD: Suitable for automated testing pipelines with full validation

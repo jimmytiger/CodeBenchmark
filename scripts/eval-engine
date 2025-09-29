@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+"""
+Evaluation Engine CLI Tool
+
+This script provides the eval-engine command-line interface.
+"""
+
+import sys
+import os
+
+# Add the parent directory to the path so we can import evaluation_engine
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from evaluation_engine.cli.config_cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())

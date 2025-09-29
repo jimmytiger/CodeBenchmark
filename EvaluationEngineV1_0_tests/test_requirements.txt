@@ -1,0 +1,87 @@
+# Test dependencies for comprehensive test suite
+
+# Core testing framework
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0  # For parallel test execution
+pytest-json-report>=1.5.0  # For JSON test reports
+pytest-benchmark>=4.0.0  # For performance benchmarking
+
+# HTTP testing
+requests>=2.28.0
+responses>=0.23.0  # For mocking HTTP requests
+httpretty>=1.1.4  # Alternative HTTP mocking
+
+# System monitoring and performance
+psutil>=5.9.0  # For system resource monitoring
+memory-profiler>=0.60.0  # For memory profiling
+
+# Data handling and validation
+pydantic>=1.10.0  # For data validation
+jsonschema>=4.17.0  # For JSON schema validation
+PyYAML>=6.0  # For YAML configuration files
+
+# Async testing support
+aiohttp>=3.8.0  # For async HTTP testing
+asyncio-mqtt>=0.13.0  # For async MQTT testing (if needed)
+
+# Mock and test utilities
+factory-boy>=3.2.0  # For test data factories
+faker>=18.0.0  # For generating fake test data
+freezegun>=1.2.0  # For mocking time in tests
+
+# CLI testing
+click-testing>=0.1.0  # For testing CLI applications
+typer>=0.7.0  # If using typer for CLI
+
+# Database testing (if needed)
+pytest-postgresql>=4.1.0  # For PostgreSQL testing
+pytest-redis>=3.0.0  # For Redis testing
+
+# Logging and debugging
+pytest-logging>=2016.11.4  # Enhanced logging for tests
+pytest-html>=3.1.0  # HTML test reports
+
+# Code quality and coverage
+coverage>=7.0.0
+pytest-flake8>=1.1.0  # Code style checking
+pytest-mypy>=0.10.0  # Type checking
+
+# Parallel and distributed testing
+pytest-parallel>=0.1.0  # Alternative parallel execution
+pytest-xvfb>=3.0.0  # For GUI testing (if needed)
+
+# Security testing
+bandit>=1.7.0  # Security linting
+safety>=2.3.0  # Dependency vulnerability checking
+
+# Performance and load testing
+locust>=2.14.0  # For load testing APIs
+pytest-timeout>=2.1.0  # For test timeouts
+
+# Documentation testing
+pytest-doctest>=0.0.1  # For testing documentation examples
+
+# Environment and configuration
+python-dotenv>=1.0.0  # For environment variable management
+pytest-env>=0.8.0  # For setting test environment variables
+
+# Reporting and visualization
+pytest-json>=0.4.0  # Additional JSON reporting
+pytest-metadata>=3.0.0  # Test metadata collection
+
+# Development and debugging
+pytest-pdb>=0.2.0  # PDB integration
+pytest-sugar>=0.9.0  # Better test output formatting
+pytest-clarity>=1.0.0  # Better assertion output
+
+# Optional: Machine learning testing (if needed for model evaluation)
+# scikit-learn>=1.2.0
+# numpy>=1.24.0
+# pandas>=1.5.0
+
+# Optional: Docker testing (if needed)
+# docker>=6.0.0
+# testcontainers>=3.7.0

@@ -1,0 +1,848 @@
+openapi: 3.0.3
+info:
+  title: Multi-Turn Evaluation Engine API
+  description: |
+    REST API for the Multi-Turn Evaluation Engine, providing comprehensive endpoints for 
+    creating, monitoring, and managing multi-turn evaluations across various benchmark scenarios.
+    
+    ## Features
+    - Multi-turn evaluation orchestration
+    - Real-time progress monitoring via WebSocket
+    - Support for multiple benchmark adapters (SWE-bench, InterCode, ConvCodeBench, etc.)
+    - Comprehensive metrics collection and analysis
+    - Safety controls and incident monitoring
+    - Backward compatibility with existing lm-eval tasks
+    
+    ## Authentication
+    All endpoints require Bearer token authentication. Contact your administrator for API tokens.
+    
+    ## Rate Limits
+    - Standard users: 100 requests per minute
+    - Admin users: 1000 requests per minute
+    
+    ## WebSocket Support
+    Real-time updates are available via WebSocket connections at `/ws/multi-turn/{evaluation_id}`
+  version: 1.0.0
+  contact:
+    name: Multi-Turn Evaluation Engine Support
+    email: support@evaluation-engine.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development server
+  - url: https://api.evaluation-engine.com/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /multi-turn/evaluations:
+    post:
+      summary: Create Multi-Turn Evaluation
+      description: |
+        Create a new multi-turn evaluation with specified model, tasks, and configuration.
+        The evaluation will be queued and executed asynchronously.
+      operationId: createMultiTurnEvaluation
+      tags:
+        - Multi-Turn Evaluation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiTurnEvaluationRequest'
+            examples:
+              basic_evaluation:
+                summary: Basic multi-turn evaluation
+                value:
+                  model_id: "gpt-4"
+                  task_ids: ["swe_bench_lite_001", "intercode_python_001"]
+                  max_turns: 10
+                  timeout_seconds: 3600
+                  feedback_strategy: "adaptive"
+                  safety_level: "moderate"
+                  enable_context_retention: true
+              advanced_evaluation:
+                summary: Advanced evaluation with custom config
+                value:
+                  model_id: "claude-3-sonnet"
+                  task_ids: ["convcode_bench_001", "bugs_in_py_001"]
+                  max_turns: 15
+                  timeout_seconds: 7200
+                  feedback_strategy: "full"
+                  safety_level: "strict"
+                  enable_context_retention: true
+                  metadata:
+                    experiment_name: "advanced_debugging_test"
+                    researcher: "john.doe@company.com"
+      responses:
+        '201':
+          description: Evaluation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiTurnEvaluationResponse'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Authentication required
+        '403':
+          description: Insufficient permissions
+        '429':
+          description: Rate limit exceeded
+
+    get:
+      summary: List Multi-Turn Evaluations
+      description: |
+        List multi-turn evaluations with pagination and filtering options.
+        Users can only see their own evaluations unless they have admin privileges.
+      operationId: listMultiTurnEvaluations
+      tags:
+        - Multi-Turn Evaluation
+      parameters:
+        - name: page
+          in: query
+          description: Page number (1-based)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: status
+          in: query
+          description: Filter by evaluation status
+          schema:
+            $ref: '#/components/schemas/MultiTurnEvaluationStatus'
+        - name: model_id
+          in: query
+          description: Filter by model ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of evaluations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /multi-turn/evaluations/{evaluation_id}/status:
+    get:
+      summary: Get Evaluation Status
+      description: |
+        Get detailed status information for a specific multi-turn evaluation,
+        including progress, current task, and performance metrics.
+      operationId: getEvaluationStatus
+      tags:
+        - Multi-Turn Evaluation
+      parameters:
+        - name: evaluation_id
+          in: path
+          required: true
+          description: Unique evaluation identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Evaluation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiTurnEvaluationStatusResponse'
+        '404':
+          description: Evaluation not found
+
+  /multi-turn/evaluations/{evaluation_id}/results:
+    get:
+      summary: Get Evaluation Results
+      description: |
+        Get complete results for a finished multi-turn evaluation,
+        including task results, metrics, and analysis.
+      operationId: getEvaluationResults
+      tags:
+        - Multi-Turn Evaluation
+      parameters:
+        - name: evaluation_id
+          in: path
+          required: true
+          description: Unique evaluation identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Evaluation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiTurnEvaluationResults'
+        '400':
+          description: Evaluation not completed
+        '404':
+          description: Evaluation not found
+
+  /multi-turn/evaluations/{evaluation_id}/control:
+    post:
+      summary: Control Evaluation
+      description: |
+        Control a running evaluation with actions like pause, resume, cancel, or terminate.
+        Some actions may require admin privileges.
+      operationId: controlEvaluation
+      tags:
+        - Multi-Turn Evaluation
+      parameters:
+        - name: evaluation_id
+          in: path
+          required: true
+          description: Unique evaluation identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationControlRequest'
+      responses:
+        '200':
+          description: Control action executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  evaluation_id:
+                    type: string
+                  new_status:
+                    $ref: '#/components/schemas/MultiTurnEvaluationStatus'
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid control action
+        '404':
+          description: Evaluation not found
+
+  /multi-turn/evaluations/{evaluation_id}:
+    delete:
+      summary: Delete Evaluation (Admin Only)
+      description: |
+        Delete a completed evaluation and its associated data.
+        This action is irreversible and requires admin privileges.
+      operationId: deleteEvaluation
+      tags:
+        - Administration
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: evaluation_id
+          in: path
+          required: true
+          description: Unique evaluation identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Evaluation deleted successfully
+        '400':
+          description: Cannot delete active evaluation
+        '403':
+          description: Admin privileges required
+        '404':
+          description: Evaluation not found
+
+  /multi-turn/orchestrator/status:
+    get:
+      summary: Get Orchestrator Status
+      description: |
+        Get current status and metrics for the multi-turn orchestrator,
+        including active evaluations, resource usage, and system health.
+      operationId: getOrchestratorStatus
+      tags:
+        - Monitoring
+      responses:
+        '200':
+          description: Orchestrator status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrchestratorStatus'
+
+  /multi-turn/metrics/snapshot:
+    get:
+      summary: Get Metrics Snapshot
+      description: |
+        Get current metrics snapshot for system monitoring and analysis.
+        Can be filtered to specific evaluation or aggregated across all evaluations.
+      operationId: getMetricsSnapshot
+      tags:
+        - Monitoring
+      parameters:
+        - name: evaluation_id
+          in: query
+          description: Get metrics for specific evaluation (optional)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metrics snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsSnapshot'
+
+  /multi-turn/system/cleanup:
+    post:
+      summary: System Cleanup (Admin Only)
+      description: |
+        Clean up old evaluations and system data.
+        This helps maintain system performance and storage efficiency.
+      operationId: cleanupSystem
+      tags:
+        - Administration
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: older_than_days
+          in: query
+          description: Delete evaluations older than N days
+          schema:
+            type: integer
+            minimum: 1
+            default: 7
+      responses:
+        '200':
+          description: Cleanup completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  deleted_count:
+                    type: integer
+                  cutoff_date:
+                    type: string
+                    format: date-time
+                  cleaned_at:
+                    type: string
+                    format: date-time
+        '403':
+          description: Admin privileges required
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    MultiTurnEvaluationStatus:
+      type: string
+      enum:
+        - created
+        - initializing
+        - running
+        - paused
+        - completed
+        - failed
+        - cancelled
+        - terminated
+      description: Current status of the multi-turn evaluation
+
+    TerminationReason:
+      type: string
+      enum:
+        - success
+        - max_turns
+        - timeout
+        - safety_violation
+        - error
+        - user_cancelled
+      description: Reason why the evaluation terminated
+
+    FeedbackStrategy:
+      type: string
+      enum:
+        - full
+        - adaptive
+        - minimal
+        - top_k
+      description: Strategy for processing feedback between turns
+
+    SafetyLevel:
+      type: string
+      enum:
+        - strict
+        - moderate
+        - permissive
+      description: Level of safety enforcement during evaluation
+
+    MultiTurnEvaluationRequest:
+      type: object
+      required:
+        - model_id
+        - task_ids
+      properties:
+        model_id:
+          type: string
+          description: ID of the model to evaluate
+          example: "gpt-4"
+        task_ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: List of multi-turn task IDs to execute
+          example: ["swe_bench_lite_001", "intercode_python_001"]
+        max_turns:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+          description: Maximum number of turns per task
+        timeout_seconds:
+          type: integer
+          minimum: 60
+          maximum: 86400
+          default: 3600
+          description: Evaluation timeout in seconds
+        feedback_strategy:
+          $ref: '#/components/schemas/FeedbackStrategy'
+        safety_level:
+          $ref: '#/components/schemas/SafetyLevel'
+        enable_context_retention:
+          type: boolean
+          default: true
+          description: Enable context retention between turns
+        configuration:
+          type: object
+          description: Additional configuration parameters
+        metadata:
+          type: object
+          description: Evaluation metadata for tracking and analysis
+
+    MultiTurnEvaluationResponse:
+      type: object
+      required:
+        - evaluation_id
+        - status
+        - message
+        - created_at
+        - websocket_url
+      properties:
+        evaluation_id:
+          type: string
+          description: Unique evaluation identifier
+          example: "mt_eval_20241201_143022_user123"
+        status:
+          $ref: '#/components/schemas/MultiTurnEvaluationStatus'
+        message:
+          type: string
+          description: Response message
+          example: "Multi-turn evaluation created successfully"
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        estimated_duration:
+          type: integer
+          description: Estimated duration in seconds
+          example: 1800
+        websocket_url:
+          type: string
+          description: WebSocket URL for real-time updates
+          example: "/ws/multi-turn/mt_eval_20241201_143022_user123"
+
+    MultiTurnEvaluationStatusResponse:
+      type: object
+      required:
+        - evaluation_id
+        - status
+        - progress
+        - completed_tasks
+        - total_tasks
+        - safety_incidents
+        - total_turns_executed
+      properties:
+        evaluation_id:
+          type: string
+          description: Evaluation identifier
+        status:
+          $ref: '#/components/schemas/MultiTurnEvaluationStatus'
+        progress:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Progress percentage (0.0 to 1.0)
+        current_task:
+          type: string
+          nullable: true
+          description: Currently executing task ID
+        current_turn:
+          type: integer
+          nullable: true
+          description: Current turn number
+        completed_tasks:
+          type: integer
+          description: Number of completed tasks
+        total_tasks:
+          type: integer
+          description: Total number of tasks
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+          description: Evaluation start time
+        estimated_completion:
+          type: string
+          format: date-time
+          nullable: true
+          description: Estimated completion time
+        error_message:
+          type: string
+          nullable: true
+          description: Error message if failed
+        safety_incidents:
+          type: integer
+          description: Number of safety incidents
+        total_turns_executed:
+          type: integer
+          description: Total turns executed across all tasks
+
+    TurnResult:
+      type: object
+      required:
+        - turn_number
+        - action
+        - observation
+        - reward
+        - done
+        - info
+        - processed_feedback
+        - execution_time
+        - tokens_used
+        - cost
+      properties:
+        turn_number:
+          type: integer
+          description: Turn number
+        action:
+          type: object
+          description: Executed action
+        observation:
+          type: object
+          description: Environment observation
+        reward:
+          type: number
+          description: Turn reward
+        done:
+          type: boolean
+          description: Whether task is complete
+        info:
+          type: object
+          description: Additional information
+        processed_feedback:
+          type: object
+          description: Processed feedback
+        execution_time:
+          type: number
+          description: Turn execution time in seconds
+        tokens_used:
+          type: integer
+          description: Tokens used in this turn
+        cost:
+          type: number
+          description: Cost for this turn
+        safety_violations:
+          type: array
+          items:
+            type: string
+          description: Safety violations detected
+
+    MultiTurnTaskResult:
+      type: object
+      required:
+        - task_id
+        - status
+        - success
+        - total_turns
+        - turn_results
+        - termination_reason
+        - final_metrics
+        - execution_time
+        - total_tokens
+        - total_cost
+      properties:
+        task_id:
+          type: string
+          description: Task identifier
+        status:
+          type: string
+          description: Task completion status
+        success:
+          type: boolean
+          description: Whether task was completed successfully
+        total_turns:
+          type: integer
+          description: Total number of turns executed
+        turn_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TurnResult'
+          description: Results for each turn
+        termination_reason:
+          $ref: '#/components/schemas/TerminationReason'
+        final_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Final task metrics
+        execution_time:
+          type: number
+          description: Total task execution time in seconds
+        total_tokens:
+          type: integer
+          description: Total tokens used
+        total_cost:
+          type: number
+          description: Total cost
+
+    MultiTurnEvaluationResults:
+      type: object
+      required:
+        - evaluation_id
+        - model_id
+        - task_results
+        - aggregated_metrics
+        - overall_success_rate
+        - average_turns_per_task
+        - total_execution_time
+        - total_tokens
+        - total_cost
+        - safety_summary
+        - completed_at
+      properties:
+        evaluation_id:
+          type: string
+          description: Evaluation identifier
+        model_id:
+          type: string
+          description: Model identifier
+        task_results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultiTurnTaskResult'
+          description: Results for each task
+        aggregated_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Aggregated metrics across all tasks
+        overall_success_rate:
+          type: number
+          description: Overall success rate (0.0 to 1.0)
+        average_turns_per_task:
+          type: number
+          description: Average turns per task
+        total_execution_time:
+          type: number
+          description: Total execution time in seconds
+        total_tokens:
+          type: integer
+          description: Total tokens used
+        total_cost:
+          type: number
+          description: Total cost
+        safety_summary:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Safety incidents summary
+        completed_at:
+          type: string
+          format: date-time
+          description: Completion timestamp
+
+    EvaluationControlRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - pause
+            - resume
+            - cancel
+            - terminate
+          description: Control action to perform
+        reason:
+          type: string
+          description: Reason for the action
+
+    OrchestratorStatus:
+      type: object
+      required:
+        - active_evaluations
+        - queued_evaluations
+        - total_evaluations_today
+        - average_execution_time
+        - resource_usage
+        - safety_incidents_today
+      properties:
+        active_evaluations:
+          type: integer
+          description: Number of active evaluations
+        queued_evaluations:
+          type: integer
+          description: Number of queued evaluations
+        total_evaluations_today:
+          type: integer
+          description: Total evaluations started today
+        average_execution_time:
+          type: number
+          description: Average execution time in seconds
+        resource_usage:
+          type: object
+          additionalProperties:
+            type: number
+          description: Current resource usage percentages
+        safety_incidents_today:
+          type: integer
+          description: Safety incidents today
+
+    MetricsSnapshot:
+      type: object
+      required:
+        - timestamp
+        - task_success_metrics
+        - efficiency_metrics
+        - repair_quality_metrics
+        - robustness_metrics
+        - cost_metrics
+        - safety_metrics
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Snapshot timestamp
+        task_success_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Task success metrics (resolved_percentage, recall, mrr)
+        efficiency_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Efficiency metrics (avg_turns, avg_steps, redundancy_rate)
+        repair_quality_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Repair quality metrics (edit_churn, files_touched)
+        robustness_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Robustness metrics (recovery_rate, stability_score)
+        cost_metrics:
+          type: object
+          additionalProperties:
+            type: number
+          description: Cost metrics (wall_time_per_solved, tokens_per_solved, cost_per_solved)
+        safety_metrics:
+          type: object
+          additionalProperties:
+            type: integer
+          description: Safety metrics (safety_incidents, policy_violations)
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+        evaluation_id:
+          type: string
+          nullable: true
+          description: Related evaluation ID
+        turn_number:
+          type: integer
+          nullable: true
+          description: Related turn number
+
+    PaginatedResponse:
+      type: object
+      required:
+        - items
+        - total
+        - page
+        - page_size
+        - has_next
+        - has_previous
+      properties:
+        items:
+          type: array
+          items: {}
+          description: Response items
+        total:
+          type: integer
+          description: Total number of items
+        page:
+          type: integer
+          description: Current page number
+        page_size:
+          type: integer
+          description: Items per page
+        has_next:
+          type: boolean
+          description: Whether there are more pages
+        has_previous:
+          type: boolean
+          description: Whether there are previous pages
+
+tags:
+  - name: Multi-Turn Evaluation
+    description: Core multi-turn evaluation operations
+  - name: Monitoring
+    description: System monitoring and metrics
+  - name: Administration
+    description: Administrative operations (admin only)
+
+externalDocs:
+  description: Multi-Turn Evaluation Engine Documentation
+  url: https://docs.evaluation-engine.com

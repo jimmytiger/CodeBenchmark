@@ -1,0 +1,289 @@
+# Complex Task Dependencies Configuration Example
+# This demonstrates advanced task dependency management and execution ordering
+
+metadata:
+  name: "Complex Task Dependencies Evaluation"
+  version: "1.0"
+  author: "Advanced Evaluation Team"
+  description: "Demonstrates complex task dependency chains and conditional execution patterns"
+
+# Advanced variable system with nested references
+variables:
+  # Environment configuration
+  base_dir: "${env:HOME}/evaluations"
+  project_name: "complex_deps_eval"
+  timestamp: "20240115"
+  output_root: "${base_dir}/${project_name}_${timestamp}"
+  
+  # Execution parameters
+  quick_test_limit: 50
+  standard_test_limit: 200
+  comprehensive_test_limit: 500
+  
+  # Model-specific batch sizes
+  gpt4_batch_size: 2      # Expensive model, small batches
+  gpt35_batch_size: 8     # Balanced
+  claude_batch_size: 4    # Medium batches
+  
+  # Task-specific parameters
+  reasoning_fewshot: 10
+  math_fewshot: 8
+  code_fewshot: 3
+  safety_fewshot: 0       # Zero-shot for safety tasks
+
+# Model configurations with different capabilities
+models:
+  # Primary reasoning model
+  gpt4_reasoning:
+    name: "gpt4_reasoning"
+    type: "openai"
+    model_name: "gpt-4"
+    parameters:
+      temperature: 0.1
+      max_tokens: 2000
+    system_prompt: "You are an expert reasoning assistant. Think step by step and provide clear, logical answers."
+    prompt_template: "Problem: {question}\n\nLet me think through this step by step:\n\nAnswer:"
+
+  # Fast execution model
+  gpt35_fast:
+    name: "gpt35_fast"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.2
+      max_tokens: 1500
+    system_prompt: "You are a helpful assistant. Provide quick and accurate responses."
+    prompt_template: "Q: {question}\nA:"
+
+  # Code-specialized model
+  gpt4_code:
+    name: "gpt4_code"
+    type: "openai"
+    model_name: "gpt-4"
+    parameters:
+      temperature: 0.0  # Deterministic for code
+      max_tokens: 2500
+    system_prompt: "You are an expert programmer. Write clean, efficient, and well-documented code."
+    prompt_template: "Code task: {question}\n\n```python\n"
+
+  # Safety-focused model
+  claude_safety:
+    name: "claude_safety"
+    type: "anthropic"
+    model_name: "claude-3-opus-20240229"
+    parameters:
+      temperature: 0.1
+      max_tokens: 2000
+    system_prompt: "You are Claude, focused on providing safe, helpful, and honest responses. Be especially careful about harmful content."
+    prompt_template: "Human: {question}\n\nAssistant: I'll provide a safe and helpful response:\n\n"
+
+# Default configuration
+defaults:
+  num_fewshot: 5
+  batch_size: 4
+  output:
+    format: ["json"]
+    save_predictions: true
+
+# Complex task dependency structure
+tasks:
+  # === FOUNDATION LAYER (No dependencies) ===
+  - name: "foundation_quick_test"
+    description: "Quick foundation test to verify system"
+    model_ref: "gpt35_fast"
+    task_name: "piqa"  # Simple physical reasoning
+    num_fewshot: 3
+    batch_size: "${gpt35_batch_size}"
+    task_config:
+      limit: "${quick_test_limit}"
+    depends_on: []
+
+  - name: "foundation_reasoning_check"
+    description: "Foundation reasoning capability check"
+    model_ref: "gpt4_reasoning"
+    task_name: "hellaswag"
+    num_fewshot: "${reasoning_fewshot}"
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${quick_test_limit}"
+    depends_on: []
+
+  # === BASIC CAPABILITY LAYER (Depends on foundation) ===
+  - name: "basic_commonsense"
+    description: "Basic commonsense reasoning evaluation"
+    model_ref: "gpt35_fast"
+    task_name: "hellaswag"
+    num_fewshot: "${reasoning_fewshot}"
+    batch_size: "${gpt35_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+    depends_on: ["foundation_quick_test"]
+
+  - name: "basic_reading_comprehension"
+    description: "Basic reading comprehension test"
+    model_ref: "gpt35_fast"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    batch_size: "${gpt35_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+    depends_on: ["foundation_quick_test"]
+
+  - name: "basic_math_simple"
+    description: "Basic arithmetic and simple math"
+    model_ref: "gpt35_fast"
+    task_name: "gsm8k"
+    num_fewshot: "${math_fewshot}"
+    batch_size: "${gpt35_batch_size}"
+    task_config:
+      limit: 100  # Smaller for basic math
+    depends_on: ["foundation_reasoning_check"]
+
+  # === INTERMEDIATE LAYER (Depends on basic capabilities) ===
+  - name: "intermediate_reasoning"
+    description: "Advanced reasoning with GPT-4"
+    model_ref: "gpt4_reasoning"
+    task_name: "arc_challenge"
+    num_fewshot: 25
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+    depends_on: ["basic_commonsense", "basic_reading_comprehension"]
+
+  - name: "intermediate_math_complex"
+    description: "Complex mathematical reasoning"
+    model_ref: "gpt4_reasoning"
+    task_name: "gsm8k"
+    num_fewshot: "${math_fewshot}"
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+      temperature: 0.0  # Deterministic for math
+    depends_on: ["basic_math_simple"]
+
+  - name: "intermediate_code_basic"
+    description: "Basic code generation and understanding"
+    model_ref: "gpt4_code"
+    task_name: "humaneval"
+    num_fewshot: "${code_fewshot}"
+    batch_size: 1  # Code generation needs batch_size=1
+    task_config:
+      limit: 50  # Smaller subset for intermediate
+      temperature: 0.1
+    depends_on: ["basic_reading_comprehension"]
+
+  # === ADVANCED LAYER (Depends on intermediate) ===
+  - name: "advanced_reasoning_synthesis"
+    description: "Advanced reasoning requiring synthesis"
+    model_ref: "gpt4_reasoning"
+    task_name: "winogrande"
+    num_fewshot: "${reasoning_fewshot}"
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${comprehensive_test_limit}"
+    depends_on: ["intermediate_reasoning", "intermediate_math_complex"]
+
+  - name: "advanced_code_generation"
+    description: "Advanced code generation tasks"
+    model_ref: "gpt4_code"
+    task_name: "humaneval"
+    num_fewshot: "${code_fewshot}"
+    batch_size: 1
+    task_config:
+      limit: 164  # Full HumanEval dataset
+      temperature: 0.2
+    depends_on: ["intermediate_code_basic", "intermediate_reasoning"]
+
+  - name: "advanced_safety_evaluation"
+    description: "Safety and truthfulness evaluation"
+    model_ref: "claude_safety"
+    task_name: "truthfulqa_mc"
+    num_fewshot: "${safety_fewshot}"  # Zero-shot for safety
+    batch_size: "${claude_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+    depends_on: ["intermediate_reasoning"]
+
+  # === SPECIALIZED EVALUATION LAYER ===
+  - name: "specialized_domain_science"
+    description: "Specialized scientific reasoning"
+    model_ref: "gpt4_reasoning"
+    task_name: "arc_challenge"
+    num_fewshot: 25
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${comprehensive_test_limit}"
+    depends_on: ["advanced_reasoning_synthesis"]
+
+  - name: "specialized_domain_ethics"
+    description: "Specialized ethical reasoning"
+    model_ref: "claude_safety"
+    task_name: "truthfulqa_mc"
+    num_fewshot: 0
+    batch_size: "${claude_batch_size}"
+    task_config:
+      limit: "${comprehensive_test_limit}"
+    depends_on: ["advanced_safety_evaluation"]
+
+  # === INTEGRATION LAYER (Multiple dependencies) ===
+  - name: "integration_cross_domain"
+    description: "Cross-domain integration test"
+    model_ref: "gpt4_reasoning"
+    task_name: "piqa"
+    num_fewshot: 10
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${standard_test_limit}"
+    depends_on: [
+      "advanced_code_generation",
+      "specialized_domain_science",
+      "specialized_domain_ethics"
+    ]
+
+  - name: "integration_performance_validation"
+    description: "Performance validation across all domains"
+    model_ref: "gpt35_fast"
+    task_name: "hellaswag"
+    num_fewshot: 5
+    batch_size: "${gpt35_batch_size}"
+    task_config:
+      limit: "${quick_test_limit}"
+    depends_on: [
+      "integration_cross_domain"
+    ]
+
+  # === FINAL COMPREHENSIVE LAYER ===
+  - name: "final_comprehensive_evaluation"
+    description: "Final comprehensive evaluation combining all previous results"
+    model_ref: "gpt4_reasoning"
+    task_name: "arc_easy"  # Use a reliable task for final validation
+    num_fewshot: 25
+    batch_size: "${gpt4_batch_size}"
+    task_config:
+      limit: "${comprehensive_test_limit}"
+    depends_on: [
+      "integration_cross_domain",
+      "integration_performance_validation"
+    ]
+
+# Advanced output configuration
+output:
+  directory: "${output_root}"
+  formats: ["json", "html", "csv", "yaml"]
+  include_raw_responses: true
+  generate_report: true
+  compare_models: true
+  
+  # Advanced reporting options
+  dependency_graph: true      # Generate task dependency visualization
+  execution_timeline: true    # Track execution timing
+  resource_usage: true        # Monitor resource consumption
+  
+  # Custom report sections
+  report_sections:
+    - "executive_summary"
+    - "dependency_analysis"
+    - "performance_metrics"
+    - "model_comparison"
+    - "task_progression"
+    - "recommendations"

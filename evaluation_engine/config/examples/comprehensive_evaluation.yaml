@@ -1,0 +1,240 @@
+# Comprehensive Evaluation Configuration Example
+# This demonstrates advanced configuration-driven evaluation features
+
+metadata:
+  name: "Comprehensive LLM Evaluation Suite"
+  version: "2.0"
+  author: "AI Research Team"
+  description: "Comprehensive evaluation suite covering multiple domains and model types"
+  created_at: "2024-01-15"
+
+# Environment and variable definitions
+variables:
+  # Output configuration
+  base_output_dir: "${env:EVAL_OUTPUT_DIR}"  # Use environment variable
+  timestamp: "20240115"
+  output_dir: "${base_output_dir}/eval_${timestamp}"
+  
+  # Model configuration
+  openai_api_key: "${env:OPENAI_API_KEY}"
+  anthropic_api_key: "${env:ANTHROPIC_API_KEY}"
+  
+  # Evaluation parameters
+  standard_fewshot: 5
+  reasoning_fewshot: 10
+  code_fewshot: 3
+  batch_size_small: 4
+  batch_size_medium: 8
+  batch_size_large: 16
+
+# Model configurations with different types and capabilities
+models:
+  # OpenAI models
+  gpt4:
+    name: "gpt4"
+    type: "openai"
+    model_name: "gpt-4"
+    parameters:
+      temperature: 0.1  # Low temperature for consistency
+      max_tokens: 2000
+      top_p: 0.95
+    system_prompt: "You are GPT-4, a large language model. Answer questions accurately and concisely."
+    prompt_template: "Question: {question}\n\nAnswer:"
+  
+  gpt35_turbo:
+    name: "gpt35_turbo"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.2
+      max_tokens: 1500
+    system_prompt: "You are a helpful AI assistant. Provide accurate and helpful responses."
+    prompt_template: "Q: {question}\nA:"
+  
+  # Anthropic models
+  claude_opus:
+    name: "claude_opus"
+    type: "anthropic"
+    model_name: "claude-3-opus-20240229"
+    parameters:
+      temperature: 0.1
+      max_tokens: 2000
+    system_prompt: "You are Claude, an AI assistant created by Anthropic. Be helpful, harmless, and honest."
+    prompt_template: "Human: {question}\n\nAssistant:"
+  
+  claude_sonnet:
+    name: "claude_sonnet"
+    type: "anthropic"
+    model_name: "claude-3-sonnet-20240229"
+    parameters:
+      temperature: 0.2
+      max_tokens: 1500
+    system_prompt: "You are Claude, an AI assistant. Provide thoughtful and accurate responses."
+    prompt_template: "Human: {question}\n\nAssistant:"
+  
+  # Hugging Face model example
+  llama2_7b:
+    name: "llama2_7b"
+    type: "huggingface"
+    model_name: "meta-llama/Llama-2-7b-chat-hf"
+    parameters:
+      temperature: 0.3
+      max_tokens: 1000
+      do_sample: true
+    system_prompt: "You are a helpful, respectful and honest assistant."
+    prompt_template: "[INST] {question} [/INST]"
+
+# Default configuration
+defaults:
+  num_fewshot: "${standard_fewshot}"
+  batch_size: "${batch_size_medium}"
+  output:
+    format: ["json", "csv"]
+    save_predictions: true
+
+# Comprehensive task suite organized by domain
+tasks:
+  # === REASONING TASKS ===
+  - name: "hellaswag_gpt4"
+    description: "HellaSwag commonsense reasoning - GPT-4"
+    model_ref: "gpt4"
+    task_name: "hellaswag"
+    num_fewshot: "${reasoning_fewshot}"
+    batch_size: "${batch_size_small}"
+    depends_on: []
+  
+  - name: "hellaswag_claude_opus"
+    description: "HellaSwag commonsense reasoning - Claude Opus"
+    model_ref: "claude_opus"
+    task_name: "hellaswag"
+    num_fewshot: "${reasoning_fewshot}"
+    batch_size: "${batch_size_small}"
+    depends_on: []
+  
+  - name: "arc_easy_comparison"
+    description: "ARC Easy reasoning comparison"
+    model_ref: "gpt35_turbo"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    batch_size: "${batch_size_medium}"
+    depends_on: ["hellaswag_gpt4"]
+  
+  - name: "arc_challenge_advanced"
+    description: "ARC Challenge - Advanced reasoning"
+    model_ref: "gpt4"
+    task_name: "arc_challenge"
+    num_fewshot: 25
+    batch_size: "${batch_size_small}"
+    task_config:
+      limit: 500  # Limit for faster evaluation
+    depends_on: ["arc_easy_comparison"]
+  
+  # === MATH AND LOGIC ===
+  - name: "gsm8k_math_gpt4"
+    description: "GSM8K math word problems - GPT-4"
+    model_ref: "gpt4"
+    task_name: "gsm8k"
+    num_fewshot: 8
+    batch_size: "${batch_size_small}"
+    task_config:
+      limit: 1000
+      temperature: 0.1  # Very low temperature for math
+    depends_on: []
+  
+  - name: "gsm8k_math_claude"
+    description: "GSM8K math word problems - Claude"
+    model_ref: "claude_sonnet"
+    task_name: "gsm8k"
+    num_fewshot: 8
+    batch_size: "${batch_size_small}"
+    task_config:
+      limit: 1000
+      temperature: 0.1
+    depends_on: ["gsm8k_math_gpt4"]
+  
+  # === CODE GENERATION ===
+  - name: "humaneval_code_gpt4"
+    description: "HumanEval code generation - GPT-4"
+    model_ref: "gpt4"
+    task_name: "humaneval"
+    num_fewshot: "${code_fewshot}"
+    batch_size: 1  # Code generation typically needs batch_size=1
+    task_config:
+      limit: 164  # Full HumanEval dataset
+      temperature: 0.2
+    depends_on: ["gsm8k_math_gpt4"]
+  
+  - name: "humaneval_code_claude"
+    description: "HumanEval code generation - Claude"
+    model_ref: "claude_opus"
+    task_name: "humaneval"
+    num_fewshot: "${code_fewshot}"
+    batch_size: 1
+    task_config:
+      limit: 164
+      temperature: 0.2
+    depends_on: ["humaneval_code_gpt4"]
+  
+  # === TRUTHFULNESS AND SAFETY ===
+  - name: "truthfulqa_gpt4"
+    description: "TruthfulQA - GPT-4 truthfulness"
+    model_ref: "gpt4"
+    task_name: "truthfulqa_mc"
+    num_fewshot: 0  # Zero-shot for truthfulness
+    batch_size: "${batch_size_medium}"
+    task_config:
+      limit: 817  # Full TruthfulQA dataset
+    depends_on: ["humaneval_code_gpt4"]
+  
+  - name: "truthfulqa_claude"
+    description: "TruthfulQA - Claude truthfulness"
+    model_ref: "claude_opus"
+    task_name: "truthfulqa_mc"
+    num_fewshot: 0
+    batch_size: "${batch_size_medium}"
+    task_config:
+      limit: 817
+    depends_on: ["truthfulqa_gpt4"]
+  
+  # === MULTI-MODEL COMPARISON TASKS ===
+  - name: "winogrande_comparison_gpt35"
+    description: "Winogrande comparison - GPT-3.5"
+    model_ref: "gpt35_turbo"
+    task_name: "winogrande"
+    num_fewshot: "${standard_fewshot}"
+    batch_size: "${batch_size_large}"
+    depends_on: ["truthfulqa_claude"]
+  
+  - name: "winogrande_comparison_llama"
+    description: "Winogrande comparison - Llama2"
+    model_ref: "llama2_7b"
+    task_name: "winogrande"
+    num_fewshot: "${standard_fewshot}"
+    batch_size: "${batch_size_medium}"
+    depends_on: ["winogrande_comparison_gpt35"]
+  
+  # === FINAL COMPREHENSIVE TASK ===
+  - name: "comprehensive_summary"
+    description: "Final summary task across all models"
+    model_ref: "gpt4"
+    task_name: "piqa"  # Physical interaction QA
+    num_fewshot: "${standard_fewshot}"
+    batch_size: "${batch_size_medium}"
+    task_config:
+      limit: 1000
+    depends_on: [
+      "hellaswag_claude_opus",
+      "arc_challenge_advanced", 
+      "gsm8k_math_claude",
+      "humaneval_code_claude",
+      "truthfulqa_claude",
+      "winogrande_comparison_llama"
+    ]
+
+# Output configuration with comprehensive reporting
+output:
+  directory: "${output_dir}"
+  formats: ["json", "html", "csv", "yaml"]
+  include_raw_responses: true
+  generate_report: true
+  compare_models: true

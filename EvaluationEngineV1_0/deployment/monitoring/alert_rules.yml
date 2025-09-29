@@ -1,0 +1,294 @@
+groups:
+  - name: evaluation_engine_alerts
+    rules:
+      # High-level service availability
+      - alert: EvaluationEngineDown
+        expr: up{job="evaluation-engine-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: evaluation-engine
+        annotations:
+          summary: "Evaluation Engine API is down"
+          description: "Evaluation Engine API has been down for more than 1 minute"
+          runbook_url: "https://docs.evaluation-engine.com/runbooks/service-down"
+
+      - alert: EvaluationWorkerDown
+        expr: up{job="evaluation-engine-workers"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "Evaluation Worker is down"
+          description: "Evaluation Worker {{ $labels.instance }} has been down for more than 2 minutes"
+
+      # Performance and latency alerts
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="evaluation-engine-api"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s for the last 5 minutes"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{job="evaluation-engine-api",status=~"5.."}[5m]) / rate(http_requests_total{job="evaluation-engine-api"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+
+      - alert: CriticalErrorRate
+        expr: rate(http_requests_total{job="evaluation-engine-api",status=~"5.."}[5m]) / rate(http_requests_total{job="evaluation-engine-api"}[5m]) > 0.10
+        for: 2m
+        labels:
+          severity: critical
+          service: evaluation-engine
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 2 minutes"
+
+      # Resource utilization alerts
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total{job="evaluation-engine-api"}[5m]) * 100 > 80
+        for: 10m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value }}% for instance {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes{job="evaluation-engine-api"} / 1024 / 1024 > 2048
+        for: 10m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value }}MB for instance {{ $labels.instance }}"
+
+      - alert: CriticalMemoryUsage
+        expr: process_resident_memory_bytes{job="evaluation-engine-api"} / 1024 / 1024 > 3072
+        for: 5m
+        labels:
+          severity: critical
+          service: evaluation-engine
+        annotations:
+          summary: "Critical memory usage"
+          description: "Memory usage is {{ $value }}MB for instance {{ $labels.instance }}"
+
+      # Evaluation-specific alerts
+      - alert: HighEvaluationFailureRate
+        expr: rate(evaluation_failures_total[5m]) / rate(evaluation_attempts_total[5m]) > 0.10
+        for: 5m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High evaluation failure rate"
+          description: "Evaluation failure rate is {{ $value | humanizePercentage }}"
+
+      - alert: LongRunningEvaluations
+        expr: evaluation_duration_seconds{quantile="0.95"} > 300
+        for: 10m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "Long running evaluations detected"
+          description: "95th percentile evaluation duration is {{ $value }}s"
+
+      - alert: EvaluationQueueBacklog
+        expr: evaluation_queue_size > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "Large evaluation queue backlog"
+          description: "Evaluation queue has {{ $value }} pending items"
+
+      - alert: CriticalEvaluationQueueBacklog
+        expr: evaluation_queue_size > 500
+        for: 2m
+        labels:
+          severity: critical
+          service: evaluation-engine
+        annotations:
+          summary: "Critical evaluation queue backlog"
+          description: "Evaluation queue has {{ $value }} pending items"
+
+      # Cache performance alerts
+      - alert: LowCacheHitRate
+        expr: cache_hit_rate < 0.5
+        for: 10m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "Low cache hit rate"
+          description: "Cache hit rate is {{ $value | humanizePercentage }}"
+
+      - alert: CacheMemoryHigh
+        expr: cache_memory_usage_bytes / 1024 / 1024 > 400
+        for: 10m
+        labels:
+          severity: warning
+          service: evaluation-engine
+        annotations:
+          summary: "High cache memory usage"
+          description: "Cache is using {{ $value }}MB of memory"
+
+  - name: database_alerts
+    rules:
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 1 minute"
+
+      - alert: PostgreSQLHighConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "PostgreSQL high connection usage"
+          description: "PostgreSQL is using {{ $value | humanizePercentage }} of max connections"
+
+      - alert: PostgreSQLSlowQueries
+        expr: rate(pg_stat_database_tup_returned[5m]) / rate(pg_stat_database_tup_fetched[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "PostgreSQL slow queries detected"
+          description: "Query efficiency is {{ $value | humanizePercentage }}"
+
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: cache
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been down for more than 1 minute"
+
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "Redis high memory usage"
+          description: "Redis is using {{ $value | humanizePercentage }} of max memory"
+
+  - name: infrastructure_alerts
+    rules:
+      - alert: KubernetesNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+        annotations:
+          summary: "Kubernetes node not ready"
+          description: "Node {{ $labels.node }} has been not ready for more than 5 minutes"
+
+      - alert: KubernetesPodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "Pod is crash looping"
+          description: "Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping"
+
+      - alert: KubernetesPodNotReady
+        expr: kube_pod_status_ready{condition="true"} == 0
+        for: 10m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "Pod not ready"
+          description: "Pod {{ $labels.namespace }}/{{ $labels.pod }} has been not ready for more than 10 minutes"
+
+      - alert: KubernetesDeploymentReplicasMismatch
+        expr: kube_deployment_spec_replicas != kube_deployment_status_available_replicas
+        for: 10m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "Deployment replicas mismatch"
+          description: "Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has {{ $labels.spec_replicas }} desired but {{ $labels.available_replicas }} available replicas"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "High disk usage"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+      - alert: CriticalDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          service: infrastructure
+        annotations:
+          summary: "Critical disk usage"
+          description: "Disk usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+
+  - name: security_alerts
+    rules:
+      - alert: UnauthorizedAPIAccess
+        expr: rate(http_requests_total{status="401"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "High rate of unauthorized API access"
+          description: "{{ $value }} unauthorized requests per second"
+
+      - alert: SuspiciousAPIActivity
+        expr: rate(http_requests_total{status="403"}[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Suspicious API activity detected"
+          description: "{{ $value }} forbidden requests per second"
+
+      - alert: SecurityViolation
+        expr: increase(security_violations_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          service: security
+        annotations:
+          summary: "Security violation detected"
+          description: "{{ $value }} security violations in the last 5 minutes"

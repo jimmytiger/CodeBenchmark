@@ -1,0 +1,109 @@
+# Regression Testing Baseline Configuration
+# Minimal configuration for ensuring no performance degradation
+
+model_id: "baseline-model"
+task_ids:
+  # Small representative sample for quick regression testing
+  - "swe_bench_lite_simple_001"
+  - "intercode_python_basic_001"
+  - "convcode_basic_001"
+
+# Minimal evaluation parameters for speed
+max_turns: 5
+timeout_seconds: 1800  # 30 minutes total
+enable_context_retention: true
+
+# Minimal feedback processing for speed
+feedback_strategy: "minimal"
+feedback_config:
+  context_strategy: "minimal"
+  max_feedback_length: 2000
+  enable_stack_summarization: false
+  enable_file_context: false
+  top_k_assertions: 2
+
+# Standard safety configuration
+safety_level: "moderate"
+safety_config:
+  allowed_tools: ["python", "bash", "git"]
+  enable_sandboxing: true
+  max_execution_time: 120
+  resource_limits:
+    memory: "2GB"
+    cpu_time: "60s"
+    disk_space: "1GB"
+
+# Simple termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+
+# Basic export configuration
+export_config:
+  formats: ["json"]
+  include_turn_details: false
+  generate_summary_report: true
+
+# Core metrics only
+custom_metrics:
+  - name: "basic_success_rate"
+    calculator: "basic_success_calculator"
+    weight: 0.6
+    description: "Basic task completion rate"
+  
+  - name: "basic_efficiency"
+    calculator: "basic_efficiency_calculator"
+    weight: 0.4
+    description: "Basic efficiency metrics"
+
+# Minimal adapter configuration
+adapter_config:
+  # Fast setup, minimal validation
+  quick_setup: true
+  minimal_validation: true
+  skip_optional_checks: true
+
+# Metadata for regression tracking
+metadata:
+  baseline_type: "regression"
+  purpose: "Ensure no performance degradation between versions"
+  comparison_baseline: "previous_version"
+  test_type: "smoke_test"
+  
+  # Performance expectations
+  expected_execution_time: 1800  # 30 minutes
+  expected_success_rate: 0.8
+  expected_avg_turns: 3.5
+  
+  # Regression thresholds
+  regression_thresholds:
+    success_rate_drop: 0.1  # Alert if success rate drops by more than 10%
+    execution_time_increase: 0.2  # Alert if execution time increases by more than 20%
+    turn_count_increase: 0.15  # Alert if average turns increase by more than 15%
+  
+  # Test environment
+  test_environment: "ci_cd"
+  automated: true
+  frequency: "on_every_commit"
+
+# Logging configuration - minimal for speed
+logging:
+  level: "WARNING"
+  include_turn_details: false
+  include_execution_logs: false
+  log_file: "regression_test.log"
+
+# No notifications for regression tests
+notifications:
+  on_completion: false
+  on_failure: true  # Only notify on failures
+  on_safety_incident: true
+
+# Performance optimization
+performance_optimization:
+  parallel_execution: false  # Keep simple for regression
+  cache_enabled: true
+  skip_optional_validations: true
+  fast_mode: true

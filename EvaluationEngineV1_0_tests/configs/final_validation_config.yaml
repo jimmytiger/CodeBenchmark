@@ -1,0 +1,280 @@
+# Final Integration and Validation Configuration
+# This configuration defines all parameters for comprehensive end-to-end validation
+
+validation:
+  # Overall validation settings
+  run_cli_tests: true
+  run_api_tests: true
+  run_adapter_tests: true
+  run_pipeline_tests: true
+  run_performance_tests: true
+  validate_documentation: true
+  timeout_seconds: 1800  # 30 minutes total timeout
+  parallel_execution: true
+  generate_detailed_reports: true
+  
+  # Real execution validation
+  enforce_real_execution: true
+  validate_no_mocks: true
+  check_actual_api_calls: true
+  verify_resource_consumption: true
+
+# CLI Testing Configuration
+cli_tests:
+  # Test categories to run
+  test_builtin_tasks: true
+  test_custom_tasks: true
+  test_error_handling: true
+  test_configuration_variations: true
+  test_real_execution: true
+  
+  # Specific tests
+  builtin_tasks:
+    - "hellaswag"
+    - "arc_easy"
+  
+  custom_task_directories:
+    - "lm_eval/tasks"
+    - "custom_tasks"
+  
+  configuration_tests:
+    - basic_config
+    - advanced_config
+    - minimal_config
+    - error_config
+  
+  timeout_per_test: 300  # 5 minutes per CLI test
+
+# API Testing Configuration
+api_tests:
+  # Server configuration
+  server_host: "localhost"
+  server_port: 8080
+  startup_timeout: 30
+  
+  # Test categories
+  test_endpoints: true
+  test_async_operations: true
+  test_curl_commands: true
+  test_concurrent_requests: true
+  test_error_responses: true
+  
+  # Endpoint tests
+  endpoints_to_test:
+    - "/api/v1/evaluations"
+    - "/api/v1/evaluations/{id}/status"
+    - "/api/v1/evaluations/{id}/results"
+    - "/api/v1/tasks"
+    - "/api/v1/adapters"
+    - "/api/v1/health"
+  
+  # Concurrency tests
+  concurrent_requests: 5
+  max_concurrent_evaluations: 3
+  
+  timeout_per_test: 180  # 3 minutes per API test
+
+# Adapter Testing Configuration
+adapter_tests:
+  # Adapters to test
+  test_lm_eval: true
+  test_swe_bench: true
+  validate_real_execution: true
+  install_dependencies: true
+  
+  # LM Eval adapter tests
+  lm_eval:
+    test_builtin_tasks: true
+    test_custom_tasks: true
+    builtin_tasks_to_test:
+      - "hellaswag"
+    custom_task_directories:
+      - "lm_eval/tasks"
+    dependency_check: true
+    integration_test: true
+  
+  # SWE-bench adapter tests
+  swe_bench:
+    test_software_tasks: true
+    environment_setup: true
+    dependency_installation: true
+    tasks_to_test: 1  # Test at least one task
+    integration_test: true
+  
+  timeout_per_adapter: 600  # 10 minutes per adapter
+
+# Pipeline Testing Configuration
+pipeline_tests:
+  # Pipeline components to test
+  test_configuration_validation: true
+  test_complete_pipeline: true
+  test_report_generation: true
+  test_metrics_collection: true
+  test_error_handling: true
+  test_result_storage: true
+  
+  # Test configurations
+  test_configurations:
+    - name: "basic_pipeline"
+      tasks: ["hellaswag"]
+      adapters: ["lm_eval"]
+    - name: "multi_adapter_pipeline"
+      tasks: ["hellaswag"]
+      adapters: ["lm_eval", "swe_bench"]
+  
+  timeout_per_pipeline: 900  # 15 minutes per pipeline test
+
+# Performance Testing Configuration
+performance_tests:
+  # Performance benchmarks
+  run_benchmarks: true
+  measure_execution_time: true
+  measure_memory_usage: true
+  measure_api_response_time: true
+  
+  # Performance thresholds
+  max_cli_execution_time: 300  # 5 minutes
+  max_api_response_time: 30    # 30 seconds
+  max_memory_usage_mb: 2048    # 2GB
+  
+  # Load testing
+  concurrent_cli_tests: 2
+  concurrent_api_requests: 5
+
+# Documentation Validation Configuration
+documentation_tests:
+  # Documentation to validate
+  validate_usage_guide: true
+  validate_api_docs: true
+  validate_examples: true
+  validate_troubleshooting: true
+  
+  # Required documentation files
+  required_files:
+    - "docs/usage.md"
+    - "docs/api_specification.md"
+    - "docs/troubleshooting_guide.md"
+    - "docs/developer_guide.md"
+    - "README.md"
+  
+  # Required sections in usage.md
+  required_usage_sections:
+    - "Installation"
+    - "Quick Start"
+    - "CLI Usage"
+    - "API Usage"
+    - "Examples"
+    - "Troubleshooting"
+  
+  # Required API endpoints in documentation
+  required_api_endpoints:
+    - "/api/v1/evaluations"
+    - "/api/v1/tasks"
+    - "/api/v1/adapters"
+  
+  # Example validation
+  validate_cli_examples: true
+  validate_api_examples: true
+  validate_curl_examples: true
+  run_example_syntax_check: true
+
+# Error Handling and Recovery Configuration
+error_handling:
+  # Error handling tests
+  test_configuration_errors: true
+  test_dependency_errors: true
+  test_execution_errors: true
+  test_validation_errors: true
+  test_integration_errors: true
+  
+  # Recovery mechanisms
+  enable_retry_logic: true
+  max_retries: 3
+  retry_delay_seconds: 5
+  
+  # Error reporting
+  detailed_error_logging: true
+  capture_stack_traces: true
+  generate_error_reports: true
+
+# Security and Safety Configuration
+security_tests:
+  # Security validations
+  validate_sandboxed_execution: true
+  validate_resource_limits: true
+  validate_command_validation: true
+  validate_api_security: true
+  
+  # Resource limits
+  max_execution_time: 1800  # 30 minutes
+  max_memory_usage: 4096    # 4GB
+  max_disk_usage: 10240     # 10GB
+  
+  # API security
+  test_authentication: false  # Set to true if auth is implemented
+  test_rate_limiting: false   # Set to true if rate limiting is implemented
+  validate_input_sanitization: true
+
+# Reporting Configuration
+reporting:
+  # Report generation
+  generate_json_report: true
+  generate_markdown_report: true
+  generate_html_report: false
+  
+  # Report content
+  include_detailed_results: true
+  include_performance_metrics: true
+  include_requirements_coverage: true
+  include_component_analysis: true
+  include_recommendations: true
+  
+  # Report locations
+  json_report_path: "final_integration_validation_report.json"
+  markdown_report_path: "FINAL_INTEGRATION_VALIDATION_REPORT.md"
+  html_report_path: "final_validation_report.html"
+  
+  # Log configuration
+  log_level: "INFO"
+  log_file: "final_validation.log"
+  detailed_logging: true
+
+# Requirements Coverage Configuration
+requirements_coverage:
+  # Requirements to validate
+  validate_all_requirements: true
+  
+  # Requirement categories
+  cli_requirements: ["1.1", "1.2", "1.3", "1.4", "1.5", "1.6"]
+  api_requirements: ["2.1", "2.2", "2.3", "2.4", "2.5", "2.6"]
+  adapter_requirements: ["3.1", "3.2", "3.3", "3.4", "3.5", "3.6"]
+  pipeline_requirements: ["4.1", "4.2", "4.3", "4.4", "4.5", "4.6"]
+  structure_requirements: ["5.1", "5.2", "5.3", "5.4", "5.5", "5.6"]
+  execution_requirements: ["6.1", "6.2", "6.3", "6.4", "6.5", "6.6"]
+  custom_task_requirements: ["7.1", "7.2", "7.3", "7.4", "7.5", "7.6"]
+  documentation_requirements: ["8.1", "8.2", "8.3", "8.4", "8.5", "8.6"]
+  
+  # Coverage thresholds
+  minimum_coverage_percentage: 95
+  fail_on_uncovered_requirements: true
+
+# Environment Configuration
+environment:
+  # Python environment
+  python_version_check: true
+  required_python_version: "3.8"
+  
+  # Dependencies
+  check_dependencies: true
+  install_missing_dependencies: false  # Set to true for auto-install
+  
+  # Paths
+  evaluation_engine_path: "../EvaluationEngineV1_0"
+  lm_eval_path: "../lm_eval"
+  results_directory: "validation_results"
+  temp_directory: "temp_validation"
+  
+  # Cleanup
+  cleanup_temp_files: true
+  preserve_logs: true
+  preserve_reports: true

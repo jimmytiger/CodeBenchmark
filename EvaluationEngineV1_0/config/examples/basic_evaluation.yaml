@@ -1,0 +1,28 @@
+# Basic Multi-Turn Evaluation Configuration
+# This is a simple configuration for getting started with multi-turn evaluation
+
+# Model to evaluate
+model_id: "gpt-4"
+
+# Tasks to execute
+task_ids:
+  - "example_multi_turn_task"
+  - "simple_coding_task"
+
+# Basic settings
+max_turns: 10
+timeout_seconds: 3600  # 1 hour
+
+# Feedback processing
+feedback_strategy: "adaptive"  # Options: full, adaptive, minimal, top_k
+enable_context_retention: true
+
+# Safety settings
+safety_level: "moderate"  # Options: strict, moderate, permissive
+enable_sandboxing: true
+
+# Metadata
+metadata:
+  description: "Basic multi-turn evaluation example"
+  created_by: "user"
+  use_case: "getting_started"

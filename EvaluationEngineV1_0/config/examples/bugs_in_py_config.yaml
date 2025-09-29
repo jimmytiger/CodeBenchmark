@@ -1,0 +1,362 @@
+# BugsInPy Evaluation Configuration
+# Python-specific bug fixing tasks from real open-source projects
+
+model_id: "claude-3-sonnet"
+task_ids:
+  # pandas bugs
+  - "bugs_in_py_pandas_1"
+  - "bugs_in_py_pandas_2"
+  - "bugs_in_py_pandas_3"
+  
+  # numpy bugs
+  - "bugs_in_py_numpy_1"
+  - "bugs_in_py_numpy_2"
+  
+  # requests bugs
+  - "bugs_in_py_requests_1"
+  - "bugs_in_py_requests_2"
+  
+  # matplotlib bugs
+  - "bugs_in_py_matplotlib_1"
+  - "bugs_in_py_matplotlib_2"
+  
+  # scikit-learn bugs
+  - "bugs_in_py_sklearn_1"
+
+# Evaluation parameters
+max_turns: 18
+timeout_seconds: 9000  # 2.5 hours per bug
+enable_context_retention: true
+
+# Feedback processing configuration for Python debugging
+feedback_strategy: "full"
+feedback_config:
+  context_strategy: "adaptive"
+  max_feedback_length: 20000
+  enable_stack_summarization: true
+  enable_file_context: true
+  python_specific_processing: true
+  
+  # Python-specific feedback features
+  include_traceback_analysis: true
+  include_variable_inspection: true
+  include_type_information: true
+  include_import_analysis: true
+  include_dependency_info: true
+  
+  # Code analysis features
+  ast_analysis: true
+  static_analysis: true
+  code_complexity_analysis: true
+  test_coverage_analysis: true
+
+# Safety configuration for Python development
+safety_level: "moderate"
+safety_config:
+  allowed_tools:
+    - "python"
+    - "python3"
+    - "pip"
+    - "pytest"
+    - "nose"
+    - "unittest"
+    - "coverage"
+    - "flake8"
+    - "pylint"
+    - "black"
+    - "isort"
+    - "mypy"
+    - "git"
+    - "grep"
+    - "find"
+    - "cat"
+    - "less"
+    - "head"
+    - "tail"
+    - "vim"
+    - "nano"
+  
+  blocked_commands:
+    - "rm -rf /"
+    - "del /f /q"
+    - "format"
+    - "pip install --force-reinstall"
+    - "pip uninstall -y"
+  
+  enable_sandboxing: true
+  max_execution_time: 900  # 15 minutes per command
+  
+  resource_limits:
+    memory: "8GB"  # Some scientific computing tasks need more memory
+    cpu_time: "600s"
+    disk_space: "5GB"
+    max_processes: 20
+  
+  # Python-specific safety patterns
+  dangerous_python_patterns:
+    - "eval("
+    - "exec("
+    - "__import__"
+    - "compile("
+    - "globals("
+    - "locals("
+    - "setattr("
+    - "delattr("
+    - "os.system"
+    - "subprocess.call"
+
+# Python environment configuration
+python_config:
+  # Python version management
+  python_versions: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+  default_version: "3.8"
+  version_switching: true
+  
+  # Virtual environment management
+  use_virtual_env: true
+  venv_isolation: true
+  requirements_installation: true
+  
+  # Package management
+  pip_config:
+    upgrade_pip: true
+    use_cache: true
+    timeout: 300
+    retries: 3
+  
+  # Testing frameworks
+  testing_frameworks:
+    - "pytest"
+    - "unittest"
+    - "nose"
+    - "doctest"
+  
+  # Code quality tools
+  quality_tools:
+    - "flake8"
+    - "pylint"
+    - "black"
+    - "isort"
+    - "mypy"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "test_regression"  # New tests failing
+  - "environment_corruption"
+
+# Export configuration
+export_config:
+  formats: ["json", "csv", "html", "xml"]
+  include_turn_details: true
+  include_code_changes: true
+  include_test_results: true
+  include_coverage_reports: true
+  generate_bug_analysis_report: true
+  generate_fix_quality_report: true
+
+# Custom metrics for Python bug fixing
+custom_metrics:
+  - name: "bug_fix_accuracy"
+    calculator: "python_bug_fix_calculator"
+    weight: 0.35
+    description: "Accuracy of the bug fix"
+  
+  - name: "test_pass_rate"
+    calculator: "python_test_calculator"
+    weight: 0.25
+    description: "Percentage of tests passing after fix"
+  
+  - name: "code_quality_improvement"
+    calculator: "python_code_quality_calculator"
+    weight: 0.15
+    description: "Improvement in code quality metrics"
+  
+  - name: "fix_minimality"
+    calculator: "fix_minimality_calculator"
+    weight: 0.15
+    description: "Minimality of the fix (fewer changes is better)"
+  
+  - name: "regression_safety"
+    calculator: "regression_safety_calculator"
+    weight: 0.1
+    description: "No new regressions introduced"
+
+# Adapter-specific configuration
+adapter_config:
+  bugs_in_py:
+    # Repository management
+    clone_depth: 1
+    checkout_timeout: 120
+    clean_workspace: true
+    preserve_git_history: true
+    
+    # Bug reproduction
+    reproduction_attempts: 3
+    reproduction_timeout: 600
+    capture_reproduction_output: true
+    
+    # Environment setup
+    setup_timeout: 900  # 15 minutes for complex dependencies
+    install_dev_dependencies: true
+    setup_test_environment: true
+    
+    # Testing configuration
+    test_discovery: true
+    test_isolation: true
+    test_timeout: 1800  # 30 minutes
+    test_verbose: true
+    test_coverage: true
+    
+    # Fix validation
+    validate_fix: true
+    run_full_test_suite: true
+    check_code_style: true
+    static_analysis: true
+
+# Project-specific configurations
+project_configs:
+  pandas:
+    python_version: "3.8"
+    dependencies: ["numpy", "pytz", "python-dateutil"]
+    test_command: "pytest pandas/tests/"
+    build_command: "python setup.py build_ext --inplace"
+    
+  numpy:
+    python_version: "3.8"
+    dependencies: ["cython"]
+    test_command: "pytest numpy/tests/"
+    build_command: "python setup.py build_ext --inplace"
+    
+  requests:
+    python_version: "3.7"
+    dependencies: ["urllib3", "certifi", "chardet", "idna"]
+    test_command: "pytest tests/"
+    
+  matplotlib:
+    python_version: "3.8"
+    dependencies: ["numpy", "cycler", "kiwisolver", "pyparsing", "python-dateutil"]
+    test_command: "pytest lib/matplotlib/tests/"
+    
+  sklearn:
+    python_version: "3.8"
+    dependencies: ["numpy", "scipy", "joblib", "threadpoolctl"]
+    test_command: "pytest sklearn/tests/"
+    build_command: "python setup.py build_ext --inplace"
+
+# Bug categorization
+bug_categories:
+  logic_errors:
+    description: "Incorrect algorithm or business logic"
+    examples: ["wrong calculation", "incorrect condition"]
+    
+  boundary_conditions:
+    description: "Issues with edge cases and boundary values"
+    examples: ["off-by-one errors", "empty input handling"]
+    
+  type_errors:
+    description: "Type-related issues"
+    examples: ["type conversion", "duck typing issues"]
+    
+  performance_issues:
+    description: "Performance and efficiency problems"
+    examples: ["memory leaks", "inefficient algorithms"]
+    
+  api_compatibility:
+    description: "API compatibility and interface issues"
+    examples: ["breaking changes", "deprecated features"]
+
+# Metadata for tracking and analysis
+metadata:
+  scenario: "bugs_in_py"
+  experiment_name: "python_bug_fixing_evaluation"
+  description: "Evaluation of AI agents on real Python bugs from open-source projects"
+  researcher: "python_debugging_team"
+  version: "1.0"
+  
+  # Project distribution
+  project_distribution:
+    pandas: 3
+    numpy: 2
+    requests: 2
+    matplotlib: 2
+    sklearn: 1
+  
+  # Bug type distribution
+  bug_type_distribution:
+    logic_errors: 4
+    boundary_conditions: 3
+    type_errors: 2
+    performance_issues: 1
+  
+  # Difficulty levels
+  difficulty_distribution:
+    easy: 2
+    medium: 5
+    hard: 3
+  
+  # Expected outcomes
+  expected_success_rate: 0.7
+  expected_avg_turns: 10.5
+  expected_avg_time: 4500  # 1.25 hours
+  
+  # Python-specific benchmarks
+  python_benchmarks:
+    min_test_pass_rate: 0.95
+    max_acceptable_fix_size: 50  # lines of code
+    min_code_quality_score: 0.8
+
+# Logging configuration
+logging:
+  level: "DEBUG"
+  include_python_specifics: true
+  include_test_execution: true
+  include_dependency_management: true
+  include_environment_setup: true
+  log_file: "bugs_in_py_evaluation.log"
+  
+  # Python-specific logging
+  log_python_version: true
+  log_package_versions: true
+  log_import_errors: true
+  log_test_discovery: true
+  log_coverage_reports: true
+
+# Development tools integration
+dev_tools:
+  # Code formatters
+  formatters:
+    black:
+      enabled: true
+      line_length: 88
+    isort:
+      enabled: true
+      profile: "black"
+  
+  # Linters
+  linters:
+    flake8:
+      enabled: true
+      max_line_length: 88
+      ignore: ["E203", "W503"]
+    pylint:
+      enabled: false  # Can be too strict for bug fixing
+  
+  # Type checkers
+  type_checkers:
+    mypy:
+      enabled: true
+      strict: false
+      ignore_missing_imports: true
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_test_regression: true
+  on_environment_issues: true
+  webhook_url: "https://your-webhook-url.com/bugs-in-py-notifications"

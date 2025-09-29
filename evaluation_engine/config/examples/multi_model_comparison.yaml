@@ -1,0 +1,225 @@
+# Multi-Model Comparison Configuration Example
+# This demonstrates comparing multiple models on the same tasks
+
+metadata:
+  name: "Multi-Model Comparison Evaluation"
+  version: "1.0"
+  author: "Research Team"
+  description: "Systematic comparison of different LLM models on standardized tasks"
+
+# Variables for consistent configuration
+variables:
+  output_dir: "${env:EVAL_OUTPUT_DIR}"
+  comparison_batch_size: 4
+  comparison_fewshot: 5
+  test_limit: 200  # Reasonable limit for comparison studies
+
+# Multiple model configurations for comparison
+models:
+  # OpenAI Models
+  gpt4:
+    name: "gpt4"
+    type: "openai"
+    model_name: "gpt-4"
+    parameters:
+      temperature: 0.1
+      max_tokens: 1500
+    system_prompt: "You are GPT-4. Provide accurate and helpful responses."
+    prompt_template: "Question: {question}\n\nAnswer:"
+
+  gpt35_turbo:
+    name: "gpt35_turbo"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.1
+      max_tokens: 1500
+    system_prompt: "You are GPT-3.5 Turbo. Provide accurate and helpful responses."
+    prompt_template: "Question: {question}\n\nAnswer:"
+
+  # Anthropic Models
+  claude_opus:
+    name: "claude_opus"
+    type: "anthropic"
+    model_name: "claude-3-opus-20240229"
+    parameters:
+      temperature: 0.1
+      max_tokens: 1500
+    system_prompt: "You are Claude Opus. Provide thoughtful and accurate responses."
+    prompt_template: "Human: {question}\n\nAssistant:"
+
+  claude_sonnet:
+    name: "claude_sonnet"
+    type: "anthropic"
+    model_name: "claude-3-sonnet-20240229"
+    parameters:
+      temperature: 0.1
+      max_tokens: 1500
+    system_prompt: "You are Claude Sonnet. Provide helpful and accurate responses."
+    prompt_template: "Human: {question}\n\nAssistant:"
+
+  # Hugging Face Model
+  llama2_7b:
+    name: "llama2_7b"
+    type: "huggingface"
+    model_name: "meta-llama/Llama-2-7b-chat-hf"
+    parameters:
+      temperature: 0.1
+      max_tokens: 1500
+    system_prompt: "You are Llama 2. Provide helpful and accurate responses."
+    prompt_template: "[INST] {question} [/INST]"
+
+# Default configuration for all tasks
+defaults:
+  num_fewshot: "${comparison_fewshot}"
+  batch_size: "${comparison_batch_size}"
+  output:
+    format: ["json", "csv"]
+    save_predictions: true
+
+# Tasks designed for model comparison - same task across different models
+tasks:
+  # === COMMONSENSE REASONING COMPARISON ===
+  - name: "hellaswag_gpt4"
+    description: "HellaSwag - GPT-4"
+    model_ref: "gpt4"
+    task_name: "hellaswag"
+    task_config:
+      limit: "${test_limit}"
+    depends_on: []
+
+  - name: "hellaswag_gpt35"
+    description: "HellaSwag - GPT-3.5 Turbo"
+    model_ref: "gpt35_turbo"
+    task_name: "hellaswag"
+    task_config:
+      limit: "${test_limit}"
+    depends_on: []
+
+  - name: "hellaswag_claude_opus"
+    description: "HellaSwag - Claude Opus"
+    model_ref: "claude_opus"
+    task_name: "hellaswag"
+    task_config:
+      limit: "${test_limit}"
+    depends_on: []
+
+  - name: "hellaswag_claude_sonnet"
+    description: "HellaSwag - Claude Sonnet"
+    model_ref: "claude_sonnet"
+    task_name: "hellaswag"
+    task_config:
+      limit: "${test_limit}"
+    depends_on: []
+
+  - name: "hellaswag_llama2"
+    description: "HellaSwag - Llama 2 7B"
+    model_ref: "llama2_7b"
+    task_name: "hellaswag"
+    task_config:
+      limit: "${test_limit}"
+    depends_on: []
+
+  # === READING COMPREHENSION COMPARISON ===
+  - name: "arc_easy_gpt4"
+    description: "ARC Easy - GPT-4"
+    model_ref: "gpt4"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    task_config:
+      limit: "${test_limit}"
+    depends_on: ["hellaswag_gpt4"]
+
+  - name: "arc_easy_gpt35"
+    description: "ARC Easy - GPT-3.5 Turbo"
+    model_ref: "gpt35_turbo"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    task_config:
+      limit: "${test_limit}"
+    depends_on: ["hellaswag_gpt35"]
+
+  - name: "arc_easy_claude_opus"
+    description: "ARC Easy - Claude Opus"
+    model_ref: "claude_opus"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    task_config:
+      limit: "${test_limit}"
+    depends_on: ["hellaswag_claude_opus"]
+
+  - name: "arc_easy_claude_sonnet"
+    description: "ARC Easy - Claude Sonnet"
+    model_ref: "claude_sonnet"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    task_config:
+      limit: "${test_limit}"
+    depends_on: ["hellaswag_claude_sonnet"]
+
+  - name: "arc_easy_llama2"
+    description: "ARC Easy - Llama 2 7B"
+    model_ref: "llama2_7b"
+    task_name: "arc_easy"
+    num_fewshot: 25
+    task_config:
+      limit: "${test_limit}"
+    depends_on: ["hellaswag_llama2"]
+
+  # === MATH REASONING COMPARISON ===
+  - name: "gsm8k_gpt4"
+    description: "GSM8K Math - GPT-4"
+    model_ref: "gpt4"
+    task_name: "gsm8k"
+    num_fewshot: 8
+    batch_size: 2
+    task_config:
+      limit: 100  # Smaller limit for math tasks
+      temperature: 0.0  # Deterministic for math
+    depends_on: ["arc_easy_gpt4"]
+
+  - name: "gsm8k_gpt35"
+    description: "GSM8K Math - GPT-3.5 Turbo"
+    model_ref: "gpt35_turbo"
+    task_name: "gsm8k"
+    num_fewshot: 8
+    batch_size: 2
+    task_config:
+      limit: 100
+      temperature: 0.0
+    depends_on: ["arc_easy_gpt35"]
+
+  - name: "gsm8k_claude_opus"
+    description: "GSM8K Math - Claude Opus"
+    model_ref: "claude_opus"
+    task_name: "gsm8k"
+    num_fewshot: 8
+    batch_size: 2
+    task_config:
+      limit: 100
+      temperature: 0.0
+    depends_on: ["arc_easy_claude_opus"]
+
+  # === FINAL COMPARISON SUMMARY ===
+  - name: "comparison_summary"
+    description: "Final comparison task - Winogrande"
+    model_ref: "gpt4"
+    task_name: "winogrande"
+    task_config:
+      limit: 100
+    depends_on: [
+      "gsm8k_gpt4",
+      "gsm8k_gpt35", 
+      "gsm8k_claude_opus",
+      "arc_easy_claude_sonnet",
+      "arc_easy_llama2"
+    ]
+
+# Output configuration optimized for model comparison
+output:
+  directory: "${output_dir}"
+  formats: ["json", "html", "csv"]
+  include_raw_responses: true
+  generate_report: true
+  compare_models: true  # Enable model comparison features
+  comparison_metrics: ["accuracy", "f1", "exact_match"]

@@ -1,0 +1,273 @@
+# InterCode Evaluation Configuration
+# Interactive coding environments with immediate execution feedback
+
+model_id: "claude-3-sonnet"
+task_ids:
+  # Python coding tasks
+  - "intercode_python_basic_001"
+  - "intercode_python_basic_002"
+  - "intercode_python_intermediate_001"
+  - "intercode_python_intermediate_002"
+  - "intercode_python_advanced_001"
+  
+  # Bash scripting tasks
+  - "intercode_bash_basic_001"
+  - "intercode_bash_intermediate_001"
+  - "intercode_bash_advanced_001"
+  
+  # SQL query tasks
+  - "intercode_sql_basic_001"
+  - "intercode_sql_intermediate_001"
+
+# Evaluation parameters
+max_turns: 12
+timeout_seconds: 3600  # 1 hour per task
+enable_context_retention: true
+
+# Feedback processing configuration
+feedback_strategy: "full"
+feedback_config:
+  context_strategy: "full"
+  max_feedback_length: 12000
+  enable_stack_summarization: true
+  enable_execution_history: true
+  include_stdout: true
+  include_stderr: true
+  include_return_codes: true
+  execution_context_window: 5  # Keep last 5 executions
+
+# Safety configuration for interactive execution
+safety_level: "moderate"
+safety_config:
+  allowed_tools:
+    - "python"
+    - "python3"
+    - "bash"
+    - "sh"
+    - "sqlite3"
+    - "psql"
+    - "mysql"
+    - "echo"
+    - "cat"
+    - "grep"
+    - "awk"
+    - "sed"
+    - "sort"
+    - "uniq"
+    - "wc"
+    - "head"
+    - "tail"
+    - "ls"
+    - "pwd"
+    - "cd"
+    - "mkdir"
+    - "touch"
+    - "cp"
+    - "mv"
+  
+  blocked_commands:
+    - "rm -rf"
+    - "del /f /q"
+    - "format"
+    - "fdisk"
+    - "mkfs"
+    - "dd"
+    - "wget"
+    - "curl"
+    - "nc"
+    - "netcat"
+  
+  enable_sandboxing: true
+  max_execution_time: 120  # 2 minutes per command
+  
+  resource_limits:
+    memory: "2GB"
+    cpu_time: "60s"
+    disk_space: "1GB"
+    max_processes: 10
+    max_files: 100
+  
+  dangerous_patterns:
+    - "eval("
+    - "exec("
+    - "__import__"
+    - "subprocess"
+    - "os.system"
+    - "while True:"
+    - "for i in range(999999"
+
+# Environment-specific configurations
+environment_configs:
+  python:
+    version: "3.9"
+    packages:
+      - "numpy"
+      - "pandas"
+      - "matplotlib"
+      - "requests"
+    timeout_per_execution: 30
+    memory_limit: "512MB"
+  
+  bash:
+    shell: "/bin/bash"
+    timeout_per_execution: 60
+    working_directory: "/tmp/intercode_workspace"
+    environment_variables:
+      PATH: "/usr/local/bin:/usr/bin:/bin"
+  
+  sql:
+    database_type: "sqlite"
+    database_file: ":memory:"
+    timeout_per_query: 30
+    max_result_rows: 1000
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+  - "execution_error_limit"  # Too many consecutive errors
+
+# Export configuration
+export_config:
+  formats: ["json", "yaml", "html"]
+  include_turn_details: true
+  include_execution_logs: true
+  include_code_history: true
+  generate_execution_timeline: true
+  generate_performance_analysis: true
+
+# Custom metrics for InterCode
+custom_metrics:
+  - name: "execution_success_rate"
+    calculator: "execution_success_calculator"
+    weight: 0.3
+    description: "Percentage of successful code executions"
+  
+  - name: "debugging_efficiency"
+    calculator: "debugging_efficiency_calculator"
+    weight: 0.25
+    description: "Efficiency in identifying and fixing errors"
+  
+  - name: "code_correctness"
+    calculator: "code_correctness_calculator"
+    weight: 0.3
+    description: "Correctness of final solution"
+  
+  - name: "iteration_quality"
+    calculator: "iteration_quality_calculator"
+    weight: 0.15
+    description: "Quality of iterative improvements"
+
+# Adapter-specific configuration
+adapter_config:
+  intercode:
+    # Execution environment
+    container_image: "intercode:latest"
+    container_timeout: 300
+    container_memory: "2GB"
+    container_cpu: "1.0"
+    
+    # Code execution
+    execution_mode: "interactive"
+    preserve_state: true
+    variable_persistence: true
+    
+    # Error handling
+    max_consecutive_errors: 3
+    error_recovery: true
+    syntax_checking: true
+    
+    # Output processing
+    capture_intermediate_outputs: true
+    output_buffer_size: 10000
+    truncate_long_outputs: true
+
+# Task-specific configurations
+task_configs:
+  python_basic:
+    focus_areas: ["syntax", "basic_algorithms", "data_structures"]
+    allowed_libraries: ["math", "random", "string", "re"]
+    complexity_level: "beginner"
+  
+  python_intermediate:
+    focus_areas: ["object_oriented", "file_handling", "error_handling"]
+    allowed_libraries: ["os", "sys", "json", "csv", "datetime"]
+    complexity_level: "intermediate"
+  
+  python_advanced:
+    focus_areas: ["decorators", "generators", "metaclasses", "async"]
+    allowed_libraries: ["asyncio", "threading", "multiprocessing"]
+    complexity_level: "advanced"
+  
+  bash_basic:
+    focus_areas: ["file_operations", "text_processing", "basic_scripting"]
+    shell_features: ["pipes", "redirections", "variables"]
+    complexity_level: "beginner"
+  
+  sql_basic:
+    focus_areas: ["select", "insert", "update", "delete"]
+    database_features: ["joins", "aggregations", "subqueries"]
+    complexity_level: "beginner"
+
+# Metadata for tracking and analysis
+metadata:
+  scenario: "intercode"
+  experiment_name: "interactive_coding_evaluation"
+  description: "Evaluation of AI agents on interactive coding tasks with immediate feedback"
+  researcher: "coding_evaluation_team"
+  version: "1.0"
+  
+  # Task distribution
+  task_distribution:
+    python: 5
+    bash: 3
+    sql: 2
+  
+  # Difficulty levels
+  difficulty_distribution:
+    basic: 4
+    intermediate: 4
+    advanced: 2
+  
+  # Expected outcomes
+  expected_success_rate: 0.75
+  expected_avg_turns: 6.5
+  expected_avg_executions: 8.2
+  
+  # Performance benchmarks
+  benchmarks:
+    max_acceptable_turns: 15
+    max_acceptable_time: 1800
+    min_success_rate: 0.6
+
+# Logging configuration
+logging:
+  level: "DEBUG"
+  include_execution_details: true
+  include_environment_state: true
+  include_variable_tracking: true
+  log_file: "intercode_evaluation.log"
+  
+  # Execution logging
+  log_stdout: true
+  log_stderr: true
+  log_return_codes: true
+  log_execution_time: true
+
+# Real-time monitoring
+monitoring:
+  enable_real_time_updates: true
+  update_frequency: 5  # seconds
+  track_resource_usage: true
+  alert_on_long_execution: true
+  long_execution_threshold: 60  # seconds
+
+# Notification settings
+notifications:
+  on_completion: true
+  on_failure: true
+  on_safety_incident: true
+  on_execution_timeout: true
+  webhook_url: "https://your-webhook-url.com/intercode-notifications"

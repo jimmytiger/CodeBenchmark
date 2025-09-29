@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Basic LLM Evaluation JSON",
+    "version": "1.0",
+    "author": "Evaluation Team",
+    "description": "Basic JSON configuration demonstrating config-driven evaluation"
+  },
+  "variables": {
+    "output_dir": "./results",
+    "default_batch_size": 32
+  },
+  "models": {
+    "gpt35": {
+      "name": "gpt35",
+      "type": "openai",
+      "model_name": "gpt-3.5-turbo",
+      "parameters": {
+        "temperature": 0.7,
+        "max_tokens": 1000
+      },
+      "system_prompt": "You are a helpful assistant. Please answer the following question accurately.",
+      "prompt_template": "Question: {question}\\nAnswer:"
+    }
+  },
+  "defaults": {
+    "num_fewshot": 5,
+    "batch_size": 32,
+    "output": {
+      "format": ["json"],
+      "save_predictions": true
+    }
+  },
+  "tasks": [
+    {
+      "name": "hellaswag_test",
+      "description": "HellaSwag commonsense reasoning test",
+      "model_ref": "gpt35",
+      "task_name": "hellaswag",
+      "num_fewshot": 5,
+      "batch_size": 16,
+      "depends_on": []
+    }
+  ],
+  "output": {
+    "directory": "./results",
+    "formats": ["json", "csv"],
+    "include_raw_responses": false,
+    "generate_report": true,
+    "compare_models": false
+  }
+}

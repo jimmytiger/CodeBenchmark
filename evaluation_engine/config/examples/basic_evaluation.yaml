@@ -1,0 +1,63 @@
+# Basic Evaluation Configuration Example
+# This demonstrates simple configuration-driven evaluation setup
+
+metadata:
+  name: "Basic LLM Evaluation"
+  version: "1.0"
+  author: "Evaluation Team"
+  description: "Simple evaluation setup for getting started with config-driven evaluation"
+
+# Simple variable definitions
+variables:
+  output_dir: "./results"
+  default_batch_size: 8
+  api_key: "${env:OPENAI_API_KEY}"
+
+# Basic model configuration
+models:
+  gpt35:
+    name: "gpt35"
+    type: "openai"
+    model_name: "gpt-3.5-turbo"
+    parameters:
+      temperature: 0.7
+      max_tokens: 1000
+    system_prompt: "You are a helpful assistant. Please answer the following question accurately."
+    prompt_template: "Question: {question}\nAnswer:"
+
+# Default settings
+defaults:
+  num_fewshot: 5
+  batch_size: "${default_batch_size}"
+  output:
+    format: ["json"]
+    save_predictions: true
+
+# Simple task definitions
+tasks:
+  - name: "hellaswag_basic"
+    description: "Basic HellaSwag commonsense reasoning test"
+    model_ref: "gpt35"
+    task_name: "hellaswag"
+    num_fewshot: 10
+    batch_size: 4
+    task_config:
+      limit: 100  # Small limit for quick testing
+    depends_on: []
+
+  - name: "arc_easy_basic"
+    description: "Basic ARC Easy reasoning test"
+    model_ref: "gpt35"
+    task_name: "arc_easy"
+    num_fewshot: 5
+    batch_size: 8
+    task_config:
+      limit: 50
+    depends_on: ["hellaswag_basic"]
+
+# Simple output configuration
+output:
+  directory: "${output_dir}"
+  formats: ["json", "csv"]
+  include_raw_responses: false
+  generate_report: true

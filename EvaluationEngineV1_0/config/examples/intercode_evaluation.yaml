@@ -1,0 +1,76 @@
+# InterCode Multi-Turn Evaluation Configuration
+# Configuration for InterCode interactive coding tasks
+
+# Model configuration
+model_id: "gpt-4"
+
+# InterCode tasks across different environments
+task_ids:
+  - "intercode_python_basic"
+  - "intercode_python_advanced"
+  - "intercode_bash_scripting"
+  - "intercode_sql_queries"
+  - "intercode_sql_complex"
+
+# Execution settings for interactive coding
+max_turns: 15
+timeout_seconds: 14400  # 4 hours
+max_execution_time: 300  # 5 minutes per action
+
+# Feedback processing for interactive environments
+feedback_strategy: "adaptive"
+context_strategy: "adaptive"
+max_feedback_length: 15000
+max_context_length: 75000
+enable_stack_summarization: true
+enable_file_context: false  # InterCode focuses on command-line interaction
+top_k_assertions: 8
+
+# Safety settings for interactive environments
+safety_level: "moderate"
+enable_sandboxing: true
+allowed_tools:
+  - "python"
+  - "bash"
+  - "sqlite3"
+  - "mysql"
+  - "psql"
+  - "awk"
+  - "sed"
+  - "grep"
+
+# Resource limits for interactive tasks
+resource_limits:
+  max_memory_mb: 2048
+  max_cpu_percent: 70
+  max_disk_mb: 1024
+  max_network_requests: 10
+
+# Patterns to prevent system damage
+dangerous_patterns:
+  - "rm.*-rf"
+  - "sudo"
+  - "chmod.*777"
+  - "mkfs"
+  - "fdisk"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+
+# InterCode specific metadata
+metadata:
+  description: "InterCode interactive coding evaluation"
+  benchmark: "intercode"
+  created_by: "intercode_user"
+  expected_duration: "2-4 hours"
+  difficulty: "medium"
+  environments:
+    - "python"
+    - "bash"
+    - "sql"
+  interaction_type: "command_line"
+  focus: "interactive_problem_solving"

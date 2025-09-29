@@ -1,0 +1,81 @@
+# SWE-bench Multi-Turn Evaluation Configuration
+# Configuration optimized for SWE-bench software engineering tasks
+
+# Model configuration
+model_id: "gpt-4"
+
+# SWE-bench tasks
+task_ids:
+  - "swe_bench_lite_001"
+  - "swe_bench_lite_002"
+  - "swe_bench_lite_003"
+  - "swe_bench_lite_004"
+  - "swe_bench_lite_005"
+
+# Execution settings optimized for software engineering
+max_turns: 25
+timeout_seconds: 28800  # 8 hours for complex bug fixes
+max_execution_time: 1200  # 20 minutes per action
+
+# Feedback processing for code-heavy tasks
+feedback_strategy: "full"
+context_strategy: "full"
+max_feedback_length: 25000
+max_context_length: 150000
+enable_stack_summarization: true
+enable_file_context: true
+top_k_assertions: 12
+
+# Safety settings for software development
+safety_level: "moderate"
+enable_sandboxing: true
+allowed_tools:
+  - "python"
+  - "bash"
+  - "git"
+  - "pytest"
+  - "pip"
+  - "conda"
+  - "make"
+  - "gcc"
+  - "javac"
+
+# Resource limits for development tasks
+resource_limits:
+  max_memory_mb: 8192
+  max_cpu_percent: 85
+  max_disk_mb: 4096
+  max_network_requests: 50
+
+# Patterns to prevent destructive operations
+dangerous_patterns:
+  - "rm.*-rf.*/"
+  - "sudo.*rm"
+  - "chmod.*777"
+  - "format.*c:"
+  - "del.*\\*"
+
+# Termination conditions
+termination_conditions:
+  - "success"
+  - "max_turns"
+  - "timeout"
+  - "safety_violation"
+
+# SWE-bench specific metadata
+metadata:
+  description: "SWE-bench evaluation for real-world bug fixing"
+  benchmark: "swe_bench"
+  subset: "lite"
+  domain: "software_engineering"
+  created_by: "swe_researcher"
+  expected_duration: "4-8 hours"
+  difficulty: "high"
+  languages:
+    - "python"
+    - "java"
+    - "javascript"
+  task_types:
+    - "bug_fixing"
+    - "feature_implementation"
+    - "code_refactoring"
